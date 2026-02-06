@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인 | 호텔어라운드 평창</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="auth-page">
+  <!-- Navigation -->
+  <nav class="nav scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-text">HOTEL AROUND</span>
+        <span class="logo-sub">PYEONGCHANG</span>
+      </a>
+    </div>
+  </nav>
+
+  <main class="auth-wrapper">
+    <div class="auth-container">
+      <!-- Left Side - Image -->
+      <div class="auth-image">
+        <div class="auth-image-overlay"></div>
+        <div class="auth-image-content">
+          <h2>산에서 집중,<br>계곡에서 충전</h2>
+          <p>프리미엄 워케이션의 새로운 기준<br>호텔어라운드 평창에서 시작하세요</p>
+        </div>
+      </div>
+
+      <!-- Right Side - Form -->
+      <div class="auth-form-wrapper">
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="login">로그인</button>
+          <button class="auth-tab" data-tab="register">회원가입</button>
+        </div>
+
+        <!-- Login Form -->
+        <form class="auth-form" id="loginForm">
+          <div class="form-header">
+            <h1>로그인</h1>
+            <p>워케이션 예약을 위해 로그인해 주세요</p>
+          </div>
+
+          <div class="form-group">
+            <label for="loginEmail">이메일</label>
+            <input type="email" id="loginEmail" name="email" required placeholder="email@example.com">
+          </div>
+
+          <div class="form-group">
+            <label for="loginPassword">비밀번호</label>
+            <div class="password-wrapper">
+              <input type="password" id="loginPassword" name="password" required placeholder="비밀번호 입력">
+              <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-options">
+            <label class="checkbox-label">
+              <input type="checkbox" name="remember">
+              <span>로그인 상태 유지</span>
+            </label>
+            <a href="#" class="forgot-link">비밀번호 찾기</a>
+          </div>
+
+          <button type="submit" class="btn btn-auth">로그인</button>
+
+          <div class="social-login">
+            <p>간편 로그인</p>
+            <div class="social-buttons">
+              <button type="button" class="social-btn kakao" onclick="socialLogin('kakao')">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 3C6.48 3 2 6.58 2 11c0 2.84 1.86 5.33 4.65 6.73-.15.54-.97 3.47-1 3.64 0 .1.04.19.12.25.07.05.16.06.24.03.32-.08 3.74-2.46 4.28-2.83.55.08 1.12.13 1.71.13 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/>
+                </svg>
+                카카오 로그인
+              </button>
+              <button type="button" class="social-btn naver" onclick="socialLogin('naver')">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727v12.845z"/>
+                </svg>
+                네이버 로그인
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Register Form -->
+        <form class="auth-form hidden" id="registerForm">
+          <div class="form-header">
+            <h1>회원가입</h1>
+            <p>호텔어라운드 평창의 멤버가 되어 주세요</p>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="registerName">이름 *</label>
+              <input type="text" id="registerName" name="name" required placeholder="홍길동">
+            </div>
+            <div class="form-group">
+              <label for="registerPhone">연락처 *</label>
+              <input type="tel" id="registerPhone" name="phone" required placeholder="010-0000-0000">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="registerEmail">이메일 *</label>
+            <input type="email" id="registerEmail" name="email" required placeholder="email@example.com">
+          </div>
+
+          <div class="form-group">
+            <label for="registerPassword">비밀번호 *</label>
+            <div class="password-wrapper">
+              <input type="password" id="registerPassword" name="password" required placeholder="8자 이상, 영문/숫자 포함">
+              <button type="button" class="password-toggle" onclick="togglePassword('registerPassword')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <div class="password-strength" id="passwordStrength"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="registerPasswordConfirm">비밀번호 확인 *</label>
+            <div class="password-wrapper">
+              <input type="password" id="registerPasswordConfirm" name="passwordConfirm" required placeholder="비밀번호 재입력">
+              <button type="button" class="password-toggle" onclick="togglePassword('registerPasswordConfirm')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="registerCompany">회사/소속 (선택)</label>
+            <input type="text" id="registerCompany" name="company" placeholder="회사명">
+          </div>
+
+          <div class="form-group">
+            <label>관심 워케이션 타입</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" name="interest" value="freelancer">
+                <span>프리랜서 워케이션</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="interest" value="team">
+                <span>팀 워크숍</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="interest" value="longterm">
+                <span>장기 체류</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group terms">
+            <label class="checkbox-label">
+              <input type="checkbox" name="agreeAll" id="agreeAll">
+              <span><strong>전체 동의</strong></span>
+            </label>
+            <div class="terms-detail">
+              <label class="checkbox-label">
+                <input type="checkbox" name="agreeTerms" required>
+                <span>이용약관 동의 (필수)</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="agreePrivacy" required>
+                <span>개인정보 처리방침 동의 (필수)</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="agreeMarketing">
+                <span>마케팅 정보 수신 동의 (선택)</span>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-auth">회원가입</button>
+
+          <div class="social-login">
+            <p>간편 가입</p>
+            <div class="social-buttons">
+              <button type="button" class="social-btn kakao" onclick="socialLogin('kakao')">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 3C6.48 3 2 6.58 2 11c0 2.84 1.86 5.33 4.65 6.73-.15.54-.97 3.47-1 3.64 0 .1.04.19.12.25.07.05.16.06.24.03.32-.08 3.74-2.46 4.28-2.83.55.08 1.12.13 1.71.13 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/>
+                </svg>
+                카카오로 시작하기
+              </button>
+              <button type="button" class="social-btn naver" onclick="socialLogin('naver')">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727v12.845z"/>
+                </svg>
+                네이버로 시작하기
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

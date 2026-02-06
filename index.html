@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>호텔어라운드 평창 | 마운틴 워크스페이스</title>
+  <meta name="description" content="산에서 집중, 계곡에서 충전 - 평창의 프리미엄 워케이션 공간">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav" id="navbar">
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <span class="logo-text">HOTEL AROUND</span>
+        <span class="logo-sub">PYEONGCHANG</span>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="#about">소개</a></li>
+        <li><a href="#workspace">워크스페이스</a></li>
+        <li><a href="#packages">패키지</a></li>
+        <li><a href="#rooms">객실</a></li>
+        <li><a href="#facilities">시설</a></li>
+        <li><a href="#contact">문의</a></li>
+      </ul>
+      <a href="#packages" class="nav-cta">예약 문의</a>
+      <button class="nav-toggle" id="navToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-subtitle fade-in">Premium Workation in Pyeongchang</p>
+      <h1 class="hero-title fade-in">
+        <span class="title-line">산에서 집중,</span>
+        <span class="title-line">계곡에서 충전</span>
+      </h1>
+      <p class="hero-desc fade-in">
+        서울에서 1시간, 518개 객실의 신축 호텔에서<br>
+        당신만의 워케이션을 시작하세요
+      </p>
+      <div class="hero-cta fade-in">
+        <a href="#packages" class="btn btn-primary">패키지 둘러보기</a>
+        <a href="#about" class="btn btn-outline">자세히 알아보기</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="section about" id="about">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">About</span>
+        <h2 class="section-title">평창 마운틴 워크스페이스</h2>
+        <p class="section-desc">
+          2025년 11월 오픈한 호텔어라운드 평창은<br>
+          대한민국 최고의 워케이션 목적지입니다
+        </p>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="about-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h3>518개 객실</h3>
+          <p>호텔, 테라스, 빌라까지<br>다양한 타입의 프리미엄 객실</p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          <h3>서울에서 1시간</h3>
+          <p>KTX 진부역 무료 셔틀<br>빠르고 편리한 접근성</p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </div>
+          <h3>1Gbps 인터넷</h3>
+          <p>초고속 유무선 인터넷<br>끊김 없는 업무 환경</p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <h3>코워킹 스페이스</h3>
+          <p>폰부스, 미팅룸, 라운지<br>업무에 최적화된 공간</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="section stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-number" data-count="518">0</span>
+          <span class="stat-label">객실</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="1">0</span>
+          <span class="stat-unit">Gbps</span>
+          <span class="stat-label">인터넷 속도</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="60">0</span>
+          <span class="stat-unit">분</span>
+          <span class="stat-label">서울에서</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="24">0</span>
+          <span class="stat-unit">/7</span>
+          <span class="stat-label">프론트 서비스</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workspace Section -->
+  <section class="section workspace" id="workspace">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Workspace</span>
+        <h2 class="section-title">프리미엄 워크스페이스</h2>
+        <p class="section-desc">
+          일과 휴식의 완벽한 균형을 위한<br>
+          최적의 업무 환경을 제공합니다
+        </p>
+      </div>
+
+      <div class="workspace-grid">
+        <div class="workspace-item large">
+          <div class="workspace-image" style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=800')"></div>
+          <div class="workspace-content">
+            <h3>코워킹 라운지</h3>
+            <p>넓은 창으로 산과 계곡을 바라보며 일하는 오픈형 업무 공간</p>
+            <ul class="workspace-features">
+              <li>인체공학적 의자 & 데스크</li>
+              <li>무료 커피 & 음료</li>
+              <li>프린터 & 스캐너</li>
+            </ul>
+          </div>
+        </div>
+        <div class="workspace-item">
+          <div class="workspace-image" style="background-image: url('https://images.unsplash.com/photo-1572025442646-866d16c84a54?w=600')"></div>
+          <div class="workspace-content">
+            <h3>프라이빗 폰부스</h3>
+            <p>화상 회의와 통화를 위한 방음 처리된 개인 공간</p>
+          </div>
+        </div>
+        <div class="workspace-item">
+          <div class="workspace-image" style="background-image: url('https://images.unsplash.com/photo-1582653291997-079a1c04e5a1?w=600')"></div>
+          <div class="workspace-content">
+            <h3>미팅룸</h3>
+            <p>4~12인용 미팅룸, 대형 모니터 & 화상회의 장비 구비</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Packages Section -->
+  <section class="section packages" id="packages">
+    <div class="container">
+      <div class="section-header light">
+        <span class="section-label">Packages</span>
+        <h2 class="section-title">워케이션 패키지</h2>
+        <p class="section-desc">
+          당신의 워케이션 스타일에 맞는<br>
+          최적의 패키지를 선택하세요
+        </p>
+      </div>
+
+      <div class="packages-grid">
+        <!-- Bronze -->
+        <div class="package-card">
+          <div class="package-badge">BRONZE</div>
+          <div class="package-header">
+            <h3>7박 패키지</h3>
+            <p class="package-target">단기 집중 워케이션</p>
+          </div>
+          <div class="package-price">
+            <span class="price-amount">1,190,000</span>
+            <span class="price-unit">원~</span>
+          </div>
+          <ul class="package-features">
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              스탠다드 호텔룸 7박
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              코워킹 라운지 자유이용
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              조식 7회 포함
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              KTX역 셔틀버스
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              피트니스센터 이용
+            </li>
+          </ul>
+          <a href="#contact" class="btn btn-package">문의하기</a>
+        </div>
+
+        <!-- Silver -->
+        <div class="package-card featured">
+          <div class="package-popular">MOST POPULAR</div>
+          <div class="package-badge">SILVER</div>
+          <div class="package-header">
+            <h3>14박 패키지</h3>
+            <p class="package-target">밸런스 워케이션</p>
+          </div>
+          <div class="package-price">
+            <span class="price-amount">2,100,000</span>
+            <span class="price-unit">원~</span>
+          </div>
+          <ul class="package-features">
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              디럭스 호텔룸 14박
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              코워킹 라운지 자유이용
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              조식 14회 포함
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              미팅룸 2시간/일 무료
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              세탁 서비스 2회 포함
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              웰컴 어메니티
+            </li>
+          </ul>
+          <a href="#contact" class="btn btn-package-primary">문의하기</a>
+        </div>
+
+        <!-- Gold -->
+        <div class="package-card">
+          <div class="package-badge gold">GOLD</div>
+          <div class="package-header">
+            <h3>30박 패키지</h3>
+            <p class="package-target">프리미엄 장기 체류</p>
+          </div>
+          <div class="package-price">
+            <span class="price-amount">3,900,000</span>
+            <span class="price-unit">원~</span>
+          </div>
+          <ul class="package-features">
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              테라스/빌라 객실 30박
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              전용 워크스테이션
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              조식 30회 + 석식 10회
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              미팅룸 무제한 이용
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              세탁 서비스 무제한
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              BBQ 시설 2회 이용
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              전담 컨시어지 서비스
+            </li>
+          </ul>
+          <a href="#contact" class="btn btn-package">문의하기</a>
+        </div>
+      </div>
+
+      <div class="packages-note">
+        <p>* 모든 패키지는 체크인 날짜, 객실 타입에 따라 가격이 변동될 수 있습니다.</p>
+        <p>* 기업 단체 워케이션은 별도 맞춤 견적을 제공해 드립니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rooms Section -->
+  <section class="section rooms" id="rooms">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Rooms</span>
+        <h2 class="section-title">객실 타입</h2>
+        <p class="section-desc">
+          호텔, 테라스, 빌라까지<br>
+          다양한 숙박 옵션을 제공합니다
+        </p>
+      </div>
+
+      <div class="rooms-slider" id="roomsSlider">
+        <div class="rooms-track">
+          <div class="room-card">
+            <div class="room-image" style="background-image: url('https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600')"></div>
+            <div class="room-content">
+              <span class="room-type">HOTEL</span>
+              <h3>스탠다드 룸</h3>
+              <p>효율적인 업무와 편안한 휴식을 위한 컴팩트한 공간</p>
+              <ul class="room-specs">
+                <li>28㎡</li>
+                <li>퀸베드 1</li>
+                <li>마운틴뷰</li>
+              </ul>
+            </div>
+          </div>
+          <div class="room-card">
+            <div class="room-image" style="background-image: url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600')"></div>
+            <div class="room-content">
+              <span class="room-type">HOTEL</span>
+              <h3>디럭스 룸</h3>
+              <p>넓은 공간과 프리미엄 어메니티를 갖춘 업그레이드 객실</p>
+              <ul class="room-specs">
+                <li>38㎡</li>
+                <li>킹베드 1</li>
+                <li>밸리뷰</li>
+              </ul>
+            </div>
+          </div>
+          <div class="room-card">
+            <div class="room-image" style="background-image: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600')"></div>
+            <div class="room-content">
+              <span class="room-type">TERRACE</span>
+              <h3>테라스 룸</h3>
+              <p>프라이빗 테라스에서 자연을 만끽하는 특별한 경험</p>
+              <ul class="room-specs">
+                <li>45㎡</li>
+                <li>킹베드 1</li>
+                <li>테라스 포함</li>
+              </ul>
+            </div>
+          </div>
+          <div class="room-card">
+            <div class="room-image" style="background-image: url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600')"></div>
+            <div class="room-content">
+              <span class="room-type">VILLA</span>
+              <h3>빌라</h3>
+              <p>독립된 공간에서 완벽한 프라이버시와 자유를 누리세요</p>
+              <ul class="room-specs">
+                <li>85㎡~</li>
+                <li>침실 2~3</li>
+                <li>전용정원</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="rooms-nav">
+          <button class="rooms-nav-btn prev" id="roomsPrev">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <button class="rooms-nav-btn next" id="roomsNext">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Facilities Section -->
+  <section class="section facilities" id="facilities">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Facilities</span>
+        <h2 class="section-title">부대시설</h2>
+        <p class="section-desc">
+          워케이션을 더욱 풍요롭게 만드는<br>
+          프리미엄 시설을 이용하세요
+        </p>
+      </div>
+
+      <div class="facilities-grid">
+        <div class="facility-item">
+          <div class="facility-image" style="background-image: url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=400')"></div>
+          <div class="facility-content">
+            <h4>피트니스 센터</h4>
+            <p>24시간 운영</p>
+          </div>
+        </div>
+        <div class="facility-item">
+          <div class="facility-image" style="background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400')"></div>
+          <div class="facility-content">
+            <h4>레스토랑</h4>
+            <p>조식 · 중식 · 석식</p>
+          </div>
+        </div>
+        <div class="facility-item">
+          <div class="facility-image" style="background-image: url('https://images.unsplash.com/photo-1555244162-803834f70033?w=400')"></div>
+          <div class="facility-content">
+            <h4>BBQ 가든</h4>
+            <p>프라이빗 바베큐</p>
+          </div>
+        </div>
+        <div class="facility-item">
+          <div class="facility-image" style="background-image: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400')"></div>
+          <div class="facility-content">
+            <h4>연회장</h4>
+            <p>세미나 · 워크숍</p>
+          </div>
+        </div>
+        <div class="facility-item">
+          <div class="facility-image" style="background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400')"></div>
+          <div class="facility-content">
+            <h4>셔틀버스</h4>
+            <p>KTX 진부역 연결</p>
+          </div>
+        </div>
+        <div class="facility-item">
+          <div class="facility-image" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400')"></div>
+          <div class="facility-content">
+            <h4>주변 관광</h4>
+            <p>오대산 · 월정사</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Target Section -->
+  <section class="section target">
+    <div class="container">
+      <div class="section-header light">
+        <span class="section-label">For You</span>
+        <h2 class="section-title">이런 분께 추천합니다</h2>
+      </div>
+
+      <div class="target-grid">
+        <div class="target-card">
+          <div class="target-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <h3>프리랜서</h3>
+          <p>일상의 루틴을 벗어나 새로운 환경에서 창의력을 발휘하고 싶은 분</p>
+          <span class="target-percent">70%</span>
+        </div>
+        <div class="target-card">
+          <div class="target-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <h3>기업 팀</h3>
+          <p>팀 빌딩, 워크숍, 오프사이트 미팅을 위한 최적의 공간</p>
+          <span class="target-percent">20%</span>
+        </div>
+        <div class="target-card">
+          <div class="target-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <h3>디지털 노마드</h3>
+          <p>국내외를 오가며 일하는 새로운 라이프스타일의 선구자</p>
+          <span class="target-percent">10%</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="section contact" id="contact">
+    <div class="container">
+      <div class="contact-wrapper">
+        <div class="contact-info">
+          <span class="section-label">Contact</span>
+          <h2 class="section-title">예약 문의</h2>
+          <p class="contact-desc">
+            워케이션 패키지에 대한 상담을 원하시면<br>
+            아래 양식을 작성해 주세요.<br>
+            담당자가 24시간 내 연락드리겠습니다.
+          </p>
+
+          <div class="contact-details">
+            <div class="contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <div>
+                <span>전화</span>
+                <strong>033-330-5000</strong>
+              </div>
+            </div>
+            <div class="contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              <div>
+                <span>이메일</span>
+                <strong>workation@hotelaround.co.kr</strong>
+              </div>
+            </div>
+            <div class="contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <div>
+                <span>주소</span>
+                <strong>강원도 평창군 진부면 오대산로 350</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form class="contact-form" id="contactForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">이름 *</label>
+              <input type="text" id="name" name="name" required placeholder="홍길동">
+            </div>
+            <div class="form-group">
+              <label for="company">회사/소속</label>
+              <input type="text" id="company" name="company" placeholder="회사명">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">이메일 *</label>
+              <input type="email" id="email" name="email" required placeholder="email@example.com">
+            </div>
+            <div class="form-group">
+              <label for="phone">연락처 *</label>
+              <input type="tel" id="phone" name="phone" required placeholder="010-0000-0000">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="package">관심 패키지</label>
+            <select id="package" name="package">
+              <option value="">패키지를 선택하세요</option>
+              <option value="bronze">Bronze - 7박 패키지</option>
+              <option value="silver">Silver - 14박 패키지</option>
+              <option value="gold">Gold - 30박 패키지</option>
+              <option value="custom">기업 맞춤 패키지</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="checkin">희망 체크인</label>
+              <input type="date" id="checkin" name="checkin">
+            </div>
+            <div class="form-group">
+              <label for="guests">인원</label>
+              <select id="guests" name="guests">
+                <option value="1">1명</option>
+                <option value="2">2명</option>
+                <option value="3-5">3~5명</option>
+                <option value="6-10">6~10명</option>
+                <option value="10+">10명 이상</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="message">문의 내용</label>
+            <textarea id="message" name="message" rows="4" placeholder="문의하실 내용을 입력해 주세요"></textarea>
+          </div>
+          <div class="form-group checkbox">
+            <input type="checkbox" id="privacy" name="privacy" required>
+            <label for="privacy">개인정보 수집 및 이용에 동의합니다. *</label>
+          </div>
+          <button type="submit" class="btn btn-submit">문의 보내기</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="logo-text">HOTEL AROUND</span>
+          <span class="logo-sub">PYEONGCHANG</span>
+          <p class="footer-desc">산에서 집중, 계곡에서 충전<br>프리미엄 워케이션의 새로운 기준</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>바로가기</h4>
+            <ul>
+              <li><a href="#about">소개</a></li>
+              <li><a href="#workspace">워크스페이스</a></li>
+              <li><a href="#packages">패키지</a></li>
+              <li><a href="#rooms">객실</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>고객지원</h4>
+            <ul>
+              <li><a href="#contact">예약 문의</a></li>
+              <li><a href="#faq">자주 묻는 질문</a></li>
+              <li><a href="#terms">이용약관</a></li>
+              <li><a href="#privacy">개인정보처리방침</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>연락처</h4>
+            <ul>
+              <li>033-330-5000</li>
+              <li>workation@hotelaround.co.kr</li>
+              <li>강원도 평창군 진부면<br>오대산로 350</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Hotel Around Pyeongchang. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Success Modal -->
+  <div class="modal" id="successModal">
+    <div class="modal-content">
+      <div class="modal-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <h3>문의가 접수되었습니다</h3>
+      <p>담당자가 24시간 내에 연락드리겠습니다.<br>감사합니다.</p>
+      <button class="btn btn-primary" onclick="closeModal()">확인</button>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
