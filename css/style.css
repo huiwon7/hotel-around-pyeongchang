@@ -535,6 +535,27 @@ h1, h2, h3, h4 {
   transform: translate(-50%, -50%) scale(1.1);
 }
 
+.video-thumbnail-link {
+  cursor: pointer;
+}
+
+.video-iframe-wrap {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.video-iframe-wrap iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 /* =============================================
    Workspace Section
    ============================================= */
