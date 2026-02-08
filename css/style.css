@@ -492,6 +492,50 @@ h1, h2, h3, h4 {
 }
 
 /* =============================================
+   Video Section
+   ============================================= */
+.video-section {
+  background: var(--color-white);
+}
+
+.video-thumbnail-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.video-thumbnail-link {
+  display: block;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.video-thumbnail-img {
+  width: 100%;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.video-thumbnail-link:hover .video-thumbnail-img {
+  transform: scale(1.03);
+}
+
+.video-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.85;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.video-thumbnail-link:hover .video-play-btn {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* =============================================
    Workspace Section
    ============================================= */
 .workspace-grid {
