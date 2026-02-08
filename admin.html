@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 대시보드 | 호텔어라운드 평창</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- Login Screen -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-header">
+        <h1>HOTEL AROUND</h1>
+        <p>관리자 대시보드</p>
+      </div>
+      <form id="loginForm">
+        <div class="login-field">
+          <label for="adminPassword">관리자 비밀번호</label>
+          <input type="password" id="adminPassword" placeholder="비밀번호를 입력하세요" required>
+        </div>
+        <button type="submit" class="login-btn">로그인</button>
+        <p class="login-error" id="loginError"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="dashboard" id="dashboard" style="display:none;">
+
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <h1 class="logo">HOTEL AROUND <span>Admin</span></h1>
+      </div>
+      <div class="top-bar-right">
+        <button class="btn-refresh" id="btnRefresh" title="새로고침">&#x21bb; 새로고침</button>
+        <span class="last-updated" id="lastUpdated"></span>
+        <button class="btn-logout" id="btnLogout">로그아웃</button>
+      </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <section class="stats-row">
+      <div class="stat-card">
+        <div class="stat-number" id="statTotal">0</div>
+        <div class="stat-label">전체 문의</div>
+      </div>
+      <div class="stat-card today">
+        <div class="stat-number" id="statToday">0</div>
+        <div class="stat-label">오늘 접수</div>
+      </div>
+      <div class="stat-card week">
+        <div class="stat-number" id="statWeek">0</div>
+        <div class="stat-label">이번 주</div>
+      </div>
+      <div class="stat-card packages">
+        <div class="stat-number" id="statPackage">-</div>
+        <div class="stat-label">인기 패키지</div>
+      </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="filters-bar">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="이름, 회사, 이메일 검색...">
+      </div>
+      <div class="filter-group">
+        <select id="filterPackage">
+          <option value="">전체 패키지</option>
+          <option value="starter">Starter</option>
+          <option value="professional">Professional</option>
+          <option value="nomad">Nomad</option>
+          <option value="paradise">Paradise</option>
+          <option value="custom">기업 맞춤</option>
+        </select>
+        <select id="filterPeriod">
+          <option value="">전체 기간</option>
+          <option value="today">오늘</option>
+          <option value="week">이번 주</option>
+          <option value="month">이번 달</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Table -->
+    <section class="table-section">
+      <div class="table-wrapper">
+        <table class="inquiry-table">
+          <thead>
+            <tr>
+              <th>접수일시</th>
+              <th>이름</th>
+              <th>회사</th>
+              <th>패키지</th>
+              <th>연락처</th>
+              <th>이메일</th>
+              <th>체크인</th>
+              <th>인원</th>
+              <th>상세</th>
+            </tr>
+          </thead>
+          <tbody id="inquiryBody">
+            <tr>
+              <td colspan="9" class="empty-state">
+                <div class="empty-icon">&#128203;</div>
+                <p>데이터를 불러오는 중...</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2>문의 상세</h2>
+          <button class="modal-close" id="modalClose">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+      </div>
+    </div>
+
+    <!-- Setup Guide -->
+    <section class="setup-section" id="setupSection" style="display:none;">
+      <div class="setup-card">
+        <h2>Google Sheets 연동 가이드</h2>
+        <p>문의 데이터를 자동 저장하려면 아래 단계를 따라주세요:</p>
+
+        <div class="setup-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Google Sheet 생성</h3>
+            <p><a href="https://sheets.google.com" target="_blank">Google Sheets</a>에서 새 스프레드시트를 만드세요.</p>
+            <p>첫 번째 행(헤더)에 다음을 입력:</p>
+            <code>timestamp | name | company | email | phone | package | checkin | guests | message | status</code>
+          </div>
+        </div>
+
+        <div class="setup-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Apps Script 설정</h3>
+            <p>스프레드시트 메뉴에서 <strong>확장 프로그램 > Apps Script</strong>를 클릭하고, 아래 코드를 붙여넣으세요:</p>
+            <pre><code>function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+  sheet.appendRow([
+    data.timestamp || new Date().toISOString(),
+    data.name || '',
+    data.company || '',
+    data.email || '',
+    data.phone || '',
+    data.package || '',
+    data.checkin || '',
+    data.guests || '',
+    data.message || '',
+    'pending'
+  ]);
+  return ContentService.createTextOutput(
+    JSON.stringify({result: 'success'})
+  ).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0];
+  var rows = [];
+  for (var i = 1; i &lt; data.length; i++) {
+    var row = {};
+    for (var j = 0; j &lt; headers.length; j++) {
+      row[headers[j]] = data[i][j];
+    }
+    rows.push(row);
+  }
+  return ContentService.createTextOutput(
+    JSON.stringify(rows)
+  ).setMimeType(ContentService.MimeType.JSON);
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="setup-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>웹 앱 배포</h3>
+            <p>Apps Script에서 <strong>배포 > 새 배포</strong>를 클릭</p>
+            <p>유형: <strong>웹 앱</strong>, 액세스: <strong>모든 사용자</strong>로 설정 후 배포</p>
+          </div>
+        </div>
+
+        <div class="setup-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h3>URL 등록</h3>
+            <p>배포된 웹 앱 URL을 아래에 입력하고 저장하세요:</p>
+            <div class="url-input-row">
+              <input type="text" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/...">
+              <button class="btn-save-url" id="btnSaveUrl">저장</button>
+            </div>
+            <p class="url-status" id="urlStatus"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="admin-footer">
+      <button class="btn-setup" id="btnSetup">Google Sheets 설정</button>
+      <span>&copy; 2025 Hotel Around Pyeongchang - Admin</span>
+    </footer>
+
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

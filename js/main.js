@@ -4,6 +4,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Load Google Script URL from localStorage
+  window.GOOGLE_SCRIPT_URL = localStorage.getItem('adminScriptUrl') || '';
+
   // Initialize all modules
   initNavigation();
   initScrollEffects();
@@ -348,17 +351,26 @@ function removeError(field) {
 }
 
 function storeInquiry(data) {
-  // Get existing inquiries from localStorage
-  const inquiries = JSON.parse(localStorage.getItem('workationInquiries') || '[]');
-
-  // Add timestamp
+  // Add metadata
   data.timestamp = new Date().toISOString();
   data.id = Date.now();
   data.status = 'pending';
 
-  // Store new inquiry
+  // localStorage 백업 저장
+  const inquiries = JSON.parse(localStorage.getItem('workationInquiries') || '[]');
   inquiries.push(data);
   localStorage.setItem('workationInquiries', JSON.stringify(inquiries));
+
+  // Google Sheets로 전송
+  const SCRIPT_URL = window.GOOGLE_SCRIPT_URL || '';
+  if (SCRIPT_URL) {
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).catch(err => console.error('Google Sheets 전송 실패:', err));
+  }
 
   console.log('Inquiry stored:', data);
 }
