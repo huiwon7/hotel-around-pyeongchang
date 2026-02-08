@@ -153,8 +153,8 @@
       <div class="section-header">
         <h2 class="section-title">호텔 어라운드 평창 영상보기</h2>
       </div>
-      <div class="video-thumbnail-wrapper">
-        <a href="https://www.youtube.com/watch?v=OgUKm-fU9XQ" target="_blank" rel="noopener noreferrer" class="video-thumbnail-link">
+      <div class="video-thumbnail-wrapper" id="videoWrapper">
+        <div class="video-thumbnail-link" onclick="playVideo()">
           <img src="images/Youtube-thumnail.png" alt="호텔 어라운드 평창 영상" class="video-thumbnail-img">
           <div class="video-play-btn">
             <svg viewBox="0 0 68 48" width="68" height="48">
@@ -162,8 +162,14 @@
               <path d="M45 24L27 14v20" fill="white"/>
             </svg>
           </div>
-        </a>
+        </div>
       </div>
+      <script>
+        function playVideo() {
+          document.getElementById('videoWrapper').innerHTML =
+            '<div class="video-iframe-wrap"><iframe src="https://www.youtube.com/embed/OgUKm-fU9XQ?autoplay=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>';
+        }
+      </script>
     </div>
   </section>
 
