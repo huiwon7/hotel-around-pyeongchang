@@ -492,6 +492,66 @@ h1, h2, h3, h4 {
 }
 
 /* =============================================
+   Award Section
+   ============================================= */
+.award-section {
+  background: var(--color-primary);
+  padding: 4rem 0;
+}
+
+.award-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+}
+
+.award-image {
+  flex-shrink: 0;
+}
+
+.award-image img {
+  width: 140px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.award-badge {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.award-title {
+  font-family: var(--font-body);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-white);
+  margin-bottom: 0.4rem;
+}
+
+.award-desc {
+  font-size: 1.05rem;
+  color: var(--color-gray-400);
+  font-weight: 400;
+}
+
+@media (max-width: 768px) {
+  .award-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .award-title {
+    font-size: 1.4rem;
+  }
+}
+
+/* =============================================
    Video Section
    ============================================= */
 .video-section {
