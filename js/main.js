@@ -440,3 +440,19 @@ if ('IntersectionObserver' in window) {
     imageObserver.observe(img);
   });
 }
+
+/**
+ * FAQ toggle
+ */
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const isActive = item.classList.contains('active');
+
+  // Close all
+  document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('active'));
+
+  // Open clicked (if it wasn't already open)
+  if (!isActive) {
+    item.classList.add('active');
+  }
+}
