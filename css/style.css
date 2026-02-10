@@ -825,6 +825,12 @@ h1, h2, h3, h4 {
   color: var(--color-gray-500);
 }
 
+.price-vat {
+  font-size: 0.75rem;
+  color: var(--color-gray-400);
+  font-weight: 400;
+}
+
 .price-discount {
   display: inline-block;
   font-size: 0.8rem;
