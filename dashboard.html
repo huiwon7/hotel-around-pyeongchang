@@ -235,9 +235,88 @@
             display: inline-block;
         }
 
+        /* Target Achievement */
+        .target-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .target-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .target-label { font-size: 12px; color: var(--text-light); font-weight: 600; margin-bottom: 8px; }
+        .target-values { display: flex; align-items: baseline; gap: 6px; margin-bottom: 10px; }
+        .target-actual { font-size: 22px; font-weight: 800; }
+        .target-goal { font-size: 13px; color: var(--text-light); }
+        .target-pct { font-size: 12px; color: var(--text-light); margin-top: 8px; display: flex; align-items: center; gap: 8px; }
+        .target-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .target-badge.over { background: #d4edda; color: #155724; }
+        .target-badge.under { background: #fff3cd; color: #856404; }
+        .target-badge.critical { background: #f8d7da; color: #721c24; }
+
+        /* Risk Cards */
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .risk-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--danger);
+        }
+        .risk-card.warning { border-left-color: var(--accent); }
+        .risk-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+        .risk-card p { font-size: 13px; color: var(--text-light); line-height: 1.6; }
+
+        /* House Use Bar */
+        .room-stack {
+            display: flex;
+            height: 32px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        .room-stack span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+        }
+        .room-legend {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 6px;
+        }
+        .room-legend i {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
         @media (max-width: 768px) {
-            .chart-grid, .compare-grid, .daily-grid { grid-template-columns: 1fr; }
-            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .chart-grid, .compare-grid, .daily-grid, .risk-grid { grid-template-columns: 1fr; }
+            .kpi-grid, .target-grid { grid-template-columns: repeat(2, 1fr); }
             .header { flex-direction: column; gap: 12px; text-align: center; }
             .container { padding: 16px; }
         }
@@ -309,6 +388,86 @@
                 <li><strong>객실 판매 2배 성장:</strong> 전 운영사 동기 7,580실 → 약 14,000실 예상 (12~2월 누적)</li>
                 <li><strong>2월 전망:</strong> 8일간 3,883실(OCC 39.5%) 이미 달성, 월말 기준 5,000실 이상 예상</li>
             </ul>
+        </div>
+
+        <h3 class="section-title">AZMT 경영 목표 대비 달성률 (1월 기준, VAT제외)</h3>
+        <div class="target-grid">
+            <div class="target-card">
+                <div class="target-label">월 매출</div>
+                <div class="target-values">
+                    <span class="target-actual" style="color:var(--accent)">5.63억</span>
+                    <span class="target-goal">/ 6.82억</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:82.6%;background:var(--accent)"></div></div>
+                <div class="target-pct">82.6% 달성 <span class="target-badge under">미달</span></div>
+            </div>
+            <div class="target-card">
+                <div class="target-label">OCC (점유율)</div>
+                <div class="target-values">
+                    <span class="target-actual" style="color:var(--success)">52.9%</span>
+                    <span class="target-goal">/ 35.0%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--success)"></div></div>
+                <div class="target-pct">151.1% 달성 <span class="target-badge over">초과 달성</span></div>
+            </div>
+            <div class="target-card">
+                <div class="target-label">ADR (평균 객실 단가)</div>
+                <div class="target-values">
+                    <span class="target-actual" style="color:var(--accent)">101,125원</span>
+                    <span class="target-goal">/ 113,712원</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:88.9%;background:var(--accent)"></div></div>
+                <div class="target-pct">88.9% 달성 <span class="target-badge under">미달</span></div>
+            </div>
+            <div class="target-card">
+                <div class="target-label">RevPAR</div>
+                <div class="target-values">
+                    <span class="target-actual" style="color:var(--success)">53,485원</span>
+                    <span class="target-goal">/ 39,799원</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--success)"></div></div>
+                <div class="target-pct">134.4% 달성 <span class="target-badge over">초과 달성</span></div>
+            </div>
+            <div class="target-card">
+                <div class="target-label">Group 비율</div>
+                <div class="target-values">
+                    <span class="target-actual" style="color:var(--danger)">0%</span>
+                    <span class="target-goal">/ 20%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--danger)"></div></div>
+                <div class="target-pct">0% 달성 <span class="target-badge critical">심각 미달</span></div>
+            </div>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="chart-title">AZMT 목표 대비 달성률 (%)</div>
+                <div class="chart-wrapper"><canvas id="targetAchChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">12월 vs 1월 주요 KPI 비교</div>
+                <div class="chart-wrapper"><canvas id="monthCompareChart"></canvas></div>
+            </div>
+        </div>
+
+        <h3 class="section-title">구조적 리스크 분석</h3>
+        <div class="risk-grid">
+            <div class="risk-card warning">
+                <h4>ADR 하락 리스크</h4>
+                <p>1월 ADR 101,125원 → 목표(113,712원) 대비 <strong>11% 미달</strong>. 객실 물량은 확보했으나 12월(139,427원) 대비 27.5% 하락. 객단가 관리 전략 필요.</p>
+            </div>
+            <div class="risk-card">
+                <h4>주말 매출 편중 (금~토 58%)</h4>
+                <p>금~토 매출이 전체의 약 <strong>58%</strong> 차지. 수요일 ADR이 토요일의 약 48% 수준. 주중 수요 창출 및 패키지 개발 시급.</p>
+            </div>
+            <div class="risk-card">
+                <h4>Group/MICE 매출 전무</h4>
+                <p>Group 매출 <strong>0원</strong> (목표 20%). B2B, MICE, 단체 유치가 전혀 이루어지지 않음. 즉각적인 세일즈 전략 수립 필요.</p>
+            </div>
+            <div class="risk-card warning">
+                <h4>객실 가용성 제한 (House Use 28%)</h4>
+                <p>전체 518실 중 House Use 평균 <strong>146실(28%)</strong>. 실제 판매 가능 객실 약 340~350실. 비가용 객실 원인 분석 및 가용 확대 검토 필요.</p>
+            </div>
         </div>
 
         <div class="chart-grid">
@@ -512,22 +671,32 @@
 
     <!-- ==================== TAB 4: 객실 운영 ==================== -->
     <div id="tab-rooms" class="tab-content">
-        <h3 class="section-title">월별 객실 운영 지표 (VAT 포함)</h3>
+        <h3 class="section-title">월별 객실 운영 지표</h3>
         <div class="kpi-grid">
             <div class="kpi-card success">
                 <div class="kpi-label">1월 매출 (최고)</div>
                 <div class="kpi-value positive">6.19억</div>
-                <div class="kpi-sub">618,813,926원 / 5,563실</div>
+                <div class="kpi-sub">618,813,926원 (VAT포함) / 5,563실</div>
             </div>
             <div class="kpi-card success">
                 <div class="kpi-label">1월 OCC (최고)</div>
                 <div class="kpi-value positive">52.9%</div>
-                <div class="kpi-sub">최고 점유율 달성</div>
+                <div class="kpi-sub">목표 35% 대비 151% 달성</div>
             </div>
             <div class="kpi-card accent">
-                <div class="kpi-label">12월 ADR (최고)</div>
-                <div class="kpi-value">139,215원</div>
-                <div class="kpi-sub">성수기 단가 최고치</div>
+                <div class="kpi-label">1월 RevPAR</div>
+                <div class="kpi-value">53,485원</div>
+                <div class="kpi-sub">목표 39,799원 대비 134% <span class="target-badge over">초과</span></div>
+            </div>
+            <div class="kpi-card accent">
+                <div class="kpi-label">1월 ADR (VAT제외)</div>
+                <div class="kpi-value">101,125원</div>
+                <div class="kpi-sub">목표 113,712원 대비 89% <span class="target-badge under">미달</span></div>
+            </div>
+            <div class="kpi-card danger">
+                <div class="kpi-label">FIT / Group 비율</div>
+                <div class="kpi-value negative">100% / 0%</div>
+                <div class="kpi-sub">Group 목표 20% <span class="target-badge critical">심각 미달</span></div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-label">2월 현재 (8일 기준)</div>
@@ -536,10 +705,35 @@
             </div>
         </div>
 
+        <h3 class="section-title">객실 가용성 분석 (1월 기준)</h3>
+        <div class="chart-card" style="margin-bottom:24px;">
+            <div style="padding:4px 0;">
+                <div style="font-size:13px;font-weight:600;margin-bottom:12px;">전체 518실 중 일평균 객실 배분 현황</div>
+                <div class="room-stack">
+                    <span style="width:34.6%;background:var(--primary);">판매 179실</span>
+                    <span style="width:28.2%;background:var(--danger);">House Use 146실</span>
+                    <span style="width:37.2%;background:#cbd5e0;color:#4a5568;">미판매 193실</span>
+                </div>
+                <div class="room-legend">
+                    <span><i style="background:var(--primary)"></i> 판매 객실 (34.6%)</span>
+                    <span><i style="background:var(--danger)"></i> House Use (28.2%) — 비가용</span>
+                    <span><i style="background:#cbd5e0"></i> 미판매 (37.2%) — 판매 기회</span>
+                </div>
+                <div style="font-size:12px;color:var(--text-light);margin-top:12px;line-height:1.6;">
+                    * House Use 146실은 직원숙소, 시설관리, 비가동 객실 등으로 추정. 실제 판매 가능 객실은 약 <strong>340~350실</strong> 수준.<br>
+                    * OCC 52.9%는 가용 객실(~340실) 기준. 전체 518실 기준 실질 판매율은 34.6%.
+                </div>
+            </div>
+        </div>
+
         <div class="chart-grid">
-            <div class="chart-card full">
-                <div class="chart-title">월별 객실 운영 현황 (숙박 기준, VAT 포함)</div>
+            <div class="chart-card">
+                <div class="chart-title">월별 객실 운영 현황 (매출·ADR·OCC)</div>
                 <div class="chart-wrapper tall"><canvas id="roomOpsChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">월별 RevPAR 추이 (VAT제외)</div>
+                <div class="chart-wrapper tall"><canvas id="revparChart"></canvas></div>
             </div>
         </div>
 
@@ -550,19 +744,21 @@
                     <thead>
                         <tr>
                             <th style="text-align:left;">월</th>
-                            <th>판매 객실수</th>
-                            <th>ADR (원)</th>
+                            <th>판매 객실</th>
+                            <th>ADR (VAT포함)</th>
                             <th>OCC (%)</th>
-                            <th>객실 매출 (VAT포함)</th>
+                            <th>RevPAR (VAT제외)</th>
+                            <th>객실매출 (VAT포함)</th>
                             <th>비고</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>2025년 11월</td><td>453</td><td>106,572</td><td>3.7%</td><td>48,277,123</td><td>운영 준비기</td></tr>
-                        <tr><td>2025년 12월</td><td>2,680</td><td>139,215</td><td>23.8%</td><td>373,096,290</td><td>본격 운영 시작</td></tr>
-                        <tr style="background:#f0fff4;"><td>2026년 1월</td><td>5,563</td><td>111,237</td><td>52.9%</td><td>618,813,926</td><td>최고 실적</td></tr>
-                        <tr><td>2026년 2월 (~8일)</td><td>3,883</td><td>122,416</td><td>39.5%</td><td>475,340,688</td><td>진행 중</td></tr>
-                        <tr><td>2026년 3월 (~8일)</td><td>243</td><td>93,995</td><td>2.1%</td><td>22,840,698</td><td>사전 예약</td></tr>
+                        <tr><td>2025년 11월</td><td>453</td><td>106,572</td><td>3.7%</td><td>3,143</td><td>48,277,123</td><td>운영 준비기</td></tr>
+                        <tr><td>2025년 12월</td><td>2,680</td><td>139,215</td><td>23.8%</td><td>21,386</td><td>373,096,290</td><td>본격 운영</td></tr>
+                        <tr style="background:#f0fff4;"><td>2026년 1월</td><td>5,563</td><td>111,237</td><td>52.9%</td><td><strong>53,485</strong></td><td>618,813,926</td><td>최고 실적</td></tr>
+                        <tr><td>2026년 2월 (~8일)</td><td>3,883</td><td>122,416</td><td>39.5%</td><td>38,230</td><td>475,340,688</td><td>진행 중</td></tr>
+                        <tr><td>2026년 3월 (~8일)</td><td>243</td><td>93,995</td><td>2.1%</td><td>1,424</td><td>22,840,698</td><td>사전 예약</td></tr>
+                        <tr class="total-row"><td colspan="7" style="text-align:left;">AZMT 목표: ADR 113,712원 / OCC 35% / RevPAR 39,799원 / Group 비율 20%</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -595,7 +791,17 @@
             <ul>
                 <li><strong>바로네트웍스 (24.12~25.2):</strong> 총 7,580실 판매 (12월 2,101 + 1월 3,453 + 2월 2,026)</li>
                 <li><strong>AZMT (25.12~26.2):</strong> 총 약 14,000실 예상 (12월 2,680 + 1월 5,563 + 2월 3,883~) → <strong style="color:var(--success);">약 2배 성장</strong></li>
-                <li>1월 객실 판매: 3,453실 → 5,563실 (+61.1% 증가)</li>
+                <li>1월 객실 판매: 3,453실 → 5,563실 (+61.1% 증가) / RevPAR: +150% 성장</li>
+            </ul>
+        </div>
+
+        <div class="insight-box">
+            <h3>구조적 이슈 및 개선 과제</h3>
+            <ul>
+                <li><strong>ADR vs 물량 트레이드오프:</strong> 12월→1월 OCC +29.1%p 상승했으나 ADR은 139,427→101,125원으로 27.5% 하락. 물량 확보와 단가 유지 전략 병행 필요.</li>
+                <li><strong>주말 편중:</strong> 금~토 매출이 전체의 약 58%. 수요일 ADR이 토요일의 약 48% 수준. 주중 패키지, 비즈니스/워케이션 프로모션 개발 필요.</li>
+                <li><strong>Group/MICE 부재:</strong> 100% FIT 의존 구조. Group 목표 20% 대비 0% 달성. OTA 수수료 절감 및 안정적 물량 확보를 위한 B2B 채널 개발 시급.</li>
+                <li><strong>House Use 최적화:</strong> 518실 중 146실(28%)이 비가용. 가동률 개선 시 추가 매출 잠재력 상당.</li>
             </ul>
         </div>
     </div>
@@ -848,6 +1054,138 @@ const expenseData = [
 ];
 
 const totalExpense = 539784612;
+
+// ==============================
+// AZMT 목표 달성률 차트
+// ==============================
+new Chart(document.getElementById('targetAchChart'), {
+    type: 'bar',
+    data: {
+        labels: ['월매출', 'OCC', 'ADR', 'RevPAR', 'Group'],
+        datasets: [
+            {
+                label: '12월 달성률',
+                data: [50.3, 65.7, 122.6, 53.7, 0],
+                backgroundColor: colors.lightBlue,
+                borderRadius: 4
+            },
+            {
+                label: '1월 달성률',
+                data: [82.6, 151.1, 88.9, 134.4, 0],
+                backgroundColor: colors.blue,
+                borderRadius: 4
+            },
+            {
+                label: '목표 (100%)',
+                data: [100, 100, 100, 100, 100],
+                type: 'line',
+                borderColor: colors.red,
+                borderWidth: 2,
+                borderDash: [6,4],
+                pointRadius: 0,
+                fill: false,
+                indexAxis: 'y'
+            }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        indexAxis: 'y',
+        plugins: {
+            tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.raw + '%' } }
+        },
+        scales: {
+            x: {
+                max: 160,
+                ticks: { callback: v => v + '%' },
+                grid: { color: '#f0f0f0' }
+            }
+        }
+    }
+});
+
+// ==============================
+// 12월 vs 1월 KPI 비교 차트
+// ==============================
+new Chart(document.getElementById('monthCompareChart'), {
+    type: 'bar',
+    data: {
+        labels: ['매출(억,VAT제외)', 'ADR(만원)', 'RevPAR(만원)', 'OCC(%)'],
+        datasets: [
+            {
+                label: '12월',
+                data: [3.43, 12.67, 2.14, 23.0],
+                backgroundColor: colors.lightBlue,
+                borderRadius: 4
+            },
+            {
+                label: '1월',
+                data: [5.63, 10.11, 5.35, 52.9],
+                backgroundColor: colors.blue,
+                borderRadius: 4
+            },
+            {
+                label: 'AZMT 목표',
+                data: [6.82, 11.37, 3.98, 35.0],
+                backgroundColor: 'transparent',
+                borderColor: colors.red,
+                borderWidth: 2,
+                borderDash: [5,5],
+                type: 'line',
+                pointStyle: 'rectRot',
+                pointRadius: 6,
+                pointBackgroundColor: colors.red
+            }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.raw } }
+        },
+        scales: { y: { grid: { color: '#f0f0f0' } } }
+    }
+});
+
+// ==============================
+// RevPAR 추이 차트
+// ==============================
+new Chart(document.getElementById('revparChart'), {
+    type: 'bar',
+    data: {
+        labels: ['25년 11월', '25년 12월', '26년 1월', '26년 2월(~8일)', '26년 3월(~8일)'],
+        datasets: [
+            {
+                label: 'RevPAR (원)',
+                data: [3143, 21386, 53485, 38230, 1424],
+                backgroundColor: [colors.blue, colors.blue, colors.green, colors.blue, colors.blue],
+                borderRadius: 6
+            },
+            {
+                label: 'AZMT 목표 (39,799원)',
+                data: [39799, 39799, 39799, 39799, 39799],
+                type: 'line',
+                borderColor: colors.red,
+                borderWidth: 2,
+                borderDash: [6,4],
+                pointRadius: 0,
+                fill: false
+            }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ₩' + fmt(ctx.raw) } }
+        },
+        scales: {
+            y: {
+                ticks: { callback: v => (v/10000).toFixed(1) + '만' },
+                grid: { color: '#f0f0f0' }
+            }
+        }
+    }
+});
 
 // ==============================
 // 차트 1: 월별 매출 추이
