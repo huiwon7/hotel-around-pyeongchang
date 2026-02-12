@@ -1,0 +1,259 @@
+/* ============================================
+   Responsive Styles
+   Uses CSS variables from variables.css
+   ============================================ */
+
+/* ============================================
+   Nav Overlay (Mobile menu backdrop)
+   ============================================ */
+.nav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: calc(var(--z-nav) - 1);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-normal), visibility var(--transition-normal);
+}
+
+.nav-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ============================================
+   Large Desktop (min-width: 1280px)
+   ============================================ */
+@media (min-width: 1280px) {
+  .container {
+    padding: 0 var(--space-xl);
+  }
+}
+
+/* ============================================
+   Small Desktop (max-width: 1200px)
+   ============================================ */
+@media (max-width: 1200px) {
+  .packages-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .pricing-card--featured {
+    transform: none;
+  }
+}
+
+/* ============================================
+   Tablet Landscape (max-width: 1024px)
+   ============================================ */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 var(--space-md);
+  }
+
+  .intro-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .packages-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pkg-features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pkg-features-grid .pkg-feature-card:last-child {
+    grid-column: span 2;
+    max-width: 50%;
+    margin: 0 auto;
+  }
+}
+
+/* ============================================
+   Tablet Portrait (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+  /* Nav height override */
+  :root {
+    --nav-height: 64px;
+  }
+
+  /* Mobile menu - slide-in panel */
+  .nav__menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background-color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-2xl) var(--space-lg);
+    z-index: var(--z-nav);
+    transition: right var(--transition-normal);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .nav__menu.open {
+    right: 0;
+  }
+
+  .nav__menu .nav__link {
+    color: var(--color-primary);
+    font-size: var(--text-base);
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--color-gray-100);
+  }
+
+  .nav__toggle {
+    display: flex;
+  }
+
+  .nav__cta {
+    display: none;
+  }
+
+  /* Season selector hidden on mobile */
+  .season-selector {
+    display: none;
+  }
+
+  /* Grids to 2 columns */
+  .intro-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .facilities-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Grids to 1 column */
+  .packages-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* Workspace */
+  .workspace-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-item.large {
+    grid-column: span 1;
+  }
+
+  /* Target */
+  .target-content {
+    grid-template-columns: 1fr;
+  }
+
+  /* Booking */
+  .booking-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Food grid */
+  .food-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .food-grid .food-card:last-child {
+    grid-column: auto;
+  }
+
+  /* Footer */
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer__bottom {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-sm);
+  }
+
+  /* Package details responsive */
+  .pkg-detail {
+    padding: var(--space-md);
+  }
+
+  .pkg-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .pkg-core-value {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-sm);
+  }
+
+  .pkg-core-save {
+    margin-left: 0;
+  }
+
+  .pkg-features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pkg-features-grid .pkg-feature-card:last-child {
+    grid-column: auto;
+    max-width: 100%;
+  }
+
+  /* Form */
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   Small Mobile (max-width: 480px)
+   ============================================ */
+@media (max-width: 480px) {
+  .hero__title {
+    font-size: 2rem;
+  }
+
+  .hero__desc {
+    font-size: var(--text-base);
+  }
+
+  .hero__buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero__buttons .btn {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .section {
+    padding: var(--space-2xl) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-3xl);
+  }
+
+  .booking-form__row {
+    grid-template-columns: 1fr;
+  }
+}
