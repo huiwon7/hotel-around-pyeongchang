@@ -800,8 +800,8 @@ h1, h2, h3, h4 {
 
 .price-original {
   display: block;
-  font-size: 0.85rem;
-  color: var(--color-gray-400);
+  font-size: 0.75rem;
+  color: var(--color-gray-300);
   text-decoration: line-through;
   margin-bottom: 0.25rem;
 }
@@ -843,7 +843,29 @@ h1, h2, h3, h4 {
   margin-bottom: 1.5rem;
 }
 
-.package-per-night,
+.package-per-night {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  background: var(--color-off-white);
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.package-per-night span {
+  color: var(--color-gray-500);
+  font-size: 0.85rem;
+}
+
+.package-per-night strong {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
 .package-target-label {
   display: flex;
   justify-content: space-between;
@@ -852,12 +874,10 @@ h1, h2, h3, h4 {
   font-size: 0.9rem;
 }
 
-.package-per-night span,
 .package-target-label span {
   color: var(--color-gray-500);
 }
 
-.package-per-night strong,
 .package-target-label strong {
   font-weight: 600;
   color: var(--color-primary);
