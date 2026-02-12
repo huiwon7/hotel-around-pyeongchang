@@ -1,0 +1,111 @@
+/* ============================================
+   CSS Custom Properties (Design Tokens)
+   ============================================ */
+
+:root {
+  /* Base Colors - Nature-inspired palette */
+  --color-primary: #1e2a1f;
+  --color-secondary: #2d3a2e;
+  --color-accent: #4a7c59;
+  --color-accent-light: #6b9d78;
+  --color-accent-dark: #355c42;
+  --color-warm: #c4956a;
+  --color-warm-light: #d4ae8a;
+  --color-white: #ffffff;
+  --color-off-white: #f7f9f5;
+  --color-gray-100: #f0f2ee;
+  --color-gray-200: #dfe2dc;
+  --color-gray-300: #c0c4bc;
+  --color-gray-400: #8a9084;
+  --color-gray-500: #5a6356;
+  --color-gray-600: #3a4238;
+
+  /* Seasonal Theme Colors */
+  --season-spring-primary: #e8a0bf;
+  --season-spring-secondary: #c47a9e;
+  --season-spring-bg: #fdf2f6;
+  --season-spring-gradient: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 50%, #e8a0bf 100%);
+
+  --season-summer-primary: #2d8a6e;
+  --season-summer-secondary: #1b6b52;
+  --season-summer-bg: #f0faf5;
+  --season-summer-gradient: linear-gradient(135deg, #e0f2e9 0%, #a5d6b7 50%, #2d8a6e 100%);
+
+  --season-fall-primary: #c4774a;
+  --season-fall-secondary: #a85d34;
+  --season-fall-bg: #fdf5ef;
+  --season-fall-gradient: linear-gradient(135deg, #fde8d0 0%, #f0c49b 50%, #c4774a 100%);
+
+  --season-winter-primary: #5a8cb5;
+  --season-winter-secondary: #3d6f94;
+  --season-winter-bg: #f0f5fa;
+  --season-winter-gradient: linear-gradient(135deg, #e3eef7 0%, #a8cce0 50%, #5a8cb5 100%);
+
+  /* Active season (default: base accent) */
+  --season-active: var(--color-accent);
+  --season-active-bg: var(--color-off-white);
+  --season-hero-gradient: linear-gradient(135deg, #2d3a2e 0%, #4a7c59 50%, #6b9d78 100%);
+
+  /* Typography */
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'Noto Sans KR', sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.5rem;
+  --text-5xl: 3.5rem;
+
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --leading-tight: 1.2;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.8;
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 5rem;
+  --space-3xl: 8rem;
+
+  /* Layout */
+  --container-max: 1200px;
+  --container-wide: 1400px;
+  --container-narrow: 800px;
+  --nav-height: 80px;
+
+  /* Borders & Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+  --radius-full: 50%;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 16px 50px rgba(0, 0, 0, 0.15);
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  --transition-season: 0.8s ease;
+
+  /* Z-index */
+  --z-nav: 1000;
+  --z-modal: 2000;
+  --z-overlay: 500;
+}
