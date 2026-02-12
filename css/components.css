@@ -465,7 +465,7 @@
 
 .pricing-card__amount {
   font-family: var(--font-display);
-  font-size: var(--text-4xl);
+  font-size: var(--text-2xl);
   font-weight: var(--weight-bold);
   color: var(--color-primary);
   line-height: var(--leading-tight);
@@ -486,7 +486,7 @@
 
 .pricing-card__per-night strong {
   font-family: var(--font-display);
-  font-size: var(--text-2xl);
+  font-size: var(--text-4xl);
   font-weight: var(--weight-bold);
   color: var(--season-active, var(--color-accent));
 }
