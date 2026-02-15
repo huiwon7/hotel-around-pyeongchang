@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>호텔어라운드 평창 | 운영 관리 감독 체계</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #C9A96E;
+            --gold-light: #E8D5A8;
+            --gold-dark: #9A7B4F;
+            --navy: #0A1628;
+            --navy-light: #152238;
+            --navy-mid: #1B2D4A;
+            --slate: #2A3A5C;
+            --white: #FFFFFF;
+            --off-white: #F8F6F1;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-500: #6B7280;
+            --gray-700: #374151;
+            --gray-900: #111827;
+            --red: #EF4444;
+            --red-dark: #DC2626;
+            --green: #10B981;
+            --amber: #F59E0B;
+            --blue: #3B82F6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; font-size: 16px; }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            color: var(--gray-900);
+            background: var(--white);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* ===================== NAVIGATION ===================== */
+        .nav {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px 0;
+        }
+        .nav.scrolled {
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 0;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+        }
+        .nav-inner {
+            max-width: 1400px; margin: 0 auto; padding: 0 40px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem; font-weight: 700; color: var(--white);
+            letter-spacing: 2px; text-decoration: none;
+        }
+        .nav-logo span { color: var(--gold); }
+        .nav-links { display: flex; gap: 32px; list-style: none; }
+        .nav-links a {
+            color: rgba(255,255,255,0.8); text-decoration: none;
+            font-size: 0.8rem; font-weight: 500; letter-spacing: 1px;
+            text-transform: uppercase; transition: color 0.3s; position: relative;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0;
+            width: 0; height: 2px; background: var(--gold); transition: width 0.3s;
+        }
+        .nav-links a:hover { color: var(--gold); }
+        .nav-links a:hover::after { width: 100%; }
+        .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; }
+        .hamburger span { width: 25px; height: 2px; background: var(--white); transition: all 0.3s; }
+
+        /* ===================== HERO ===================== */
+        .hero {
+            position: relative; height: 100vh; min-height: 700px;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+        }
+        .hero-bg { position: absolute; inset: 0; z-index: 0; }
+        .hero-bg img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.35); }
+        .hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(10,22,40,0.4) 0%, rgba(10,22,40,0.6) 50%, rgba(10,22,40,0.9) 100%);
+            z-index: 1;
+        }
+        .hero-content { position: relative; z-index: 2; text-align: center; max-width: 900px; padding: 0 40px; }
+        .hero-badge {
+            display: inline-block; border: 1px solid var(--gold); color: var(--gold);
+            padding: 8px 24px; font-size: 0.75rem; letter-spacing: 3px;
+            text-transform: uppercase; margin-bottom: 30px; font-weight: 500;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        .hero-title {
+            font-family: 'Noto Sans KR', sans-serif; font-size: 3.5rem; font-weight: 900;
+            color: var(--white); line-height: 1.25; margin-bottom: 20px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        .hero-title .highlight { color: var(--gold); }
+        .hero-subtitle {
+            font-size: 1.1rem; color: rgba(255,255,255,0.7); font-weight: 300;
+            line-height: 1.8; margin-bottom: 40px; animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        .hero-stats { display: flex; justify-content: center; gap: 60px; animation: fadeInUp 0.8s ease-out 0.6s both; }
+        .hero-stat { text-align: center; }
+        .hero-stat-value { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700; color: var(--gold); line-height: 1; }
+        .hero-stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 8px; letter-spacing: 1px; }
+        .hero-scroll { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 2; animation: bounce 2s infinite; }
+        .hero-scroll svg { width: 30px; height: 30px; stroke: var(--gold); stroke-width: 2; fill: none; }
+
+        /* ===================== COMMON ===================== */
+        .section { padding: 120px 40px; }
+        .section-inner { max-width: 1200px; margin: 0 auto; }
+        .section-label {
+            display: inline-block; color: var(--gold-dark); font-size: 0.75rem; font-weight: 600;
+            letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px;
+        }
+        .section-title { font-size: 2.5rem; font-weight: 800; line-height: 1.3; margin-bottom: 20px; }
+        .section-desc { font-size: 1.05rem; color: var(--gray-500); max-width: 700px; line-height: 1.8; }
+
+        /* ===================== CRISIS ===================== */
+        .crisis { background: var(--navy); color: var(--white); position: relative; overflow: hidden; }
+        .crisis::before {
+            content: ''; position: absolute; top: -200px; right: -200px; width: 600px; height: 600px;
+            border-radius: 50%; background: radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 70%);
+        }
+        .crisis .section-label { color: var(--gold); }
+        .crisis .section-title { color: var(--white); }
+        .crisis .section-desc { color: rgba(255,255,255,0.6); }
+        .crisis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 60px; align-items: start; }
+        .crisis-chart {
+            background: var(--navy-light); border-radius: 20px; padding: 40px;
+            border: 1px solid rgba(201,169,110,0.15);
+        }
+        .chart-title { font-size: 1rem; font-weight: 600; margin-bottom: 30px; color: rgba(255,255,255,0.9); }
+        .chart-bars { display: flex; flex-direction: column; gap: 20px; }
+        .chart-bar-item { display: flex; align-items: center; gap: 16px; }
+        .chart-bar-label { width: 50px; font-size: 0.85rem; color: rgba(255,255,255,0.6); text-align: right; flex-shrink: 0; }
+        .chart-bar-track { flex: 1; height: 36px; background: rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden; }
+        .chart-bar-fill {
+            height: 100%; border-radius: 8px; display: flex; align-items: center;
+            padding-right: 12px; justify-content: flex-end; font-size: 0.8rem;
+            font-weight: 600; color: var(--white); transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+        }
+        .chart-bar-fill.gold { background: linear-gradient(90deg, var(--gold-dark), var(--gold)); }
+        .chart-bar-fill.red { background: linear-gradient(90deg, #b91c1c, var(--red)); }
+        .chart-bar-fill.green { background: linear-gradient(90deg, #065f46, var(--green)); }
+
+        .crisis-points { display: flex; flex-direction: column; gap: 24px; }
+        .crisis-point { display: flex; gap: 20px; align-items: flex-start; }
+        .crisis-point-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.2rem;
+        }
+        .crisis-point-icon.warning { background: rgba(245,158,11,0.15); color: var(--amber); }
+        .crisis-point-icon.info { background: rgba(59,130,246,0.15); color: var(--blue); }
+        .crisis-point h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+        .crisis-point p { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+        .alert-banner {
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);
+            border-radius: 12px; padding: 16px 24px; margin-top: 24px;
+        }
+        .alert-banner .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); animation: pulse 2s infinite; }
+        .alert-banner p { font-size: 0.85rem; color: rgba(255,255,255,0.7); }
+
+        /* ===================== NUMBERS ===================== */
+        .numbers { background: var(--off-white); }
+        .numbers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 60px; }
+        .number-card {
+            background: var(--white); border-radius: 16px; padding: 36px 28px; text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid var(--gray-200);
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .number-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); border-color: var(--gold); }
+        .number-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+        .number-card.danger::before { background: var(--red); }
+        .number-card.warning::before { background: var(--amber); }
+        .number-card.success::before { background: var(--green); }
+        .number-card.info::before { background: var(--blue); }
+        .number-value { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 700; line-height: 1; margin-bottom: 8px; }
+        .number-card.danger .number-value { color: var(--red); }
+        .number-card.warning .number-value { color: var(--amber); }
+        .number-card.success .number-value { color: var(--green); }
+        .number-card.info .number-value { color: var(--blue); }
+        .number-label { font-size: 0.9rem; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+        .number-detail { font-size: 0.78rem; color: var(--gray-500); }
+
+        /* ===================== CONFLICTS ===================== */
+        .conflicts { background: var(--white); }
+        .conflicts-header { text-align: center; margin-bottom: 60px; }
+        .conflicts-header .section-desc { margin: 0 auto; }
+        .conflicts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .conflict-card {
+            background: var(--gray-100); border-radius: 14px; padding: 28px 24px;
+            transition: all 0.3s ease; cursor: default; border: 1px solid transparent;
+        }
+        .conflict-card:hover { background: var(--white); border-color: var(--gold); box-shadow: 0 8px 30px rgba(201,169,110,0.12); transform: translateY(-4px); }
+        .conflict-number {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; border-radius: 8px;
+            background: var(--navy); color: var(--gold); font-size: 0.8rem; font-weight: 700; margin-bottom: 14px;
+        }
+        .conflict-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; }
+        .conflict-card p { font-size: 0.8rem; color: var(--gray-500); line-height: 1.5; }
+
+        /* ===================== SUPERVISION ===================== */
+        .supervision { background: var(--navy); color: var(--white); }
+        .supervision-header { text-align: center; margin-bottom: 80px; }
+        .supervision .section-label { color: var(--gold); }
+        .supervision .section-title { color: var(--white); }
+        .supervision .section-desc { color: rgba(255,255,255,0.6); margin: 0 auto; }
+        .supervision-items { display: flex; flex-direction: column; gap: 40px; }
+        .sup-item {
+            display: grid; grid-template-columns: 80px 1fr; gap: 32px; padding: 40px;
+            background: var(--navy-light); border-radius: 20px;
+            border: 1px solid rgba(201,169,110,0.1); transition: all 0.3s ease;
+        }
+        .sup-item:hover { border-color: rgba(201,169,110,0.3); background: var(--navy-mid); }
+        .sup-number { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 700; color: var(--gold); line-height: 1; }
+        .sup-content h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; }
+        .sup-content p { font-size: 0.92rem; color: rgba(255,255,255,0.55); line-height: 1.7; margin-bottom: 16px; }
+        .sup-tags { display: flex; gap: 10px; flex-wrap: wrap; }
+        .sup-tag {
+            display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 500;
+            background: rgba(201,169,110,0.1); color: var(--gold); border: 1px solid rgba(201,169,110,0.2);
+        }
+
+        /* ===================== GALLERY ===================== */
+        .gallery { background: var(--off-white); padding: 120px 0; }
+        .gallery-header { text-align: center; padding: 0 40px; margin-bottom: 60px; }
+        .gallery-scroll {
+            display: flex; gap: 20px; overflow-x: auto; padding: 0 40px 20px;
+            scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; cursor: grab;
+        }
+        .gallery-scroll::-webkit-scrollbar { display: none; }
+        .gallery-card {
+            flex: 0 0 350px; height: 460px; border-radius: 20px; overflow: hidden;
+            position: relative; scroll-snap-align: start;
+        }
+        .gallery-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .gallery-card:hover img { transform: scale(1.08); }
+        .gallery-card-overlay {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 30px;
+            background: linear-gradient(transparent, rgba(10,22,40,0.9)); color: var(--white);
+        }
+        .gallery-card-overlay h4 { font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; }
+        .gallery-card-overlay p { font-size: 0.8rem; color: rgba(255,255,255,0.6); }
+
+        /* ===================== KPI ===================== */
+        .kpi { background: var(--white); }
+        .kpi-header { text-align: center; margin-bottom: 60px; }
+        .kpi-header .section-desc { margin: 0 auto; }
+        .donut-container { display: flex; align-items: center; justify-content: center; gap: 40px; margin: 40px 0; }
+        .donut { width: 200px; height: 200px; position: relative; }
+        .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+        .donut-center .pct { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; }
+        .donut-center .pct-label { font-size: 0.7rem; color: var(--gray-500); }
+        .donut-legend { display: flex; flex-direction: column; gap: 12px; }
+        .donut-legend-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
+        .donut-legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .kpi-category { background: var(--gray-100); border-radius: 20px; padding: 36px; border: 1px solid var(--gray-200); }
+        .kpi-category-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .kpi-category-title { font-size: 1.1rem; font-weight: 700; }
+        .kpi-weight { background: var(--navy); color: var(--gold); padding: 4px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .kpi-items { display: flex; flex-direction: column; gap: 14px; }
+        .kpi-item { display: flex; align-items: center; justify-content: space-between; background: var(--white); padding: 14px 18px; border-radius: 10px; }
+        .kpi-item-label { font-size: 0.85rem; color: var(--gray-700); }
+        .kpi-item-value { font-size: 0.85rem; font-weight: 700; }
+        .kpi-item-value.target { color: var(--green); }
+        .kpi-item-value.warning { color: var(--amber); }
+        .kpi-item-value.danger { color: var(--red); }
+
+        /* ===================== AUDIT ===================== */
+        .audit { background: var(--navy); color: var(--white); }
+        .audit .section-label { color: var(--gold); }
+        .audit .section-title { color: var(--white); }
+        .audit-header { text-align: center; margin-bottom: 60px; }
+        .audit-header .section-desc { color: rgba(255,255,255,0.6); margin: 0 auto; }
+        .audit-timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .audit-card {
+            background: var(--navy-light); border-radius: 20px; padding: 36px;
+            border: 1px solid rgba(201,169,110,0.1); transition: all 0.3s ease;
+        }
+        .audit-card:hover { border-color: rgba(201,169,110,0.3); transform: translateY(-4px); }
+        .audit-card-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-bottom: 20px; }
+        .audit-card-badge.monthly { background: rgba(59,130,246,0.15); color: var(--blue); }
+        .audit-card-badge.quarterly { background: rgba(201,169,110,0.15); color: var(--gold); }
+        .audit-card-badge.yearly { background: rgba(16,185,129,0.15); color: var(--green); }
+        .audit-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+        .audit-card .role { font-size: 0.85rem; color: var(--gold); margin-bottom: 18px; }
+        .audit-card ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .audit-card li { font-size: 0.85rem; color: rgba(255,255,255,0.6); padding-left: 20px; position: relative; }
+        .audit-card li::before { content: ''; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 50%; }
+        .audit-card.monthly li::before { background: var(--blue); }
+        .audit-card.quarterly li::before { background: var(--gold); }
+        .audit-card.yearly li::before { background: var(--green); }
+
+        /* ===================== ROADMAP ===================== */
+        .roadmap { background: var(--off-white); }
+        .roadmap-header { text-align: center; margin-bottom: 70px; }
+        .roadmap-header .section-desc { margin: 0 auto; }
+        .roadmap-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; position: relative; }
+        .roadmap-steps::before {
+            content: ''; position: absolute; top: 40px; left: 12.5%; right: 12.5%;
+            height: 2px; background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold)); z-index: 0;
+        }
+        .roadmap-step { position: relative; z-index: 1; text-align: center; }
+        .roadmap-circle {
+            width: 80px; height: 80px; border-radius: 50%; background: var(--navy);
+            color: var(--gold); display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 24px; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;
+            border: 3px solid var(--gold);
+        }
+        .roadmap-step h4 { font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: var(--navy); }
+        .roadmap-list { list-style: none; display: flex; flex-direction: column; gap: 8px; text-align: left; padding: 0 8px; }
+        .roadmap-list li { font-size: 0.8rem; color: var(--gray-500); padding-left: 16px; position: relative; line-height: 1.5; }
+        .roadmap-list li::before { content: ''; position: absolute; left: 0; top: 7px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+
+        /* ===================== TOP10 ===================== */
+        .top10 { background: var(--navy); color: var(--white); }
+        .top10-header { text-align: center; margin-bottom: 60px; }
+        .top10 .section-label { color: var(--gold); }
+        .top10 .section-title { color: var(--white); }
+        .top10-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+        .top10-item {
+            background: var(--navy-light); border-radius: 16px; padding: 28px 20px; text-align: center;
+            border: 1px solid rgba(201,169,110,0.08); transition: all 0.3s ease;
+        }
+        .top10-item:hover { border-color: var(--gold); transform: translateY(-4px); }
+        .top10-item .value { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
+        .top10-item .label { font-size: 0.78rem; color: rgba(255,255,255,0.6); line-height: 1.4; }
+
+        /* ===================== CTA ===================== */
+        .cta { position: relative; padding: 140px 40px; text-align: center; overflow: hidden; }
+        .cta-bg { position: absolute; inset: 0; }
+        .cta-bg img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.25); }
+        .cta-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,22,40,0.6) 0%, rgba(10,22,40,0.85) 100%); }
+        .cta-content { position: relative; z-index: 2; max-width: 700px; margin: 0 auto; }
+        .cta-content .section-label { color: var(--gold); }
+        .cta-content h2 { font-size: 2.5rem; font-weight: 800; color: var(--white); margin-bottom: 20px; line-height: 1.3; }
+        .cta-content p { font-size: 1.05rem; color: rgba(255,255,255,0.6); margin-bottom: 40px; line-height: 1.8; }
+        .cta-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 16px 40px; background: var(--gold); color: var(--navy); text-decoration: none;
+            font-weight: 700; font-size: 0.95rem; border-radius: 50px; transition: all 0.3s ease;
+        }
+        .cta-btn:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(201,169,110,0.3); }
+
+        /* ===================== FOOTER ===================== */
+        .footer {
+            background: var(--navy); color: rgba(255,255,255,0.5);
+            padding: 60px 40px; border-top: 1px solid rgba(201,169,110,0.1);
+        }
+        .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--white); font-weight: 700; }
+        .footer-logo span { color: var(--gold); }
+        .footer-text { font-size: 0.8rem; text-align: right; line-height: 1.6; }
+
+        /* ===================== ANIMATIONS ===================== */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(10px); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.4,0,0.2,1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===================== MOBILE NAV ===================== */
+        .mobile-nav {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: rgba(10,22,40,0.98); z-index: 999;
+            flex-direction: column; align-items: center; justify-content: center; gap: 30px;
+        }
+        .mobile-nav.active { display: flex; }
+        .mobile-nav a { color: var(--white); text-decoration: none; font-size: 1.3rem; font-weight: 500; letter-spacing: 2px; }
+        .mobile-nav-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: var(--white); font-size: 2rem; cursor: pointer; }
+
+        /* ===================== RESPONSIVE ===================== */
+        @media (max-width: 1024px) {
+            .hero-title { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
+            .crisis-grid { grid-template-columns: 1fr; }
+            .numbers-grid { grid-template-columns: repeat(2, 1fr); }
+            .conflicts-grid { grid-template-columns: repeat(2, 1fr); }
+            .kpi-grid { grid-template-columns: 1fr; }
+            .audit-timeline { grid-template-columns: 1fr; }
+            .roadmap-steps { grid-template-columns: repeat(2, 1fr); }
+            .roadmap-steps::before { display: none; }
+            .top10-grid { grid-template-columns: repeat(3, 1fr); }
+            .sup-item { grid-template-columns: 60px 1fr; gap: 20px; padding: 30px; }
+        }
+        @media (max-width: 768px) {
+            html { font-size: 15px; }
+            .section { padding: 80px 20px; }
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .hero-title { font-size: 1.8rem; }
+            .hero-stats { flex-direction: column; gap: 24px; }
+            .hero-stat-value { font-size: 2rem; }
+            .numbers-grid { grid-template-columns: 1fr 1fr; }
+            .conflicts-grid { grid-template-columns: 1fr; }
+            .sup-item { grid-template-columns: 1fr; }
+            .sup-number { font-size: 2rem; }
+            .gallery-card { flex: 0 0 280px; height: 380px; }
+            .roadmap-steps { grid-template-columns: 1fr 1fr; }
+            .top10-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-inner { flex-direction: column; gap: 20px; text-align: center; }
+            .footer-text { text-align: center; }
+            .cta-content h2 { font-size: 1.8rem; }
+            .nav-inner { padding: 0 20px; }
+            .donut-container { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">HOTEL <span>AROUND</span></a>
+            <ul class="nav-links">
+                <li><a href="#crisis">현황 분석</a></li>
+                <li><a href="#conflicts">이해상충</a></li>
+                <li><a href="#supervision">감독 영역</a></li>
+                <li><a href="#gallery">시설</a></li>
+                <li><a href="#kpi">KPI</a></li>
+                <li><a href="#roadmap">로드맵</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+        </div>
+    </nav>
+
+    <!-- MOBILE NAV -->
+    <div class="mobile-nav" id="mobileNav">
+        <button class="mobile-nav-close" id="mobileNavClose">&times;</button>
+        <a href="#crisis" onclick="closeMobileNav()">현황 분석</a>
+        <a href="#conflicts" onclick="closeMobileNav()">이해상충</a>
+        <a href="#supervision" onclick="closeMobileNav()">감독 영역</a>
+        <a href="#gallery" onclick="closeMobileNav()">시설</a>
+        <a href="#kpi" onclick="closeMobileNav()">KPI</a>
+        <a href="#roadmap" onclick="closeMobileNav()">로드맵</a>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-bg"><img src="images/hero/hero1-1.jpg" alt="호텔어라운드 평창 전경"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-badge">2026 Operations Oversight Report</div>
+            <h1 class="hero-title">518실 분양형 호텔,<br>투자자 자산을 지키는<br><span class="highlight">감독의 기술</span></h1>
+            <p class="hero-subtitle">호텔 위탁운영의 12가지 이해상충을 체계적으로 관리하고,<br>오너 자산가치를 구조적으로 보전하는 감독 체계</p>
+            <div class="hero-stats">
+                <div class="hero-stat"><div class="hero-stat-value">518</div><div class="hero-stat-label">총 객실 수</div></div>
+                <div class="hero-stat"><div class="hero-stat-value">52.9%</div><div class="hero-stat-label">1월 OCC (평창 1위)</div></div>
+                <div class="hero-stat"><div class="hero-stat-value">81.86억</div><div class="hero-stat-label">연간 목표 매출</div></div>
+            </div>
+        </div>
+        <div class="hero-scroll"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+    </section>
+
+    <!-- CRISIS -->
+    <section class="crisis section" id="crisis">
+        <div class="section-inner">
+            <div class="section-label">Current Status</div>
+            <h2 class="section-title">'악순환 탈출'의 임계점에 서 있다</h2>
+            <p class="section-desc">1월 OCC 52.9%로 급등했으나, 3월 예약 OCC 2.1%로 비수기 진입 시 악순환 재진입 리스크가 상존합니다.</p>
+            <div class="crisis-grid reveal">
+                <div class="crisis-chart">
+                    <div class="chart-title">월별 점유율(OCC) 추이</div>
+                    <div class="chart-bars">
+                        <div class="chart-bar-item">
+                            <span class="chart-bar-label">11월</span>
+                            <div class="chart-bar-track"><div class="chart-bar-fill red" data-width="7%">3.7%</div></div>
+                        </div>
+                        <div class="chart-bar-item">
+                            <span class="chart-bar-label">12월</span>
+                            <div class="chart-bar-track"><div class="chart-bar-fill gold" data-width="45%">23.8%</div></div>
+                        </div>
+                        <div class="chart-bar-item">
+                            <span class="chart-bar-label">1월</span>
+                            <div class="chart-bar-track"><div class="chart-bar-fill green" data-width="100%">52.9%</div></div>
+                        </div>
+                        <div class="chart-bar-item">
+                            <span class="chart-bar-label">3월*</span>
+                            <div class="chart-bar-track"><div class="chart-bar-fill red" data-width="4%">2.1%</div></div>
+                        </div>
+                    </div>
+                    <p style="font-size:0.72rem; color:rgba(255,255,255,0.35); margin-top:16px;">* 3월은 2/8 기준 예약 현황</p>
+                    <div class="alert-banner">
+                        <div class="dot"></div>
+                        <p>1월 대비 3월 예약 매출 <strong style="color:var(--red)">96% 급감</strong> &mdash; 비수기 감독 체계 즉시 필요</p>
+                    </div>
+                </div>
+                <div class="crisis-points">
+                    <div class="crisis-point">
+                        <div class="crisis-point-icon warning">!</div>
+                        <div>
+                            <h4>10-12월 누적 영업손실 7,908만원</h4>
+                            <p>비용 5.40억 대비 매출 4.19억. 초기 셋업 비용과 경상 비용의 구분이 감독의 첫 번째 과제입니다.</p>
+                        </div>
+                    </div>
+                    <div class="crisis-point">
+                        <div class="crisis-point-icon warning">!</div>
+                        <div>
+                            <h4>소모품비 8,578만원 (매출의 20.5%)</h4>
+                            <p>초기 셋업 비용 포함 여부 미확인. 경상 비용과 일회성 비용의 분리가 필수입니다.</p>
+                        </div>
+                    </div>
+                    <div class="crisis-point">
+                        <div class="crisis-point-icon warning">!</div>
+                        <div>
+                            <h4>지급수수료 1억 5,281만원</h4>
+                            <p>세부 내역 검증 필수. 비용 항목별 투명한 공개가 선행되어야 합니다.</p>
+                        </div>
+                    </div>
+                    <div class="crisis-point">
+                        <div class="crisis-point-icon info">i</div>
+                        <div>
+                            <h4>AZMT 연간 목표: OCC 35% / GOP 38.93억</h4>
+                            <p>GOP 마진 47.6%는 업계 리조트 평균 35~40%를 상회하는 목표. 분기별 구체적 경로가 필요합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NUMBERS -->
+    <section class="numbers section" id="numbers">
+        <div class="section-inner">
+            <div class="section-label" style="text-align:center; display:block;">Financial Overview</div>
+            <h2 class="section-title" style="text-align:center;">핵심 재무 지표</h2>
+            <div class="numbers-grid reveal">
+                <div class="number-card danger">
+                    <div class="number-value">-7,908<span style="font-size:1.2rem">만</span></div>
+                    <div class="number-label">10-12월 누적 영업손실</div>
+                    <div class="number-detail">잡이익 반영 전 기준</div>
+                </div>
+                <div class="number-card success">
+                    <div class="number-value">6.19<span style="font-size:1.2rem">억</span></div>
+                    <div class="number-label">1월 매출 (성수기)</div>
+                    <div class="number-detail">월할 기준 91% 달성</div>
+                </div>
+                <div class="number-card warning">
+                    <div class="number-value">27.4<span style="font-size:1.2rem">%</span></div>
+                    <div class="number-label">인건비 비율</div>
+                    <div class="number-detail">AZMT 목표 26% 초과</div>
+                </div>
+                <div class="number-card info">
+                    <div class="number-value">85<span style="font-size:1.2rem">%</span></div>
+                    <div class="number-label">OTA 의존도</div>
+                    <div class="number-detail">목표: 30% (2년 내)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONFLICTS -->
+    <section class="conflicts section" id="conflicts">
+        <div class="section-inner">
+            <div class="conflicts-header">
+                <div class="section-label">12 Conflicts of Interest</div>
+                <h2 class="section-title">운영사-투자자 간 12가지 이해상충</h2>
+                <p class="section-desc">위탁운영의 이해상충은 12개 영역에서 동시다발적으로 발생하며, 각각에 대한 탐지-예방 시스템이 필요합니다.</p>
+            </div>
+            <div class="conflicts-grid reveal">
+                <div class="conflict-card"><div class="conflict-number">01</div><h4>CapEx 회피</h4><p>FF&E 평균 40% 과소 적립으로 장기 자산가치 훼손</p></div>
+                <div class="conflict-card"><div class="conflict-number">02</div><h4>인건비 부풀리기</h4><p>운영비의 44.8%가 인건비, 고스트 직원 리스크</p></div>
+                <div class="conflict-card"><div class="conflict-number">03</div><h4>관련자 거래 마진</h4><p>시장가 대비 20~30% 고가 납품 이중취득</p></div>
+                <div class="conflict-card"><div class="conflict-number">04</div><h4>호라이즌 문제</h4><p>단기 매출 vs 장기 브랜드가치 불일치</p></div>
+                <div class="conflict-card"><div class="conflict-number">05</div><h4>GOP 산정 조작</h4><p>비용 분류 변경, below the line 항목 조정</p></div>
+                <div class="conflict-card"><div class="conflict-number">06</div><h4>OTA 수수료 전가</h4><p>예약당 15~30% 수수료, 오너에게 전가</p></div>
+                <div class="conflict-card"><div class="conflict-number">07</div><h4>비수기 영업 방치</h4><p>성수기 대비 매출 83% 급감 구간 관리 부재</p></div>
+                <div class="conflict-card"><div class="conflict-number">08</div><h4>직원 처우 악화</h4><p>서비스 품질 저하로 고객만족도 하락</p></div>
+                <div class="conflict-card"><div class="conflict-number">09</div><h4>긴급 수선 지연</h4><p>이연 유지보수 시 향후 비용 600% 증가</p></div>
+                <div class="conflict-card"><div class="conflict-number">10</div><h4>재고 도난/횡령</h4><p>연매출의 5%가 직업 사기로 손실 (ACFE)</p></div>
+                <div class="conflict-card"><div class="conflict-number">11</div><h4>고객 데이터 분쟁</h4><p>계약 종료 시 데이터 소유권 확보 필수</p></div>
+                <div class="conflict-card"><div class="conflict-number">12</div><h4>보험청구 소극</h4><p>회수율 85% 이상 계약상 의무 명시 필요</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SUPERVISION -->
+    <section class="supervision section" id="supervision">
+        <div class="section-inner">
+            <div class="supervision-header">
+                <div class="section-label">Supervision Framework</div>
+                <h2 class="section-title">6대 핵심 감독 영역</h2>
+                <p class="section-desc">차별화 전략부터 비수기 유동성까지, 투자자 자산을 지키는 체계적 감독 프레임워크</p>
+            </div>
+            <div class="supervision-items">
+                <div class="sup-item reveal">
+                    <div class="sup-number">01</div>
+                    <div class="sup-content">
+                        <h3>차별화 전략 검증</h3>
+                        <p>트립닷컴 평창 4성급 1위는 단일 채널 성과일 뿐, 전 채널 경쟁력과 세그먼트별 매출 비중 검증이 필요합니다. STR 리포트를 통한 경쟁사 대비 객관적 지표 확보가 감독의 출발점입니다.</p>
+                        <div class="sup-tags"><span class="sup-tag">STR 리포트</span><span class="sup-tag">MPI/ARI/RGI</span><span class="sup-tag">세그먼트별 매출</span></div>
+                    </div>
+                </div>
+                <div class="sup-item reveal">
+                    <div class="sup-number">02</div>
+                    <div class="sup-content">
+                        <h3>투자 효율과 비용 구조</h3>
+                        <p>F&B 매출이 12월 2.2%에서 1월 약 4,103만원(6.6%)으로 개선되었으나, 목표 15%와는 큰 격차. 소모품비 매출의 20%는 정상 운영과 초기 셋업을 구분해야 합니다. 승인 매트릭스를 실제로 작동시키는 것이 핵심입니다.</p>
+                        <div class="sup-tags"><span class="sup-tag">F&B 목표 15%</span><span class="sup-tag">비용 승인 체계</span><span class="sup-tag">CapEx 7~9%</span></div>
+                    </div>
+                </div>
+                <div class="sup-item reveal">
+                    <div class="sup-number">03</div>
+                    <div class="sup-content">
+                        <h3>OTA 의존도 85~90% &mdash; 구조적 수익 누수</h3>
+                        <p>OTA 수수료 15~30%가 오너에게 전가되는 구조. OTA 취소율 50% vs 직접 예약 18.2%. 채널별 순수익(Net RevPAR) 산출 체계가 감독의 핵심입니다.</p>
+                        <div class="sup-tags"><span class="sup-tag">OTA &rarr; 30%</span><span class="sup-tag">Net RevPAR</span><span class="sup-tag">B2B 채널</span></div>
+                    </div>
+                </div>
+                <div class="sup-item reveal">
+                    <div class="sup-number">04</div>
+                    <div class="sup-content">
+                        <h3>GOP 마진 47.6% 목표 vs 현재 적자</h3>
+                        <p>제안서상 GOP 38.93억(마진 47.6%)과 10-12월 적자 7,908만원의 갭을 분기별 경로로 설명할 수 없다면, 목표 자체의 현실성이 의심됩니다. USALI 12판 기반 비용 분류가 필수입니다.</p>
+                        <div class="sup-tags"><span class="sup-tag">업계 GOP 25~40%</span><span class="sup-tag">USALI 12판</span><span class="sup-tag">플로우스루</span></div>
+                    </div>
+                </div>
+                <div class="sup-item reveal">
+                    <div class="sup-number">05</div>
+                    <div class="sup-content">
+                        <h3>ADR 변동폭 30% &mdash; 전략인가, 덤핑인가</h3>
+                        <p>11월 106K &rarr; 12월 139K &rarr; 1월 111K &rarr; 3월 94K. 변동폭 32.5%는 목표 15% 이내를 크게 초과. RMS 도입과 비수기 최저 방어선 설정이 필수입니다.</p>
+                        <div class="sup-tags"><span class="sup-tag">ADR 15% 이내</span><span class="sup-tag">RMS 도입</span><span class="sup-tag">가격 파리티</span></div>
+                    </div>
+                </div>
+                <div class="sup-item reveal">
+                    <div class="sup-number">06</div>
+                    <div class="sup-content">
+                        <h3>비수기(3~6월) 유동성 리스크</h3>
+                        <p>3월 예약 OCC 2.1%. 12월 단월 비용 약 4.14억원, 비수기 월 2.5~3.5억 추정. 월 적자 한도(목표 5천만원)를 사전 설정하고 3단계 경보 시스템(Yellow/Orange/Red)을 가동해야 합니다.</p>
+                        <div class="sup-tags"><span class="sup-tag">월 적자 5천만</span><span class="sup-tag">3단계 경보</span><span class="sup-tag">워케이션/장기숙박</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="gallery" id="gallery">
+        <div class="gallery-header">
+            <div class="section-label">Hotel Facilities</div>
+            <h2 class="section-title">호텔어라운드 평창 시설</h2>
+        </div>
+        <div class="gallery-scroll" id="galleryScroll">
+            <div class="gallery-card"><img src="images/lobby/Lobby1-1.jpg" alt="로비" loading="lazy"><div class="gallery-card-overlay"><h4>Grand Lobby</h4><p>프리미엄 체크인 라운지</p></div></div>
+            <div class="gallery-card"><img src="images/room-hotel/room-hotel1-1.jpg" alt="호텔룸" loading="lazy"><div class="gallery-card-overlay"><h4>Hotel Room</h4><p>518실 스마트 객실</p></div></div>
+            <div class="gallery-card"><img src="images/room-terrace/room-terrace1-1.jpg" alt="테라스룸" loading="lazy"><div class="gallery-card-overlay"><h4>Terrace Room</h4><p>평창 전망 테라스 객실</p></div></div>
+            <div class="gallery-card"><img src="images/room-villa/room-villa1-1.jpg" alt="빌라" loading="lazy"><div class="gallery-card-overlay"><h4>Villa Suite</h4><p>프리미엄 빌라 스위트</p></div></div>
+            <div class="gallery-card"><img src="images/restaurant/restaurant1-1.jpg" alt="레스토랑" loading="lazy"><div class="gallery-card-overlay"><h4>Restaurant</h4><p>F&B 매출 성장 핵심 공간</p></div></div>
+            <div class="gallery-card"><img src="images/bbq/bbq1-1.jpg" alt="BBQ" loading="lazy"><div class="gallery-card-overlay"><h4>BBQ Terrace</h4><p>바비큐 다이닝 체험</p></div></div>
+            <div class="gallery-card"><img src="images/banquet/banquet1-1.jpg" alt="연회장" loading="lazy"><div class="gallery-card-overlay"><h4>Banquet Hall</h4><p>MICE 전용 연회 공간</p></div></div>
+            <div class="gallery-card"><img src="images/fitness/fitness.1-1.jpg" alt="피트니스" loading="lazy"><div class="gallery-card-overlay"><h4>Fitness Center</h4><p>워케이션 웰니스 시설</p></div></div>
+            <div class="gallery-card"><img src="images/TSO07756-3-HDR.jpg" alt="외관" loading="lazy"><div class="gallery-card-overlay"><h4>Exterior View</h4><p>호텔어라운드 평창 전경</p></div></div>
+        </div>
+    </section>
+
+    <!-- KPI -->
+    <section class="kpi section" id="kpi">
+        <div class="section-inner">
+            <div class="kpi-header">
+                <div class="section-label">KPI Dashboard</div>
+                <h2 class="section-title">통합 모니터링 스코어카드</h2>
+                <p class="section-desc">재무 + 운영 + 품질 + 인사 가중치의 통합 평가로 운영사를 객관적으로 모니터링합니다.</p>
+            </div>
+            <div class="donut-container reveal">
+                <div class="donut">
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#E5E7EB" stroke-width="12"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#3B82F6" stroke-width="12" stroke-dasharray="100.53 150.80" stroke-dashoffset="0"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#C9A96E" stroke-width="12" stroke-dasharray="62.83 188.50" stroke-dashoffset="-100.53"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#10B981" stroke-width="12" stroke-dasharray="50.27 200.06" stroke-dashoffset="-163.36"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#F59E0B" stroke-width="12" stroke-dasharray="37.70 213.63" stroke-dashoffset="-213.63"/>
+                    </svg>
+                    <div class="donut-center"><div class="pct">100</div><div class="pct-label">Total Score</div></div>
+                </div>
+                <div class="donut-legend">
+                    <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#3B82F6"></div><span><strong>재무 지표</strong> &mdash; 40%</span></div>
+                    <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#C9A96E"></div><span><strong>운영 지표</strong> &mdash; 25%</span></div>
+                    <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#10B981"></div><span><strong>품질 지표</strong> &mdash; 20%</span></div>
+                    <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#F59E0B"></div><span><strong>인사 지표</strong> &mdash; 15%</span></div>
+                </div>
+            </div>
+            <div class="kpi-grid reveal">
+                <div class="kpi-category">
+                    <div class="kpi-category-header"><span class="kpi-category-title" style="color:#3B82F6">재무 지표</span><span class="kpi-weight">40%</span></div>
+                    <div class="kpi-items">
+                        <div class="kpi-item"><span class="kpi-item-label">RevPAR vs 경쟁세트</span><span class="kpi-item-value target">상위 유지</span></div>
+                        <div class="kpi-item"><span class="kpi-item-label">GOP 마진</span><span class="kpi-item-value warning">목표 47.6%</span></div>
+                        <div class="kpi-item"><span class="kpi-item-label">노동비율</span><span class="kpi-item-value danger">현재 27.4%</span></div>
+                        <div class="kpi-item"><span class="kpi-item-label">GOPPAR</span><span class="kpi-item-value warning">추적 필요</span></div>
+                    </div>
+                </div>
+                <div class="kpi-category">
+                    <div class="kpi-category-header"><span class="kpi-category-title" style="color:#C9A96E">운영 지표</span><span class="kpi-weight">25%</span></div>
+                    <div class="kpi-items">
+                        <div class="kpi-item"><span class="kpi-item-label">OCC (점유율)</span><span class="kpi-item-value warning">목표 35%</span></div>
+                        <div class="kpi-item"><span class="kpi-item-label">직접 예약 비중</span><span class="kpi-item-value danger">~15% (목표 40%)</span></div>
+                        <div class="kpi-item"><span class="kpi-item-label">OTA 비중</span><span class="kpi-item-value danger">85% (목표 35%)</span></div>
+                        <div class="kpi-item"><span class="kpi-item-label">재고 수축율</span><span class="kpi-item-value target">2% 미만</span></div>
+                    </div>
+                </div>
+                <div class="kpi-category">
+                    <div class="kpi-category-header"><span class="kpi-category-title" style="color:#10B981">품질 지표</span><span class="kpi-weight">20%</span></div>
+                    <div class="kpi-items">
+                        <div class="kpi-item"><span class="kpi-item-label">NPS 점수</span><span class="kpi-item-value target">50+</span></div>
+                        <div class="kpi-item"><span class="kpi-item-label">온라인 리뷰 평점</span><span class="kpi-item-value target">4.0+</span></div>
+                        <div class="kpi-item"><span class="kpi-item-label">브랜드 감사</span><span class="kpi-item-value target">90%+</span></div>
+                        <div class="kpi-item"><span class="kpi-item-label">불만율</span><span class="kpi-item-value target">2% 미만</span></div>
+                    </div>
+                </div>
+                <div class="kpi-category">
+                    <div class="kpi-category-header"><span class="kpi-category-title" style="color:#F59E0B">인사 지표</span><span class="kpi-weight">15%</span></div>
+                    <div class="kpi-items">
+                        <div class="kpi-item"><span class="kpi-item-label">직원 만족도</span><span class="kpi-item-value target">70%+</span></div>
+                        <div class="kpi-item"><span class="kpi-item-label">이직률</span><span class="kpi-item-value warning">70% 이하</span></div>
+                        <div class="kpi-item"><span class="kpi-item-label">교육 투자</span><span class="kpi-item-value target">$200+ PAR</span></div>
+                        <div class="kpi-item"><span class="kpi-item-label">부서별 FTE</span><span class="kpi-item-value warning">월간 보고</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AUDIT -->
+    <section class="audit section" id="audit">
+        <div class="section-inner">
+            <div class="audit-header">
+                <div class="section-label">Audit Protocol</div>
+                <h2 class="section-title">3단계 정기 감사 체계</h2>
+                <p class="section-desc">월간 P&L 변동 분석, 분기 STR 벤치마킹, 연간 독립 CPA 감사의 3단계 구조가 감독의 뼈대입니다.</p>
+            </div>
+            <div class="audit-timeline reveal">
+                <div class="audit-card monthly">
+                    <span class="audit-card-badge monthly">Monthly</span>
+                    <h3>월간 감사</h3><div class="role">관리인 주관</div>
+                    <ul><li>P&L 변동 분석</li><li>부서별 노동비 추적</li><li>CapEx 지출 검증</li><li>KPI 대시보드 갱신</li><li>공급업체 지급 패턴</li></ul>
+                </div>
+                <div class="audit-card quarterly">
+                    <span class="audit-card-badge quarterly">Quarterly</span>
+                    <h3>분기 감사</h3><div class="role">독립 검토자</div>
+                    <ul><li>재무제표 심층 분석</li><li>STR 벤치마킹</li><li>급여명부 &harr; HR 교차검증</li><li>현장 실사 수행</li><li>경쟁세트 대비 평가</li></ul>
+                </div>
+                <div class="audit-card yearly">
+                    <span class="audit-card-badge yearly">Yearly</span>
+                    <h3>연간 감사</h3><div class="role">CPA + 자산관리사</div>
+                    <ul><li>독립 회계법인 감사</li><li>ASTM E2018 PCA</li><li>FF&E 적립금 조정</li><li>관리수수료 검증</li><li>운영사 종합 평가 (100점)</li></ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROADMAP -->
+    <section class="roadmap section" id="roadmap">
+        <div class="section-inner">
+            <div class="roadmap-header">
+                <div class="section-label">Execution Roadmap</div>
+                <h2 class="section-title">4단계 감독 체계 구축</h2>
+                <p class="section-desc">투명성 &rarr; 독립성 &rarr; 정렬 &rarr; 책임의 4대 원칙에 따른 단계적 실행</p>
+            </div>
+            <div class="roadmap-steps reveal">
+                <div class="roadmap-step">
+                    <div class="roadmap-circle">0~30일</div>
+                    <h4>즉시 실행</h4>
+                    <ul class="roadmap-list"><li>월간 KPI 대시보드 구축</li><li>FF&E 적립금 검증</li><li>12개월 급여 분석</li><li>OTA 채널믹스 분석</li></ul>
+                </div>
+                <div class="roadmap-step">
+                    <div class="roadmap-circle">1~3개월</div>
+                    <h4>단기 과제</h4>
+                    <ul class="roadmap-list"><li>독립 자산관리사 선정</li><li>포렌식 회계 감사</li><li>PCA 수행</li><li>공급업체 벤치마킹</li></ul>
+                </div>
+                <div class="roadmap-step">
+                    <div class="roadmap-circle">3~6개월</div>
+                    <h4>중기 과제</h4>
+                    <ul class="roadmap-list"><li>계약 재협상 (USALI 12판)</li><li>감사 권한 강화</li><li>데이터 소유권 명시</li><li>내부 통제 강화</li></ul>
+                </div>
+                <div class="roadmap-step">
+                    <div class="roadmap-circle">6~12개월</div>
+                    <h4>장기 과제</h4>
+                    <ul class="roadmap-list"><li>수수료 구조 최적화</li><li>직접 예약 채널 투자</li><li>예측 유지보수 IoT/AI</li><li>오너 우선 수익 도입</li></ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TOP 10 -->
+    <section class="top10 section" id="top10">
+        <div class="section-inner">
+            <div class="top10-header">
+                <div class="section-label">Key Targets</div>
+                <h2 class="section-title">핵심 점검 10대 지표</h2>
+            </div>
+            <div class="top10-grid reveal">
+                <div class="top10-item"><div class="value">30%</div><div class="label">OTA 의존도 축소</div></div>
+                <div class="top10-item"><div class="value">40%</div><div class="label">직접 예약 비중</div></div>
+                <div class="top10-item"><div class="value">35%</div><div class="label">연간 OCC 목표</div></div>
+                <div class="top10-item"><div class="value">15%</div><div class="label">ADR 변동 상한</div></div>
+                <div class="top10-item"><div class="value">47.6%</div><div class="label">GOP 마진 목표</div></div>
+                <div class="top10-item"><div class="value">26%</div><div class="label">인건비율 상한</div></div>
+                <div class="top10-item"><div class="value">15%</div><div class="label">F&B 매출 비중</div></div>
+                <div class="top10-item"><div class="value">Real-time</div><div class="label">투명 경영 시스템</div></div>
+                <div class="top10-item"><div class="value">5천만</div><div class="label">비수기 월 적자 한도</div></div>
+                <div class="top10-item"><div class="value">4.5+</div><div class="label">전 채널 리뷰 평점</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="cta-bg"><img src="images/hero/hero1-2.jpg" alt="호텔어라운드 평창"></div>
+        <div class="cta-overlay"></div>
+        <div class="cta-content">
+            <div class="section-label">Take Action</div>
+            <h2>감독의 목적은 대립이 아니라,<br>지속 가능한 <span style="color:var(--gold)">Win-Win</span>입니다</h2>
+            <p>체계적 감독은 운영사와 투자자 모두에게 이익입니다.<br>투명한 운영이 신뢰를 만들고, 신뢰가 자산가치를 키웁니다.</p>
+            <a href="#crisis" class="cta-btn">감독 체계 상세 보기 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div><div class="footer-logo">HOTEL <span>AROUND</span> PYEONGCHANG</div><p style="font-size:0.8rem; margin-top:8px;">518실 분양형 호텔 운영 관리 감독 체계</p></div>
+            <div class="footer-text">2026년 2월 | 팩트체크 반영 최종안<br>AZMT 위탁운영 체제 | 강원도 평창군</div>
+        </div>
+    </footer>
+
+    <script>
+        // Nav scroll
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 50));
+
+        // Mobile nav
+        document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobileNav').classList.add('active'));
+        document.getElementById('mobileNavClose').addEventListener('click', () => document.getElementById('mobileNav').classList.remove('active'));
+        function closeMobileNav() { document.getElementById('mobileNav').classList.remove('active'); }
+
+        // Reveal on scroll
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // Chart bar animation
+        const chartObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.style.width = e.target.getAttribute('data-width'); });
+        }, { threshold: 0.3 });
+        document.querySelectorAll('.chart-bar-fill').forEach(bar => { bar.style.width = '0'; chartObserver.observe(bar); });
+
+        // Gallery drag scroll
+        const gallery = document.getElementById('galleryScroll');
+        let isDown = false, startX, scrollLeft;
+        gallery.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - gallery.offsetLeft; scrollLeft = gallery.scrollLeft; gallery.style.cursor = 'grabbing'; });
+        gallery.addEventListener('mouseleave', () => { isDown = false; gallery.style.cursor = 'grab'; });
+        gallery.addEventListener('mouseup', () => { isDown = false; gallery.style.cursor = 'grab'; });
+        gallery.addEventListener('mousemove', (e) => { if (!isDown) return; e.preventDefault(); gallery.scrollLeft = scrollLeft - (e.pageX - gallery.offsetLeft - startX) * 2; });
+    </script>
+</body>
+</html>
