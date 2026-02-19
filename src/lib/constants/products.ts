@@ -1,0 +1,53 @@
+export const PRODUCT_DEFINITIONS = [
+  {
+    productCode: 'HS',
+    name: '힐링 스타터',
+    description: '바쁜 일상에서 벗어나 평창의 자연 속에서 힐링하는 2박 패키지입니다. 조식 2회와 웰컴드링크가 포함되어 있습니다.',
+    totalNights: 2,
+    price: 99000,
+    pricePerNight: 49500,
+    validityDays: 180,
+    targetSegment: '힐링/단기',
+    benefits: ['조식 2회', '웰컴드링크'],
+    sortOrder: 1,
+  },
+  {
+    productCode: 'WW',
+    name: '워케이션 위크',
+    description: '일과 여가를 함께 즐기는 5박 워케이션 패키지입니다. 비즈니스센터 이용과 출력 무료 혜택이 제공됩니다.',
+    totalNights: 5,
+    price: 199000,
+    pricePerNight: 39800,
+    validityDays: 180,
+    targetSegment: '리모트워커',
+    benefits: ['비즈니스센터 이용', '출력 무료'],
+    sortOrder: 2,
+  },
+  {
+    productCode: 'FL',
+    name: '패밀리 롱스테이',
+    description: '가족과 함께하는 14박 장기 투숙 패키지입니다. 동반 3인 무료와 조식 14회 혜택이 포함됩니다.',
+    totalNights: 14,
+    price: 490000,
+    pricePerNight: 35000,
+    validityDays: 365,
+    targetSegment: '가족',
+    benefits: ['동반 3인 무료', '조식 14회'],
+    sortOrder: 3,
+  },
+  {
+    productCode: 'PA',
+    name: '프리미엄 올시즌',
+    description: '사계절 평창을 자유롭게 즐기는 30박 프리미엄 패키지입니다. 스위트 업그레이드와 F&B 10만 크레딧이 포함됩니다.',
+    totalNights: 30,
+    price: 990000,
+    pricePerNight: 33000,
+    validityDays: 365,
+    targetSegment: '장기/법인',
+    benefits: ['스위트 업그레이드', 'F&B 10만 크레딧'],
+    sortOrder: 4,
+  },
+] as const;
+
+export const SPLIT_USE_ALLOWED_CODES = ['WW', 'FL', 'PA'] as const;
+export const MIN_NIGHTS_PER_RESERVATION = 1;

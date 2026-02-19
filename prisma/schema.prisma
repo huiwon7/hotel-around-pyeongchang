@@ -1,0 +1,294 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =========================================
+// ENUMS
+// =========================================
+
+enum SalesChannel {
+  DIRECT
+  NAVER
+  KAKAO
+  WELFARE
+  PHONE
+}
+
+enum VoucherStatus {
+  ISSUED
+  ACTIVE
+  RESERVED
+  CHECKED_IN
+  USED
+  EXPIRED
+  REFUNDED
+}
+
+enum ReservationStatus {
+  CONFIRMED
+  CHECKED_IN
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum SeasonType {
+  PEAK
+  HIGH
+  NORMAL
+  LOW
+}
+
+enum CustomerSegment {
+  WORKATION
+  FAMILY
+  HEALING
+  SKI
+  MICE
+  GENERAL
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+  REFUNDED
+  PARTIAL_REFUNDED
+}
+
+enum PaymentMethod {
+  CARD
+  EASY_PAY
+  VIRTUAL_ACCOUNT
+  TRANSFER
+}
+
+enum NotificationType {
+  PURCHASE_CONFIRM
+  RESERVATION_CONFIRM
+  RESERVATION_CANCEL
+  CHECK_IN_REMINDER
+  EXPIRY_D30
+  EXPIRY_D15
+  EXPIRY_D7
+  CHECKOUT_REVIEW
+  REFUND_CONFIRM
+}
+
+// =========================================
+// MODELS
+// =========================================
+
+model Product {
+  id           String   @id @default(uuid()) @db.Uuid
+  productCode  String   @unique @db.VarChar(2)
+  name         String   @db.VarChar(100)
+  description  String   @db.Text
+  totalNights  Int
+  price        Int
+  pricePerNight Int
+  validityDays Int
+  targetSegment String  @db.VarChar(50)
+  benefits     Json
+  isActive     Boolean  @default(true)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  vouchers Voucher[]
+
+  @@map("products")
+}
+
+model Customer {
+  id               String          @id @default(uuid()) @db.Uuid
+  name             String          @db.VarChar(50)
+  phone            String          @unique @db.VarChar(15)
+  email            String?         @db.VarChar(100)
+  segment          CustomerSegment @default(GENERAL)
+  totalPurchases   Int             @default(0)
+  totalStays       Int             @default(0)
+  lifetimeValue    Int             @default(0)
+  firstPurchaseAt  DateTime?
+  lastStayAt       DateTime?
+  marketingConsent Boolean         @default(false)
+  kakaoChannelId   String?         @db.VarChar(100)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  vouchers      Voucher[]
+  reservations  Reservation[]
+  giftsSent     Voucher[]     @relation("GiftSender")
+  giftsReceived Voucher[]     @relation("GiftReceiver")
+
+  @@index([phone])
+  @@index([segment])
+  @@map("customers")
+}
+
+model Voucher {
+  id             String        @id @default(uuid()) @db.Uuid
+  voucherCode    String        @unique @db.VarChar(25)
+  customerId     String        @db.Uuid
+  productId      String        @db.Uuid
+  paymentId      String?       @unique @db.Uuid
+  channel        SalesChannel  @default(DIRECT)
+  status         VoucherStatus @default(ISSUED)
+  totalNights    Int
+  usedNights     Int           @default(0)
+  heldNights     Int           @default(0)
+  purchasePrice  Int
+  issuedAt       DateTime      @default(now())
+  activatedAt    DateTime?
+  expiresAt      DateTime
+  qrCodeData     String?       @db.Text
+  qrSignature    String?       @db.VarChar(128)
+  giftFlag       Boolean       @default(false)
+  giftSenderId   String?       @db.Uuid
+  giftReceiverId String?       @db.Uuid
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  customer      Customer      @relation(fields: [customerId], references: [id])
+  product       Product       @relation(fields: [productId], references: [id])
+  payment       Payment?      @relation(fields: [paymentId], references: [id])
+  giftSender    Customer?     @relation("GiftSender", fields: [giftSenderId], references: [id])
+  giftReceiver  Customer?     @relation("GiftReceiver", fields: [giftReceiverId], references: [id])
+  reservations  Reservation[]
+  statusHistory VoucherStatusHistory[]
+
+  @@index([customerId])
+  @@index([status])
+  @@index([expiresAt])
+  @@map("vouchers")
+}
+
+model VoucherStatusHistory {
+  id         String         @id @default(uuid()) @db.Uuid
+  voucherId  String         @db.Uuid
+  fromStatus VoucherStatus?
+  toStatus   VoucherStatus
+  reason     String?        @db.VarChar(255)
+  actorType  String         @db.VarChar(20)
+  actorId    String?        @db.Uuid
+  metadata   Json?
+  createdAt  DateTime       @default(now())
+
+  voucher Voucher @relation(fields: [voucherId], references: [id])
+
+  @@index([voucherId])
+  @@map("voucher_status_history")
+}
+
+model Reservation {
+  id               String            @id @default(uuid()) @db.Uuid
+  voucherId        String            @db.Uuid
+  customerId       String            @db.Uuid
+  checkInDate      DateTime          @db.Date
+  checkOutDate     DateTime          @db.Date
+  nightsCount      Int
+  roomType         String?           @db.VarChar(50)
+  status           ReservationStatus @default(CONFIRMED)
+  surchargeAmount  Int               @default(0)
+  surchargePaid    Boolean           @default(false)
+  pmsReservationId String?           @db.VarChar(50)
+  createdAt        DateTime          @default(now())
+  cancelledAt      DateTime?
+  updatedAt        DateTime          @updatedAt
+
+  voucher  Voucher  @relation(fields: [voucherId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id])
+
+  @@index([voucherId])
+  @@index([customerId])
+  @@index([checkInDate])
+  @@index([status])
+  @@map("reservations")
+}
+
+model DailyQuota {
+  quotaDate         DateTime   @id @db.Date
+  maxVoucherRooms   Int        @default(30)
+  reservedRooms     Int        @default(0)
+  isBlackout        Boolean    @default(false)
+  surchargePerNight Int        @default(0)
+  seasonType        SeasonType @default(NORMAL)
+  notes             String?    @db.VarChar(255)
+  updatedAt         DateTime   @updatedAt
+
+  @@map("daily_quotas")
+}
+
+model Payment {
+  id             String        @id @default(uuid()) @db.Uuid
+  tossPaymentKey String?       @unique @db.VarChar(200)
+  tossOrderId    String        @unique @db.VarChar(100)
+  amount         Int
+  method         PaymentMethod?
+  status         PaymentStatus @default(PENDING)
+  customerName   String        @db.VarChar(50)
+  customerPhone  String        @db.VarChar(15)
+  productName    String        @db.VarChar(200)
+  receiptUrl     String?       @db.VarChar(500)
+  failReason     String?       @db.VarChar(500)
+  paidAt         DateTime?
+  cancelledAt    DateTime?
+  refundedAt     DateTime?
+  refundAmount   Int?
+  metadata       Json?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  voucher Voucher?
+
+  @@index([status])
+  @@index([tossOrderId])
+  @@map("payments")
+}
+
+model NotificationLog {
+  id             String           @id @default(uuid()) @db.Uuid
+  type           NotificationType
+  recipientPhone String           @db.VarChar(15)
+  recipientName  String           @db.VarChar(50)
+  templateCode   String           @db.VarChar(50)
+  templateVars   Json
+  kakaoMessageId String?          @db.VarChar(100)
+  sent           Boolean          @default(false)
+  sentAt         DateTime?
+  errorMessage   String?          @db.VarChar(500)
+  createdAt      DateTime         @default(now())
+
+  @@index([recipientPhone])
+  @@index([type])
+  @@map("notification_logs")
+}
+
+model VoucherSequence {
+  productCode String @db.VarChar(2)
+  yearMonth   String @db.VarChar(4)
+  lastSeq     Int    @default(0)
+
+  @@id([productCode, yearMonth])
+  @@map("voucher_sequences")
+}
+
+model AdminUser {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique @db.VarChar(100)
+  passwordHash String   @db.VarChar(255)
+  name         String   @db.VarChar(50)
+  role         String   @default("ADMIN") @db.VarChar(20)
+  isActive     Boolean  @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("admin_users")
+}
