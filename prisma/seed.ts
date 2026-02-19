@@ -1,8 +1,11 @@
 import { PrismaClient } from '../src/generated/prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcryptjs';
 import { addDays, isWithinInterval, parseISO } from 'date-fns';
 
-const prisma = new PrismaClient({});
+const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/hotel_around_pyeongchang';
+const adapter = new PrismaPg({ connectionString });
+const prisma = new PrismaClient({ adapter });
 
 const PRODUCTS = [
   {
