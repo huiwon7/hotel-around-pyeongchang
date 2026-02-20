@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>호텔어라운드 평창 - 2~3월 예상매출 보고서</title>
+    <title>호텔어라운드 평창 - 2~3월 예상매출 보고서 (확률 모델)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         @media print {
             body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .page-break { page-break-before: always; }
             .no-print { display: none; }
+            .chart-wrapper { max-height: 280px; }
         }
 
         :root {
@@ -33,929 +35,815 @@
         }
 
         .report {
-            max-width: 900px;
+            max-width: 960px;
             margin: 0 auto;
             background: var(--bg);
             box-shadow: 0 0 40px rgba(0,0,0,0.08);
         }
 
-        /* Cover Header */
         .cover-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             color: white;
             padding: 48px 60px;
             position: relative;
-            overflow: hidden;
         }
-        .cover-header::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 300px;
-            height: 300px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 50%;
-        }
-        .cover-header .hotel-name {
-            font-size: 14px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            opacity: 0.7;
-            margin-bottom: 12px;
-        }
-        .cover-header h1 {
-            font-size: 28px;
-            font-weight: 800;
-            line-height: 1.3;
-            margin-bottom: 8px;
-        }
-        .cover-header .subtitle {
-            font-size: 15px;
-            opacity: 0.8;
-        }
-        .cover-meta {
-            display: flex;
-            gap: 24px;
-            margin-top: 24px;
-            font-size: 13px;
-            opacity: 0.7;
-        }
-        .cover-meta span { display: flex; align-items: center; gap: 6px; }
+        .cover-header .hotel-name { font-size: 13px; letter-spacing: 4px; opacity: 0.6; margin-bottom: 12px; }
+        .cover-header h1 { font-size: 26px; font-weight: 800; line-height: 1.4; margin-bottom: 6px; }
+        .cover-header .subtitle { font-size: 14px; opacity: 0.75; }
+        .cover-meta { display: flex; gap: 24px; margin-top: 20px; font-size: 12px; opacity: 0.6; flex-wrap: wrap; }
 
-        /* Content */
         .content { padding: 40px 60px; }
 
-        /* TOC */
-        .toc {
-            background: #f7fafc;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 24px 32px;
-            margin-bottom: 36px;
-        }
-        .toc h3 {
-            font-size: 14px;
-            color: var(--primary);
-            margin-bottom: 12px;
-            letter-spacing: 1px;
-        }
-        .toc-list { list-style: none; }
-        .toc-list li {
-            padding: 6px 0;
-            font-size: 14px;
-            border-bottom: 1px dotted var(--border);
-            display: flex;
-            justify-content: space-between;
-        }
-        .toc-list li:last-child { border: none; }
-        .toc-list .section-num { color: var(--primary); font-weight: 700; margin-right: 8px; }
-
-        /* Section Headers */
-        .section-divider {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin: 40px 0 24px;
-            page-break-after: avoid;
-        }
+        .section-divider { display: flex; align-items: center; gap: 14px; margin: 44px 0 20px; }
         .section-divider .num {
-            background: var(--primary);
-            color: white;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            font-weight: 700;
-            flex-shrink: 0;
+            background: var(--primary); color: white;
+            width: 34px; height: 34px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; font-weight: 700; flex-shrink: 0;
         }
-        .section-divider h2 {
-            font-size: 20px;
-            color: var(--primary);
-        }
+        .section-divider h2 { font-size: 19px; color: var(--primary); }
 
-        h3 {
-            font-size: 16px;
-            color: var(--primary);
-            margin: 28px 0 12px;
-            padding-bottom: 6px;
-            border-bottom: 2px solid var(--primary);
-            display: inline-block;
-        }
+        h3 { font-size: 15px; color: var(--primary); margin: 24px 0 10px; padding-bottom: 4px; border-bottom: 2px solid var(--primary); display: inline-block; }
+        h4 { font-size: 13px; color: var(--text); margin: 16px 0 6px; font-weight: 700; }
+        p { font-size: 13px; margin-bottom: 10px; }
 
-        h4 {
-            font-size: 14px;
-            color: var(--text);
-            margin: 20px 0 8px;
-            font-weight: 700;
-        }
-
-        p { font-size: 14px; margin-bottom: 12px; }
-
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0 24px;
-            font-size: 13px;
-        }
-        th {
-            background: var(--primary);
-            color: white;
-            padding: 10px 12px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 12px;
-        }
+        table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 12.5px; }
+        th { background: var(--primary); color: white; padding: 8px 10px; text-align: center; font-size: 11.5px; font-weight: 600; }
         th:first-child { text-align: left; }
-        td {
-            padding: 9px 12px;
-            text-align: center;
-            border-bottom: 1px solid var(--border);
-        }
+        td { padding: 7px 10px; text-align: center; border-bottom: 1px solid var(--border); }
         td:first-child { text-align: left; font-weight: 500; }
         tr:nth-child(even) { background: #f8fafe; }
         tr.highlight { background: #f0fff4 !important; font-weight: 600; }
-        tr.total-row {
-            background: #edf2f7 !important;
-            font-weight: 700;
-            border-top: 2px solid var(--primary);
-        }
-        tr.scenario-base { background: #ebf5ff !important; }
+        tr.total-row { background: #edf2f7 !important; font-weight: 700; border-top: 2px solid var(--primary); }
 
-        /* KPI Summary Cards */
-        .kpi-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin: 20px 0 28px;
-        }
-        .kpi-box {
-            background: #f7fafc;
-            border-radius: 8px;
-            padding: 16px;
-            text-align: center;
-            border-left: 4px solid var(--primary);
-        }
+        .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 16px 0 24px; }
+        .kpi-box { background: #f7fafc; border-radius: 8px; padding: 14px; text-align: center; border-left: 4px solid var(--primary); }
         .kpi-box.accent { border-left-color: var(--accent); }
         .kpi-box.success { border-left-color: var(--success); }
         .kpi-box.danger { border-left-color: var(--danger); }
-        .kpi-box .label { font-size: 11px; color: var(--text-light); font-weight: 600; margin-bottom: 4px; }
-        .kpi-box .value { font-size: 22px; font-weight: 800; color: var(--primary); }
-        .kpi-box .sub { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+        .kpi-box .label { font-size: 10.5px; color: var(--text-light); font-weight: 600; margin-bottom: 3px; }
+        .kpi-box .value { font-size: 20px; font-weight: 800; color: var(--primary); }
+        .kpi-box .sub { font-size: 10.5px; color: var(--text-light); margin-top: 3px; }
 
-        /* Callout */
-        .callout {
-            background: #fffbeb;
-            border: 1px solid #fcd34d;
-            border-left: 4px solid var(--accent);
-            border-radius: 6px;
-            padding: 16px 20px;
-            margin: 20px 0;
-            font-size: 13px;
-        }
-        .callout.blue {
-            background: #eff6ff;
-            border-color: #93c5fd;
-            border-left-color: var(--primary-light);
-        }
-        .callout.green {
-            background: #f0fdf4;
-            border-color: #86efac;
-            border-left-color: var(--success);
-        }
-        .callout.red {
-            background: #fef2f2;
-            border-color: #fca5a5;
-            border-left-color: var(--danger);
-        }
+        .callout { border-radius: 6px; padding: 14px 18px; margin: 16px 0; font-size: 12.5px; border-left: 4px solid; }
+        .callout.yellow { background: #fffbeb; border-color: #fcd34d; border-left-color: var(--accent); }
+        .callout.blue { background: #eff6ff; border-color: #93c5fd; border-left-color: var(--primary-light); }
+        .callout.green { background: #f0fdf4; border-color: #86efac; border-left-color: var(--success); }
+        .callout.red { background: #fef2f2; border-color: #fca5a5; border-left-color: var(--danger); }
         .callout strong { color: var(--primary); }
 
-        /* Result Box */
+        .formula-box {
+            background: #f8f9fa; border: 1px solid var(--border); border-radius: 8px;
+            padding: 16px 20px; margin: 14px 0; font-family: 'Consolas', 'Courier New', monospace; font-size: 13px;
+        }
+        .formula-box .label { font-size: 11px; color: var(--text-light); font-weight: 600; margin-bottom: 6px; font-family: 'Malgun Gothic', sans-serif; }
+        .formula-box .eq { margin: 4px 0; line-height: 1.8; }
+        .formula-box .note { font-size: 11px; color: var(--text-light); margin-top: 8px; font-family: 'Malgun Gothic', sans-serif; }
+
         .result-box {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            border-radius: 12px;
-            padding: 28px 32px;
-            margin: 24px 0;
-            text-align: center;
+            color: white; border-radius: 12px; padding: 24px 28px; margin: 20px 0; text-align: center;
         }
-        .result-box .label { font-size: 13px; opacity: 0.8; margin-bottom: 8px; }
-        .result-box .amount { font-size: 36px; font-weight: 800; }
-        .result-box .range { font-size: 15px; opacity: 0.8; margin-top: 8px; }
-        .result-box.orange {
-            background: linear-gradient(135deg, #92400e 0%, #b45309 100%);
-        }
+        .result-box .label { font-size: 12px; opacity: 0.8; margin-bottom: 6px; }
+        .result-box .amount { font-size: 32px; font-weight: 800; }
+        .result-box .range { font-size: 14px; opacity: 0.8; margin-top: 6px; }
+        .result-box.orange { background: linear-gradient(135deg, #92400e 0%, #b45309 100%); }
 
-        /* Comparison Arrow */
-        .compare-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin: 24px 0;
-            flex-wrap: wrap;
-        }
-        .compare-item {
-            text-align: center;
-            padding: 16px 24px;
-            background: #f7fafc;
-            border-radius: 8px;
-            min-width: 180px;
-        }
-        .compare-item .month { font-size: 12px; color: var(--text-light); font-weight: 600; }
-        .compare-item .amount { font-size: 20px; font-weight: 800; color: var(--primary); margin-top: 4px; }
-        .compare-arrow {
-            font-size: 24px;
-            color: var(--text-light);
-        }
-        .compare-arrow.down { color: var(--danger); }
-        .compare-arrow.up { color: var(--success); }
+        .chart-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin: 16px 0; }
+        .chart-title { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+        .chart-wrapper { position: relative; height: 260px; }
+        .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-        /* Bullet List */
-        ul.styled { margin: 8px 0 16px 20px; }
-        ul.styled li { font-size: 13px; margin-bottom: 6px; line-height: 1.6; }
-        ul.styled li strong { color: var(--primary); }
-
-        /* Footer */
-        .report-footer {
-            background: #f7fafc;
-            border-top: 1px solid var(--border);
-            padding: 20px 60px;
-            font-size: 11px;
-            color: var(--text-light);
-            text-align: center;
-        }
-
-        /* Badge */
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 700;
-        }
+        .badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 700; }
         .badge.green { background: #d4edda; color: #155724; }
         .badge.yellow { background: #fff3cd; color: #856404; }
         .badge.red { background: #f8d7da; color: #721c24; }
         .badge.blue { background: #d1ecf1; color: #0c5460; }
+
+        ul.styled { margin: 6px 0 14px 18px; }
+        ul.styled li { font-size: 12.5px; margin-bottom: 5px; line-height: 1.6; }
+        ul.styled li strong { color: var(--primary); }
+
+        .prob-bar-bg { background: #e2e8f0; border-radius: 4px; height: 22px; position: relative; }
+        .prob-bar-fill { border-radius: 4px; height: 100%; display: flex; align-items: center; padding-left: 8px; font-size: 11px; font-weight: 700; color: white; min-width: 40px; }
+
+        .compare-row { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 20px 0; flex-wrap: wrap; }
+        .compare-item { text-align: center; padding: 14px 20px; background: #f7fafc; border-radius: 8px; min-width: 150px; }
+        .compare-item .month { font-size: 11px; color: var(--text-light); font-weight: 600; }
+        .compare-item .amount { font-size: 18px; font-weight: 800; color: var(--primary); margin-top: 3px; }
+        .compare-arrow { font-size: 20px; color: var(--text-light); }
+        .compare-arrow.down { color: var(--danger); }
+        .compare-arrow.up { color: var(--success); }
+
+        .report-footer {
+            background: #f7fafc; border-top: 1px solid var(--border);
+            padding: 16px 60px; font-size: 10.5px; color: var(--text-light); text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .content { padding: 20px; }
+            .cover-header { padding: 30px 20px; }
+            .kpi-row { grid-template-columns: 1fr 1fr; }
+            .chart-grid { grid-template-columns: 1fr; }
+            .report-footer { padding: 16px 20px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="report">
 
-    <!-- ============================================ -->
-    <!-- COVER HEADER -->
-    <!-- ============================================ -->
+    <!-- COVER -->
     <div class="cover-header">
         <div class="hotel-name">HOTEL AROUND PYEONGCHANG</div>
-        <h1>2월 예상매출액 및<br>3월 비수기 예상매출 분석 보고서</h1>
-        <div class="subtitle">운영 대시보드 데이터 기반 매출 추정 분석</div>
+        <h1>2월 예상매출액 및 3월 비수기 예상매출 분석 보고서</h1>
+        <div class="subtitle">Monte Carlo Simulation &amp; 확률 분포 모델 기반 매출 추정</div>
         <div class="cover-meta">
-            <span>작성일: 2026.02.20</span>
+            <span>작성일: 2026.02.21</span>
             <span>기준 데이터: 2026.02.18</span>
+            <span>시뮬레이션: N = 100,000회</span>
             <span>작성: 운영관리팀</span>
         </div>
     </div>
 
     <div class="content">
 
-        <!-- TOC -->
-        <div class="toc">
-            <h3>목 차</h3>
-            <ul class="toc-list">
-                <li><span><span class="section-num">1</span>분석 개요 및 기초 데이터</span></li>
-                <li><span><span class="section-num">2</span>2월 예상매출액 산출</span></li>
-                <li><span><span class="section-num">3</span>3월 비수기 예상매출 분석</span></li>
-                <li><span><span class="section-num">4</span>월별 매출 추이 종합 비교</span></li>
-                <li><span><span class="section-num">5</span>시사점 및 대응 전략</span></li>
-            </ul>
-        </div>
-
-        <!-- ============================================ -->
-        <!-- SECTION 1: 분석 개요 -->
-        <!-- ============================================ -->
+        <!-- SECTION 1 -->
         <div class="section-divider">
             <div class="num">1</div>
-            <h2>분석 개요 및 기초 데이터</h2>
+            <h2>분석 방법론 (Methodology)</h2>
         </div>
 
-        <h3>1-1. 분석 목적</h3>
-        <p>본 보고서는 호텔어라운드 평창의 운영 대시보드 데이터(2025.11~2026.02.18)를 기반으로, <strong>2월 잔여 기간(19~28일) 매출을 추정</strong>하여 2월 전체 예상매출을 산출하고, <strong>3월 비수기 매출을 다각도 시나리오 분석</strong>을 통해 전망합니다.</p>
+        <h3>1-1. 분석 프레임워크</h3>
+        <p>본 보고서는 <strong>확률 분포 모델링</strong>과 <strong>Monte Carlo 시뮬레이션(N=100,000)</strong>을 결합하여 2월 잔여기간 및 3월 전체 매출을 추정합니다. 단순 평균 추정 대비 확률적 불확실성을 명시적으로 반영하여 <strong>신뢰구간(Confidence Interval)</strong>과 <strong>목표 달성 확률</strong>을 산출합니다.</p>
 
-        <h3>1-2. 호텔 기본 정보</h3>
-        <table>
-            <tr><th style="width:40%;">항목</th><th>내용</th></tr>
-            <tr><td>호텔명</td><td>호텔어라운드 평창</td></tr>
-            <tr><td>총 객실수</td><td>350실/일</td></tr>
-            <tr><td>운영 개시</td><td>2025년 11월 (AZMT 위탁 운영)</td></tr>
-            <tr><td>AZMT 경영 목표</td><td>OCC 35% / ADR 113,712원 / RevPAR 39,799원 / 월매출 6.82억(VAT제외)</td></tr>
-        </table>
+        <h3>1-2. 확률 분포 모델</h3>
 
-        <h3>1-3. 월별 실적 현황</h3>
+        <h4>A. 가동률 (OCC) &rarr; Beta Distribution</h4>
+        <div class="formula-box">
+            <div class="label">Beta 분포 선택 근거</div>
+            <div class="eq">OCC &isin; [0, 1] &rarr; 유계(bounded) 확률변수에 적합한 Beta(&alpha;, &beta;) 분포 적용</div>
+            <div class="eq">f(x; &alpha;, &beta;) = x<sup>&alpha;-1</sup>(1-x)<sup>&beta;-1</sup> / B(&alpha;, &beta;), &nbsp;&nbsp; x &isin; [0, 1]</div>
+            <div class="eq" style="margin-top:8px;">모수 추정 (Method of Moments):</div>
+            <div class="eq">&nbsp;&nbsp;&alpha; = &mu; &middot; (&mu;(1-&mu;)/&sigma;&sup2; &minus; 1)</div>
+            <div class="eq">&nbsp;&nbsp;&beta; = (1&minus;&mu;) &middot; (&mu;(1-&mu;)/&sigma;&sup2; &minus; 1)</div>
+            <div class="note">* OCC는 0~100% 범위로 제한되므로, 정규분포 대비 Beta 분포가 이론적으로 적합</div>
+        </div>
+
+        <h4>B. 평균 객실단가 (ADR) &rarr; Log-Normal Distribution</h4>
+        <div class="formula-box">
+            <div class="label">Log-Normal 분포 선택 근거</div>
+            <div class="eq">ADR &gt; 0 (양수), 우측 꼬리 분포(right-skewed) &rarr; Log-Normal 적합</div>
+            <div class="eq">ln(ADR) ~ N(&mu;<sub>ln</sub>, &sigma;<sub>ln</sub>&sup2;)</div>
+            <div class="eq" style="margin-top:8px;">모수 추정:</div>
+            <div class="eq">&nbsp;&nbsp;&mu;<sub>ln</sub> = ln(E[ADR]) &minus; &sigma;<sub>ln</sub>&sup2;/2</div>
+            <div class="eq">&nbsp;&nbsp;&sigma;<sub>ln</sub>&sup2; = ln(1 + (&sigma;/E[ADR])&sup2;)</div>
+        </div>
+
+        <h4>C. 일별 매출 생성 모델</h4>
+        <div class="formula-box">
+            <div class="label">Monte Carlo 일별 매출 생성 프로세스</div>
+            <div class="eq">For each day d = 1, ..., D:</div>
+            <div class="eq">&nbsp;&nbsp;1) OCC<sub>d</sub> ~ Beta(&alpha;<sub>type</sub>, &beta;<sub>type</sub>)&nbsp;&nbsp;&nbsp;// type &isin; {weekday, weekend}</div>
+            <div class="eq">&nbsp;&nbsp;2) Rooms<sub>d</sub> = &lfloor;OCC<sub>d</sub> &times; 350&rfloor;</div>
+            <div class="eq">&nbsp;&nbsp;3) ADR<sub>d</sub> ~ LogNormal(&mu;<sub>ln</sub>, &sigma;<sub>ln</sub>)</div>
+            <div class="eq">&nbsp;&nbsp;4) Rev<sub>d</sub> = Rooms<sub>d</sub> &times; ADR<sub>d</sub></div>
+            <div class="eq" style="margin-top:6px;">Monthly Revenue = &Sigma; Rev<sub>d</sub></div>
+            <div class="eq">F&amp;B = &Sigma; Rooms<sub>d</sub> &times; FnB_per_room&nbsp;&nbsp;&nbsp;// FnB_per_room ~ N(&mu;<sub>fnb</sub>, &sigma;<sub>fnb</sub>)</div>
+            <div class="note">* 3월은 스키 시즌 종료에 따른 계절 감쇠 함수 f(d) 추가 적용</div>
+        </div>
+
+        <h3>1-3. 추정 모수 요약</h3>
         <table>
             <thead>
-                <tr>
-                    <th style="text-align:left;">월</th>
-                    <th>판매객실</th>
-                    <th>OCC</th>
-                    <th>ADR<br>(VAT포함)</th>
-                    <th>RevPAR<br>(VAT제외)</th>
-                    <th>객실매출<br>(VAT포함)</th>
-                    <th>F&B매출</th>
-                </tr>
+                <tr><th style="text-align:left;">변수</th><th>분포</th><th>2월 잔여 (평일)</th><th>2월 잔여 (주말)</th><th>3월 (평일)</th><th>3월 (주말)</th></tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>2025년 11월</td><td>453실</td><td>3.7%</td>
-                    <td>106,572</td><td>3,143</td><td>48,277,123</td><td>-</td>
+                    <td>OCC</td><td>Beta(&alpha;, &beta;)</td>
+                    <td>Beta(12.25, 19.53)<br>&mu;=38.6%</td>
+                    <td>Beta(12.78, 11.09)<br>&mu;=53.6%</td>
+                    <td>Beta(5.53, 49.73)<br>&mu;=10.0%</td>
+                    <td>Beta(6.97, 14.14)<br>&mu;=33.0%</td>
                 </tr>
                 <tr>
-                    <td>2025년 12월</td><td>2,680실</td><td>23.8%</td>
-                    <td>139,215</td><td>21,386</td><td>373,096,290</td><td>49,726,474</td>
-                </tr>
-                <tr class="highlight">
-                    <td>2026년 1월</td><td>5,563실</td><td>52.9%</td>
-                    <td>111,237</td><td>53,485</td><td>618,813,926</td><td>88,002,370</td>
+                    <td>ADR</td><td>LogNormal</td>
+                    <td colspan="2">LogN(11.59, 0.163)<br>E[ADR]=110,000원</td>
+                    <td colspan="2">LogN(11.45, 0.157)<br>E[ADR]=95,000원</td>
                 </tr>
                 <tr>
-                    <td>2026년 2월 (~18일)</td><td>4,741실</td><td>48.5%*</td>
-                    <td>124,405</td><td>54,851</td><td>589,802,246</td><td>55,187,100</td>
-                </tr>
-                <tr>
-                    <td>2026년 3월 (사전예약)</td><td>243실</td><td>2.2%</td>
-                    <td>93,995</td><td>1,424</td><td>22,840,698</td><td>-</td>
+                    <td>F&amp;B/Room</td><td>Normal</td>
+                    <td colspan="2">N(12,000, 3,000&sup2;)</td>
+                    <td colspan="2">N(13,000, 3,000&sup2;)</td>
                 </tr>
             </tbody>
         </table>
-        <div class="callout">
-            <strong>* OCC 산정 기준:</strong> 2월 OCC 48.5%는 28일 전체를 분모로 산출한 값입니다 (4,741실 ÷ 9,800실). 실제 18일간 일평균 가동률은 <strong>75.3%</strong>입니다 (4,741 ÷ 6,300).
+
+        <h3>1-4. 3월 계절 감쇠 함수 (Seasonal Decay)</h3>
+        <p>스키 시즌 종료(3월 중순)에 따른 수요 감소를 반영하기 위해 지수 감쇠 함수를 적용합니다.</p>
+        <div class="formula-box">
+            <div class="eq">f(d) = 1.0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if d &le; 15</div>
+            <div class="eq">f(d) = exp(&minus;0.02 &times; (d &minus; 15)) &nbsp; if d &gt; 15</div>
+            <div class="eq" style="margin-top:6px;">OCC<sub>adjusted</sub> = OCC<sub>base</sub> &times; f(d)</div>
         </div>
+        <table>
+            <thead><tr><th>일자</th><th>3/1</th><th>3/10</th><th>3/15</th><th>3/20</th><th>3/25</th><th>3/31</th></tr></thead>
+            <tbody><tr><td>f(d)</td><td>1.000</td><td>1.000</td><td>1.000</td><td>0.905</td><td>0.819</td><td>0.726</td></tr></tbody>
+        </table>
 
 
-        <!-- ============================================ -->
-        <!-- SECTION 2: 2월 예상매출 -->
-        <!-- ============================================ -->
+        <!-- SECTION 2 -->
         <div class="page-break"></div>
         <div class="section-divider">
             <div class="num">2</div>
-            <h2>2월 예상매출액 산출</h2>
+            <h2>관측 데이터 및 분포 적합</h2>
         </div>
 
-        <h3>2-1. 현재 실적 요약 (2.1~2.18, 18일간)</h3>
-        <div class="kpi-row">
-            <div class="kpi-box">
-                <div class="label">객실매출 (VAT포함)</div>
-                <div class="value">5.90억</div>
-                <div class="sub">589,802,246원</div>
-            </div>
-            <div class="kpi-box accent">
-                <div class="label">F&B매출</div>
-                <div class="value">5,519만</div>
-                <div class="sub">55,187,100원</div>
-            </div>
-            <div class="kpi-box success">
-                <div class="label">판매객실 / 일평균</div>
-                <div class="value">4,741실</div>
-                <div class="sub">일평균 263실</div>
-            </div>
-            <div class="kpi-box">
-                <div class="label">ADR (VAT포함)</div>
-                <div class="value">124,405</div>
-                <div class="sub">RevPAR 54,851원</div>
-            </div>
-        </div>
-
-        <h3>2-2. 일평균 실적</h3>
+        <h3>2-1. 월별 실적 현황</h3>
         <table>
             <thead>
-                <tr><th style="text-align:left;">항목</th><th>18일 누적</th><th>일평균</th></tr>
+                <tr><th style="text-align:left;">월</th><th>판매객실</th><th>OCC</th><th>ADR(VAT포함)</th><th>객실매출(VAT포함)</th><th>F&amp;B매출</th></tr>
             </thead>
             <tbody>
-                <tr><td>객실매출 (VAT포함)</td><td>589,802,246원</td><td>32,766,791원</td></tr>
-                <tr><td>F&B매출</td><td>55,187,100원</td><td>3,065,950원</td></tr>
-                <tr><td>판매객실</td><td>4,741실</td><td>263.4실</td></tr>
-                <tr class="total-row"><td>합계 매출</td><td>644,989,346원</td><td>35,832,741원</td></tr>
+                <tr><td>11월</td><td>453실</td><td>3.7%</td><td>106,572</td><td>48,277,123</td><td>-</td></tr>
+                <tr><td>12월</td><td>2,680실</td><td>23.8%</td><td>139,215</td><td>373,096,290</td><td>49,726,474</td></tr>
+                <tr class="highlight"><td>1월</td><td>5,563실</td><td>52.9%</td><td>111,237</td><td>618,813,926</td><td>88,002,370</td></tr>
+                <tr><td>2월 (~18일)</td><td>4,741실</td><td>48.5%*</td><td>124,405</td><td>589,802,246</td><td>55,187,100</td></tr>
+                <tr><td>3월 (사전예약)</td><td>243실</td><td>2.2%</td><td>93,995</td><td>22,840,698</td><td>-</td></tr>
+            </tbody>
+        </table>
+        <div class="callout yellow">
+            <strong>* 2월 OCC 48.5%</strong>는 28일 분모 기준(4,741 &divide; 9,800). 실제 18일간 일평균 가동률 = 4,741 &divide; (350&times;18) = <strong>75.3%</strong> (설 연휴 포함).
+        </div>
+
+        <h3>2-2. 일별 관측 데이터 (분포 적합 기초)</h3>
+        <table>
+            <thead><tr><th style="text-align:left;">일자</th><th>요일</th><th>판매객실</th><th>OCC</th><th>유형</th><th>분포 적합 활용</th></tr></thead>
+            <tbody>
+                <tr><td>2/9</td><td>일</td><td>178실</td><td>50.9%</td><td>비연휴 주말</td><td><span class="badge blue">주말 OCC 추정</span></td></tr>
+                <tr><td>2/10</td><td>월</td><td>112실</td><td>32.0%</td><td>비연휴 평일</td><td><span class="badge blue">평일 OCC 추정</span></td></tr>
+                <tr><td>2/12</td><td>수</td><td>158실</td><td>45.1%</td><td>비연휴 평일</td><td><span class="badge blue">평일 OCC 추정</span></td></tr>
+                <tr style="background:#fff8f0;"><td>2/13</td><td>목</td><td>236실</td><td>67.4%</td><td>설연휴 전일</td><td><span class="badge yellow">연휴 효과</span></td></tr>
+                <tr style="background:#fff8f0;"><td>2/14</td><td>금</td><td>261실</td><td>74.6%</td><td>설 연휴</td><td><span class="badge yellow">연휴 효과</span></td></tr>
+                <tr style="background:#fff8f0;"><td>2/15</td><td>토</td><td>295실</td><td>84.3%</td><td>설 연휴</td><td><span class="badge yellow">연휴 효과</span></td></tr>
+                <tr style="background:#fff8f0;"><td>2/17</td><td>월</td><td>272실</td><td>77.7%</td><td>설 연휴</td><td><span class="badge yellow">연휴 효과</span></td></tr>
+                <tr><td>2/18</td><td>화</td><td>242실</td><td>69.1%</td><td>연휴 직후</td><td><span class="badge green">ADR 참고</span></td></tr>
             </tbody>
         </table>
 
-        <h3>2-3. 설 연휴 효과 분석</h3>
-        <p>18일 데이터에는 <strong>설 연휴(2/14~17)</strong>가 포함되어 있어, 해당 기간은 일반 영업일 대비 현저히 높은 실적을 기록했습니다. 잔여 10일(2/19~28)은 설 연휴 없는 평일/주말로 구성되므로, <strong>단순 일평균 적용 시 과대추정 우려</strong>가 있습니다.</p>
-
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">구분</th><th>판매객실</th><th>OCC</th><th>ADR</th><th>특이사항</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>2/9 (일)</td><td>178실</td><td>50.9%</td><td>-</td><td>주말</td></tr>
-                <tr><td>2/10 (월)</td><td>112실</td><td>32.0%</td><td>-</td><td>평일</td></tr>
-                <tr><td>2/12 (수)</td><td>158실</td><td>45.1%</td><td>-</td><td>평일</td></tr>
-                <tr class="highlight"><td>2/14~15 (설연휴)</td><td>261~295실</td><td>74.6~84.3%</td><td>-</td><td>설 연휴 피크</td></tr>
-                <tr class="highlight"><td>2/17 (설연휴)</td><td>272실</td><td>77.7%</td><td>-</td><td>설 연휴</td></tr>
-                <tr><td>2/18 (화)</td><td>242실</td><td>69.1%</td><td>84,970</td><td>연휴 직후</td></tr>
-            </tbody>
-        </table>
         <div class="callout blue">
-            <strong>비연휴 평일 평균:</strong> 2/9, 2/10, 2/12 데이터 기준 일평균 약 <strong>150실 (OCC ~42%)</strong>. 잔여 10일 추정의 핵심 근거로 활용합니다.
+            <strong>분포 적합 전략:</strong> 비연휴 평일(2/10, 2/12)과 비연휴 주말(2/9) 데이터를 분리하여 Beta 분포를 적합합니다. 설 연휴 데이터는 잔여 기간 추정에서 제외하되, 이미 18일 실적에 반영된 상태입니다. 제한된 표본(n=2~3)의 한계를 보완하기 위해 분산에 보수적 가정을 적용합니다.
         </div>
 
-        <h3>2-4. 잔여 10일(2/19~28) 추정</h3>
-        <p>2월 19~28일은 공휴일이 없는 일반 기간입니다. 주중 7일 + 주말(금~일) 3일로 구성됩니다.</p>
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">구분</th><th>보수적</th><th>기본</th><th>낙관적</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>주중 평균 OCC</td><td>30%</td><td>35%</td><td>40%</td></tr>
-                <tr><td>주말 평균 OCC</td><td>55%</td><td>60%</td><td>65%</td></tr>
-                <tr><td>10일 가중평균 OCC</td><td>37.5%</td><td>42.5%</td><td>47.5%</td></tr>
-                <tr><td>일평균 판매객실</td><td>131실</td><td>149실</td><td>166실</td></tr>
-                <tr><td>10일 판매객실</td><td>1,313실</td><td>1,488실</td><td>1,663실</td></tr>
-                <tr><td>예상 ADR (VAT포함)</td><td>110,000원</td><td>115,000원</td><td>118,000원</td></tr>
-                <tr><td>객실매출</td><td>144,375,000원</td><td>171,063,000원</td><td>196,196,000원</td></tr>
-                <tr><td>F&B매출 (일평균)</td><td>2,000,000원</td><td>2,500,000원</td><td>3,000,000원</td></tr>
-                <tr><td>F&B매출 (10일 계)</td><td>20,000,000원</td><td>25,000,000원</td><td>30,000,000원</td></tr>
-                <tr class="total-row"><td>잔여 10일 소계</td><td>164,375,000원</td><td>196,063,000원</td><td>226,196,000원</td></tr>
-            </tbody>
-        </table>
-
-        <h3>2-5. 2월 전체 예상매출 종합</h3>
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">항목</th><th>보수적</th><th style="background:#2d5a9e;">기본 (추정)</th><th>낙관적</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>객실매출 (VAT포함)</td>
-                    <td>734,177,246</td>
-                    <td><strong>760,865,246</strong></td>
-                    <td>785,998,246</td>
-                </tr>
-                <tr>
-                    <td>F&B매출</td>
-                    <td>75,187,100</td>
-                    <td><strong>80,187,100</strong></td>
-                    <td>85,187,100</td>
-                </tr>
-                <tr class="total-row">
-                    <td>2월 합계</td>
-                    <td>809,364,346</td>
-                    <td><strong>841,052,346</strong></td>
-                    <td>871,185,346</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td><span class="badge yellow">~8.09억</span></td>
-                    <td><span class="badge blue">~8.41억</span></td>
-                    <td><span class="badge green">~8.71억</span></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="result-box">
-            <div class="label">2월 예상매출 (기본 추정)</div>
-            <div class="amount">약 8.4억 원</div>
-            <div class="range">추정 범위: 8.1억 ~ 8.7억 원</div>
-        </div>
-
-        <h3>2-6. 2월 추정 KPI</h3>
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">KPI</th><th>기본 추정치</th><th>AZMT 목표</th><th>달성률</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>판매객실</td>
-                    <td>6,229실</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>OCC (28일 기준)</td>
-                    <td>63.6%</td>
-                    <td>35.0%</td>
-                    <td><span class="badge green">181.6%</span></td>
-                </tr>
-                <tr>
-                    <td>ADR (VAT포함)</td>
-                    <td>122,142원</td>
-                    <td>125,083원*</td>
-                    <td><span class="badge yellow">97.6%</span></td>
-                </tr>
-                <tr>
-                    <td>월 객실매출 (VAT제외)</td>
-                    <td>약 6.92억</td>
-                    <td>6.82억</td>
-                    <td><span class="badge green">101.4%</span></td>
-                </tr>
-            </tbody>
-        </table>
-        <p style="font-size:12px; color:var(--text-light);">* AZMT ADR 목표 113,712원은 VAT제외 기준. VAT포함 환산 시 125,083원.</p>
-
-        <div class="callout green">
-            <strong>핵심 포인트:</strong> 2월은 설 연휴 효과로 <strong>OCC 목표 대비 약 182% 초과 달성</strong>이 전망됩니다. 월 매출 목표(6.82억, VAT제외) 역시 기본 시나리오 기준 <strong>최초 달성</strong> 가능성이 있으며, 이는 개관 이래 최고 월매출 기록이 될 전망입니다.
-        </div>
-
-
-        <!-- ============================================ -->
-        <!-- SECTION 3: 3월 비수기 예상매출 -->
-        <!-- ============================================ -->
-        <div class="page-break"></div>
-        <div class="section-divider">
-            <div class="num">3</div>
-            <h2>3월 비수기 예상매출 분석</h2>
-        </div>
-
-        <h3>3-1. 3월 비수기 특성</h3>
-
-        <h4>계절 요인</h4>
-        <ul class="styled">
-            <li><strong>스키 시즌 종료:</strong> 평창권 스키장(용평, 휘닉스, 알펜시아) 시즌 종료 3월 중순~하순. 3월 초순까지 스프링 스키 수요 일부 존재.</li>
-            <li><strong>봄 관광 수요 부재:</strong> 해발 700m 이상 고지대 특성상 3월에도 춥고 관광 인프라 미가동. 봄꽃 수요는 4월 중순 이후.</li>
-            <li><strong>공휴일:</strong> 삼일절(3/1, 일요일). 대체공휴일 적용 시 3/2(월) 연휴 가능하나, 대규모 수요 유발은 미미.</li>
-            <li><strong>결론: 1년 중 가장 수요가 낮은 시기 중 하나</strong></li>
-        </ul>
-
-        <h4>주중/주말 구조 (2026년 3월, 31일)</h4>
-        <table>
-            <tr><th>구분</th><th>일수</th><th>비고</th></tr>
-            <tr><td>주중 (월~목)</td><td>18일</td><td>FIT 수요 극히 제한적</td></tr>
-            <tr><td>주말 (금~일)</td><td>13일</td><td>수도권 나들이/마지막 스키 수요</td></tr>
-            <tr class="total-row"><td>합계</td><td>31일</td><td>총 가용객실: 10,850실</td></tr>
-        </table>
-
-        <h3>3-2. 사전 예약 시그널 분석</h3>
-        <div class="kpi-row">
-            <div class="kpi-box danger">
-                <div class="label">3월 사전예약 객실</div>
-                <div class="value">243실</div>
-                <div class="sub">총 가용 10,850실의 2.2%</div>
+        <h3>2-3. OCC Beta 분포 적합 시각화</h3>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="chart-title">2월 잔여 OCC 분포 (평일 vs 주말)</div>
+                <div class="chart-wrapper"><canvas id="febOccBeta"></canvas></div>
             </div>
-            <div class="kpi-box">
-                <div class="label">사전예약 ADR</div>
-                <div class="value">93,995</div>
-                <div class="sub">전월 대비 최저 수준</div>
-            </div>
-            <div class="kpi-box accent">
-                <div class="label">사전예약 매출</div>
-                <div class="value">2,284만</div>
-                <div class="sub">22,840,698원</div>
-            </div>
-            <div class="kpi-box">
-                <div class="label">기준일</div>
-                <div class="value">2.18</div>
-                <div class="sub">3월 시작까지 10일 전</div>
+            <div class="chart-card">
+                <div class="chart-title">3월 OCC 분포 (평일 vs 주말)</div>
+                <div class="chart-wrapper"><canvas id="marOccBeta"></canvas></div>
             </div>
         </div>
 
-        <div class="callout red">
-            <strong>ADR 하락 시그널:</strong> 3월 사전예약 ADR 93,995원은 개관 이래 최저치입니다. 12월(139,215) → 1월(111,237) → 2월(124,405) → <strong>3월(93,995)</strong>. 비수기 가격 경쟁 및 할인 정책이 반영된 수치로, 3월 전체 ADR도 10만원 이하를 기록할 가능성이 높습니다.
-        </div>
-
-        <h3>3-3. OCC(가동률) 시나리오 추정</h3>
-        <p>비수기 주중/주말 수요를 분리하여 가중평균 OCC를 산출합니다.</p>
-
+        <h3>2-4. F&amp;B 객실당 매출 추이</h3>
         <table>
-            <thead>
-                <tr><th style="text-align:left;">구분</th><th>보수적</th><th style="background:#2d5a9e;">기본</th><th>낙관적</th><th>추정 근거</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>주중 OCC (월~목)</td>
-                    <td>8%</td><td><strong>10%</strong></td><td>12%</td>
-                    <td>FIT 수요 극히 제한</td>
-                </tr>
-                <tr>
-                    <td>주중 일평균 판매</td>
-                    <td>28실</td><td><strong>35실</strong></td><td>42실</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>주말 OCC (금~일)</td>
-                    <td>25%</td><td><strong>35%</strong></td><td>40%</td>
-                    <td>수도권 레저 수요</td>
-                </tr>
-                <tr>
-                    <td>주말 일평균 판매</td>
-                    <td>88실</td><td><strong>123실</strong></td><td>140실</td>
-                    <td></td>
-                </tr>
-                <tr class="total-row">
-                    <td>월 가중평균 OCC</td>
-                    <td>15.1%</td><td><strong>20.5%</strong></td><td>23.7%</td>
-                    <td></td>
-                </tr>
-                <tr class="total-row">
-                    <td>월 총 판매객실</td>
-                    <td>1,638실</td><td><strong>2,224실</strong></td><td>2,572실</td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="callout">
-            <strong>산출식 (기본):</strong> (18일 × 35실 + 13일 × 123실) ÷ 31일 = (630 + 1,594) ÷ 31 = <strong>71.7실/일</strong>, OCC = 71.7 / 350 = <strong>20.5%</strong>
-        </div>
-
-        <h3>3-4. ADR(평균 객실단가) 추정</h3>
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">시나리오</th><th>ADR (VAT포함)</th><th>ADR (VAT제외)</th><th>추정 근거</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>보수적</td><td>90,000원</td><td>81,818원</td><td>비수기 심화, 할인 경쟁 격화</td></tr>
-                <tr class="scenario-base"><td><strong>기본</strong></td><td><strong>95,000원</strong></td><td><strong>86,364원</strong></td><td>사전예약 ADR(93,995) 유사</td></tr>
-                <tr><td>낙관적</td><td>100,000원</td><td>90,909원</td><td>주말 프리미엄 유지</td></tr>
-            </tbody>
-        </table>
-
-        <h3>3-5. 객실매출 산출</h3>
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">항목</th><th>보수적</th><th style="background:#2d5a9e;">기본</th><th>낙관적</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>OCC</td><td>15.1%</td><td><strong>20.5%</strong></td><td>23.7%</td></tr>
-                <tr><td>판매객실</td><td>1,638실</td><td><strong>2,224실</strong></td><td>2,572실</td></tr>
-                <tr><td>ADR (VAT포함)</td><td>90,000원</td><td><strong>95,000원</strong></td><td>100,000원</td></tr>
-                <tr class="total-row"><td>객실매출 (VAT포함)</td><td>147,420,000</td><td><strong>211,280,000</strong></td><td>257,200,000</td></tr>
-            </tbody>
-        </table>
-
-        <h3>3-6. F&B매출 추정</h3>
-        <h4>객실당 F&B 매출 추이</h4>
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">월</th><th>F&B매출</th><th>판매객실</th><th>객실당 F&B</th><th>추세</th></tr>
-            </thead>
+            <thead><tr><th style="text-align:left;">월</th><th>F&amp;B매출</th><th>판매객실</th><th>객실당 F&amp;B</th><th>전월비</th></tr></thead>
             <tbody>
                 <tr><td>12월</td><td>49,726,474</td><td>2,680실</td><td>18,554원</td><td>-</td></tr>
                 <tr><td>1월</td><td>88,002,370</td><td>5,563실</td><td>15,822원</td><td>-14.7%</td></tr>
                 <tr><td>2월 (~18일)</td><td>55,187,100</td><td>4,741실</td><td>11,641원</td><td>-26.4%</td></tr>
-                <tr class="scenario-base"><td><strong>3월 (추정)</strong></td><td>-</td><td>-</td><td><strong>12,000~14,000원</strong></td><td>-</td></tr>
             </tbody>
         </table>
 
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">항목</th><th>보수적</th><th style="background:#2d5a9e;">기본</th><th>낙관적</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>객실당 F&B 단가</td><td>12,000원</td><td><strong>13,000원</strong></td><td>14,000원</td></tr>
-                <tr><td>판매객실</td><td>1,638실</td><td><strong>2,224실</strong></td><td>2,572실</td></tr>
-                <tr class="total-row"><td>F&B매출</td><td>19,656,000</td><td><strong>28,912,000</strong></td><td>36,008,000</td></tr>
-            </tbody>
-        </table>
 
-        <h3>3-7. 3월 전체 예상매출 종합</h3>
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">항목</th><th>보수적</th><th style="background:#2d5a9e;">기본 (추정)</th><th>낙관적</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>객실매출 (VAT포함)</td>
-                    <td>147,420,000</td>
-                    <td><strong>211,280,000</strong></td>
-                    <td>257,200,000</td>
-                </tr>
-                <tr>
-                    <td>F&B매출</td>
-                    <td>19,656,000</td>
-                    <td><strong>28,912,000</strong></td>
-                    <td>36,008,000</td>
-                </tr>
-                <tr class="total-row">
-                    <td>3월 합계</td>
-                    <td>167,076,000</td>
-                    <td><strong>240,192,000</strong></td>
-                    <td>293,208,000</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td><span class="badge red">~1.67억</span></td>
-                    <td><span class="badge blue">~2.40억</span></td>
-                    <td><span class="badge yellow">~2.93억</span></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="result-box orange">
-            <div class="label">3월 예상매출 (기본 추정)</div>
-            <div class="amount">약 2.4억 원</div>
-            <div class="range">추정 범위: 1.7억 ~ 2.9억 원</div>
+        <!-- SECTION 3: 2월 -->
+        <div class="page-break"></div>
+        <div class="section-divider">
+            <div class="num">3</div>
+            <h2>2월 예상매출액 산출</h2>
         </div>
 
-        <h3>3-8. 3월 추정 KPI vs AZMT 목표</h3>
+        <h3>3-1. 2월 잔여기간 구조 (2/19~2/28)</h3>
+        <table>
+            <thead><tr><th style="text-align:left;">일자</th><th>19(수)</th><th>20(목)</th><th>21(금)</th><th>22(토)</th><th>23(일)</th><th>24(월)</th><th>25(화)</th><th>26(수)</th><th>27(목)</th><th>28(금)</th></tr></thead>
+            <tbody>
+                <tr><td>유형</td><td>평일</td><td>평일</td><td>주말</td><td>주말</td><td>주말</td><td>평일</td><td>평일</td><td>평일</td><td>평일</td><td>주말</td></tr>
+            </tbody>
+        </table>
+        <p><strong>평일 6일</strong> &times; Beta(12.25, 19.53) + <strong>주말 4일</strong> &times; Beta(12.78, 11.09) &rarr; 10일 시뮬레이션</p>
+
+        <h3>3-2. Monte Carlo 시뮬레이션 결과 (잔여 10일)</h3>
+        <div class="kpi-row">
+            <div class="kpi-box">
+                <div class="label">판매객실 (평균)</div>
+                <div class="value">1,554실</div>
+                <div class="sub">&sigma; = 101실</div>
+            </div>
+            <div class="kpi-box accent">
+                <div class="label">객실매출 (평균)</div>
+                <div class="value">1.71억</div>
+                <div class="sub">&sigma; = 1,443만</div>
+            </div>
+            <div class="kpi-box">
+                <div class="label">F&amp;B매출 (평균)</div>
+                <div class="value">1,868만</div>
+                <div class="sub">18,678,070원</div>
+            </div>
+            <div class="kpi-box success">
+                <div class="label">잔여 합계 (평균)</div>
+                <div class="value">1.90억</div>
+                <div class="sub">189,590,238원</div>
+            </div>
+        </div>
+
+        <h3>3-3. 2월 전체 예상매출 (실적 + 시뮬레이션)</h3>
+        <div class="formula-box">
+            <div class="label">산출 구조</div>
+            <div class="eq">2월 총매출 = 18일 실적(확정) + 잔여 10일(MC 확률 추정)</div>
+            <div class="eq">&nbsp;&nbsp;객실매출 = 589,802,246 + MC<sub>room_rev</sub></div>
+            <div class="eq">&nbsp;&nbsp;F&amp;B매출  = 55,187,100 + MC<sub>fnb</sub></div>
+        </div>
+
         <table>
             <thead>
-                <tr><th style="text-align:left;">KPI</th><th>3월 추정 (기본)</th><th>AZMT 목표</th><th>달성률</th></tr>
+                <tr><th style="text-align:left;">통계량</th><th>객실매출 (VAT포함)</th><th>F&amp;B매출</th><th>총매출</th></tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>OCC</td>
-                    <td>20.5%</td>
-                    <td>35.0%</td>
-                    <td><span class="badge red">58.6%</span></td>
-                </tr>
-                <tr>
-                    <td>ADR (VAT제외)</td>
-                    <td>86,364원</td>
-                    <td>113,712원</td>
-                    <td><span class="badge red">76.0%</span></td>
-                </tr>
-                <tr>
-                    <td>RevPAR (VAT제외)</td>
-                    <td>17,704원</td>
-                    <td>39,799원</td>
-                    <td><span class="badge red">44.5%</span></td>
-                </tr>
-                <tr>
-                    <td>월매출 (VAT제외)</td>
-                    <td>~2.18억</td>
-                    <td>6.82억</td>
-                    <td><span class="badge red">32.0%</span></td>
-                </tr>
+                <tr><td>평균 (Mean)</td><td>760,714,413</td><td>73,865,170</td><td><strong>834,579,584</strong></td></tr>
+                <tr><td>중앙값 (Median)</td><td>760,248,617</td><td>-</td><td><strong>834,060,701</strong></td></tr>
+                <tr><td>표준편차 (&sigma;)</td><td>14,430,635</td><td>-</td><td>16,081,633</td></tr>
+                <tr><td>변동계수 (CV)</td><td>1.90%</td><td>-</td><td>1.93%</td></tr>
             </tbody>
         </table>
 
+        <h3>3-4. 신뢰구간 및 분위수</h3>
+        <table>
+            <thead>
+                <tr><th>분위수</th><th>5%</th><th>10%</th><th>25%</th><th style="background:#2d5a9e;">50% (중앙값)</th><th>75%</th><th>90%</th><th>95%</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>총매출</strong></td>
+                    <td>8.09억</td><td>8.14억</td><td>8.23억</td>
+                    <td><strong>8.34억</strong></td>
+                    <td>8.45억</td><td>8.55억</td><td>8.62억</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="callout green">
+            <strong>90% 신뢰구간:</strong> 2월 총매출은 <strong>8.09억 ~ 8.62억</strong> 범위 내에 90% 확률로 실현될 것으로 추정됩니다.
+        </div>
 
-        <!-- ============================================ -->
-        <!-- SECTION 4: 월별 종합 비교 -->
-        <!-- ============================================ -->
+        <div class="result-box">
+            <div class="label">2월 예상 총매출 (Monte Carlo 중앙값)</div>
+            <div class="amount">약 8.34억 원</div>
+            <div class="range">90% CI: 8.09억 ~ 8.62억 원 | &sigma; = 1,608만</div>
+        </div>
+
+        <h3>3-5. 2월 매출 확률 분포</h3>
+        <div class="chart-card">
+            <div class="chart-title">2월 총매출 확률 분포 (N=100,000 시뮬레이션)</div>
+            <div class="chart-wrapper"><canvas id="febTotalHist"></canvas></div>
+        </div>
+
+        <h3>3-6. 2월 목표 달성 확률</h3>
+        <table>
+            <thead><tr><th style="text-align:left;">매출 목표</th><th>달성 확률</th><th>확률 바</th></tr></thead>
+            <tbody>
+                <tr><td>총매출 &ge; 7.5억</td><td><strong>100.0%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:100%; background:var(--success);">100.0%</div></div></td></tr>
+                <tr><td>총매출 &ge; 8.0억</td><td><strong>98.8%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:98.8%; background:var(--success);">98.8%</div></div></td></tr>
+                <tr><td>총매출 &ge; 8.5억</td><td><strong>16.9%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:16.9%; background:var(--accent);">16.9%</div></div></td></tr>
+                <tr><td>총매출 &ge; 9.0억</td><td><strong>&approx; 0%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:1%; background:var(--danger);">&approx;0%</div></div></td></tr>
+                <tr><td>객실매출 &ge; 7.5억 (AZMT 근접)</td><td><strong>76.6%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:76.6%; background:var(--primary-light);">76.6%</div></div></td></tr>
+            </tbody>
+        </table>
+
+        <h3>3-7. 2월 추정 KPI vs AZMT 목표</h3>
+        <table>
+            <thead><tr><th style="text-align:left;">KPI</th><th>추정값 (Mean)</th><th>AZMT 목표</th><th>달성률</th></tr></thead>
+            <tbody>
+                <tr><td>판매객실</td><td>6,295실</td><td>-</td><td>-</td></tr>
+                <tr><td>OCC (28일 기준)</td><td>64.2%</td><td>35.0%</td><td><span class="badge green">183.6%</span></td></tr>
+                <tr><td>월 매출 (VAT제외 객실)</td><td>~6.92억</td><td>6.82억</td><td><span class="badge green">101.4%</span></td></tr>
+            </tbody>
+        </table>
+        <div class="callout green">
+            <strong>2월 핵심:</strong> 설 연휴 효과로 OCC 목표 대비 184% 초과 달성 전망. AZMT 월 매출 목표(6.82억, VAT제외) <strong>최초 달성 가능성 76.6%</strong>. 개관 이래 최고 월매출 기록 예상.
+        </div>
+
+
+        <!-- SECTION 4: 3월 -->
         <div class="page-break"></div>
         <div class="section-divider">
             <div class="num">4</div>
-            <h2>월별 매출 추이 종합 비교</h2>
+            <h2>3월 비수기 예상매출 분석</h2>
         </div>
 
-        <h3>4-1. 매출 추이 (실적 + 추정)</h3>
+        <h3>4-1. 3월 구조 분석</h3>
         <table>
-            <thead>
-                <tr>
-                    <th style="text-align:left;">월</th>
-                    <th>객실매출</th>
-                    <th>F&B매출</th>
-                    <th>합계</th>
-                    <th>전월비</th>
-                    <th>구분</th>
-                </tr>
-            </thead>
+            <thead><tr><th style="text-align:left;">구분</th><th>일수</th><th>OCC 분포</th><th>적용 감쇠</th></tr></thead>
             <tbody>
-                <tr>
-                    <td>11월</td><td>4,828만</td><td>-</td><td>4,828만</td>
-                    <td>-</td><td><span class="badge yellow">준비기</span></td>
-                </tr>
-                <tr>
-                    <td>12월</td><td>3.73억</td><td>4,973만</td><td>4.23억</td>
-                    <td>-</td><td><span class="badge blue">실적</span></td>
-                </tr>
-                <tr class="highlight">
-                    <td>1월</td><td>6.19억</td><td>8,800만</td><td>7.07억</td>
-                    <td>+67.3%</td><td><span class="badge green">최고실적</span></td>
-                </tr>
-                <tr>
-                    <td><strong>2월 (추정)</strong></td><td><strong>7.61억</strong></td><td><strong>8,019만</strong></td><td><strong>8.41억</strong></td>
-                    <td><strong>+19.0%</strong></td><td><span class="badge blue">추정</span></td>
-                </tr>
-                <tr>
-                    <td><strong>3월 (추정)</strong></td><td><strong>2.11억</strong></td><td><strong>2,891만</strong></td><td><strong>2.40억</strong></td>
-                    <td style="color:var(--danger);"><strong>-71.5%</strong></td><td><span class="badge red">비수기 추정</span></td>
-                </tr>
+                <tr><td>평일 (Mon-Thu)</td><td>17일</td><td>Beta(5.53, 49.73), &mu;=10.0%</td><td>3/16 이후 감쇠</td></tr>
+                <tr><td>주말 (Fri-Sun)</td><td>14일</td><td>Beta(6.97, 14.14), &mu;=33.0%</td><td>3/16 이후 감쇠</td></tr>
+                <tr class="total-row"><td>합계</td><td>31일</td><td>총 가용: 10,850실</td><td>-</td></tr>
             </tbody>
         </table>
-
-        <h3>4-2. 매출 흐름 시각화</h3>
-        <div class="compare-row">
-            <div class="compare-item">
-                <div class="month">12월</div>
-                <div class="amount">4.23억</div>
-            </div>
-            <div class="compare-arrow up">→</div>
-            <div class="compare-item" style="background:#f0fff4;">
-                <div class="month">1월 (최고)</div>
-                <div class="amount" style="color:var(--success);">7.07억</div>
-            </div>
-            <div class="compare-arrow up">→</div>
-            <div class="compare-item" style="background:#ebf5ff;">
-                <div class="month">2월 (추정)</div>
-                <div class="amount">8.41억</div>
-            </div>
-            <div class="compare-arrow down">→</div>
-            <div class="compare-item" style="background:#fef2f2;">
-                <div class="month">3월 (비수기)</div>
-                <div class="amount" style="color:var(--danger);">2.40억</div>
-            </div>
-        </div>
 
         <div class="callout red">
-            <strong>2월 → 3월 매출 낙폭: 약 -71.5% (6.01억 감소)</strong><br>
-            2월 추정 8.41억에서 3월 추정 2.40억으로, 동계 성수기 종료에 따른 급격한 매출 하락이 예상됩니다. 이는 평창 지역 리조트/호텔의 구조적 계절 특성으로, 비수기 경영 전략이 필수적입니다.
+            <strong>사전예약 시그널:</strong> 3월 사전예약 ADR <strong>93,995원</strong>은 개관 이래 최저치 (12월 139,215 &rarr; 1월 111,237 &rarr; 2월 124,405 &rarr; 3월 93,995). 비수기 가격 경쟁 심화를 반영.
         </div>
 
-        <h3>4-3. 주요 KPI 비교</h3>
+        <h3>4-2. Monte Carlo 시뮬레이션 결과</h3>
+        <div class="kpi-row">
+            <div class="kpi-box danger">
+                <div class="label">판매객실 (평균)</div>
+                <div class="value">2,019실</div>
+                <div class="sub">&sigma; = 133실</div>
+            </div>
+            <div class="kpi-box">
+                <div class="label">월 OCC (평균)</div>
+                <div class="value">18.6%</div>
+                <div class="sub">AZMT 35% 대비 53%</div>
+            </div>
+            <div class="kpi-box accent">
+                <div class="label">객실매출 (평균)</div>
+                <div class="value">1.92억</div>
+                <div class="sub">&sigma; = 1,422만</div>
+            </div>
+            <div class="kpi-box">
+                <div class="label">F&amp;B매출 (평균)</div>
+                <div class="value">2,625만</div>
+                <div class="sub">26,248,124원</div>
+            </div>
+        </div>
+
         <table>
             <thead>
-                <tr><th style="text-align:left;">KPI</th><th>1월(실적)</th><th>2월(추정)</th><th>3월(추정)</th><th>AZMT 목표</th></tr>
+                <tr><th style="text-align:left;">통계량</th><th>객실매출 (VAT포함)</th><th>F&amp;B매출</th><th>총매출</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>평균 (Mean)</td><td>191,746,056</td><td>26,248,124</td><td><strong>217,994,180</strong></td></tr>
+                <tr><td>중앙값 (Median)</td><td>191,386,552</td><td>-</td><td><strong>217,573,467</strong></td></tr>
+                <tr><td>표준편차 (&sigma;)</td><td>14,220,381</td><td>-</td><td>16,878,280</td></tr>
+                <tr><td>변동계수 (CV)</td><td>7.42%</td><td>-</td><td>7.74%</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout yellow">
+            <strong>변동계수(CV) 비교:</strong> 3월 CV=7.74%로, 2월(1.93%) 대비 <strong>4배 높은 불확실성</strong>. 비수기 매출의 예측 난이도가 높아 넓은 신뢰구간으로 나타남.
+        </div>
+
+        <h3>4-3. 신뢰구간 및 분위수</h3>
+        <table>
+            <thead>
+                <tr><th>분위수</th><th>5%</th><th>10%</th><th>25%</th><th style="background:#2d5a9e;">50% (중앙값)</th><th>75%</th><th>90%</th><th>95%</th></tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>판매객실</td>
-                    <td>5,563실</td><td>6,229실</td><td>2,224실</td><td>-</td>
+                    <td><strong>총매출</strong></td>
+                    <td>1.91억</td><td>1.97억</td><td>2.06억</td>
+                    <td><strong>2.18억</strong></td>
+                    <td>2.29억</td><td>2.40억</td><td>2.46억</td>
                 </tr>
-                <tr>
-                    <td>OCC</td>
-                    <td>52.9%</td><td>63.6%</td><td>20.5%</td><td>35.0%</td>
-                </tr>
-                <tr>
-                    <td>ADR (VAT포함)</td>
-                    <td>111,237원</td><td>122,142원</td><td>95,000원</td><td>125,083원*</td>
-                </tr>
-                <tr>
-                    <td>RevPAR (VAT제외)</td>
-                    <td>53,485원</td><td>70,570원</td><td>17,704원</td><td>39,799원</td>
-                </tr>
-                <tr>
-                    <td>객실매출</td>
-                    <td>6.19억</td><td>7.61억</td><td>2.11억</td><td>-</td>
-                </tr>
-                <tr>
-                    <td>F&B매출</td>
-                    <td>8,800만</td><td>8,019만</td><td>2,891만</td><td>-</td>
-                </tr>
-                <tr class="total-row">
-                    <td>합계</td>
-                    <td>7.07억</td><td>8.41억</td><td>2.40억</td><td>6.82억</td>
-                </tr>
+            </tbody>
+        </table>
+        <div class="callout blue">
+            <strong>90% 신뢰구간:</strong> 3월 총매출은 <strong>1.91억 ~ 2.46억</strong> 범위 내에 90% 확률로 실현될 것으로 추정.
+        </div>
+
+        <div class="result-box orange">
+            <div class="label">3월 예상 총매출 (Monte Carlo 중앙값)</div>
+            <div class="amount">약 2.18억 원</div>
+            <div class="range">90% CI: 1.91억 ~ 2.46억 원 | &sigma; = 1,688만</div>
+        </div>
+
+        <h3>4-4. 3월 매출 확률 분포</h3>
+        <div class="chart-card">
+            <div class="chart-title">3월 총매출 확률 분포 (N=100,000 시뮬레이션)</div>
+            <div class="chart-wrapper"><canvas id="marTotalHist"></canvas></div>
+        </div>
+
+        <h3>4-5. 3월 목표 달성 확률</h3>
+        <table>
+            <thead><tr><th style="text-align:left;">매출 목표</th><th>달성 확률</th><th>확률 바</th></tr></thead>
+            <tbody>
+                <tr><td>총매출 &ge; 1.5억</td><td><strong>100.0%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:100%; background:var(--success);">100.0%</div></div></td></tr>
+                <tr><td>총매출 &ge; 2.0억</td><td><strong>85.8%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:85.8%; background:var(--success);">85.8%</div></div></td></tr>
+                <tr><td>총매출 &ge; 2.5억</td><td><strong>3.3%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:5%; background:var(--danger);">3.3%</div></div></td></tr>
+                <tr><td>총매출 &ge; 3.0억</td><td><strong>&approx; 0%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:1%; background:var(--danger);">&approx;0%</div></div></td></tr>
+                <tr><td>AZMT 월 목표 (6.82억)</td><td><strong>0.00%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:1%; background:var(--danger);">0.0%</div></div></td></tr>
+            </tbody>
+        </table>
+
+        <h3>4-6. 3월 KPI vs AZMT 목표</h3>
+        <table>
+            <thead><tr><th style="text-align:left;">KPI</th><th>추정값</th><th>AZMT 목표</th><th>달성률</th></tr></thead>
+            <tbody>
+                <tr><td>OCC</td><td>18.6%</td><td>35.0%</td><td><span class="badge red">53.1%</span></td></tr>
+                <tr><td>ADR (VAT제외)</td><td>~86,364원</td><td>113,712원</td><td><span class="badge red">76.0%</span></td></tr>
+                <tr><td>RevPAR (VAT제외)</td><td>~16,063원</td><td>39,799원</td><td><span class="badge red">40.4%</span></td></tr>
+                <tr><td>월매출 (VAT제외)</td><td>~1.98억</td><td>6.82억</td><td><span class="badge red">29.0%</span></td></tr>
             </tbody>
         </table>
 
 
-        <!-- ============================================ -->
-        <!-- SECTION 5: 시사점 및 대응 전략 -->
-        <!-- ============================================ -->
+        <!-- SECTION 5: 민감도 + VaR -->
         <div class="page-break"></div>
         <div class="section-divider">
             <div class="num">5</div>
+            <h2>민감도 분석 및 리스크 평가</h2>
+        </div>
+
+        <h3>5-1. OCC 시나리오 민감도 (3월)</h3>
+        <table>
+            <thead>
+                <tr><th style="text-align:left;">시나리오</th><th>주중 OCC</th><th>주말 OCC</th><th>월 OCC</th><th>판매객실</th><th>총매출</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>비관적</td><td>6%</td><td>20%</td><td>12.3%</td><td>1,337실</td><td><span class="badge red">1.44억</span></td></tr>
+                <tr><td>보수적</td><td>8%</td><td>25%</td><td>15.7%</td><td>1,701실</td><td><span class="badge yellow">1.84억</span></td></tr>
+                <tr class="highlight"><td><strong>기본 (MC)</strong></td><td>10%</td><td>33%</td><td>20.4%</td><td>2,212실</td><td><span class="badge blue">2.39억</span></td></tr>
+                <tr><td>낙관적</td><td>13%</td><td>38%</td><td>24.3%</td><td>2,636실</td><td><span class="badge green">2.85억</span></td></tr>
+                <tr><td>최낙관</td><td>16%</td><td>45%</td><td>29.1%</td><td>3,157실</td><td><span class="badge green">3.41억</span></td></tr>
+            </tbody>
+        </table>
+
+        <div class="chart-card">
+            <div class="chart-title">3월 OCC 시나리오별 매출 민감도</div>
+            <div class="chart-wrapper"><canvas id="sensitivityChart"></canvas></div>
+        </div>
+
+        <h3>5-2. ADR 시나리오 민감도 (기본 OCC 고정)</h3>
+        <table>
+            <thead><tr><th style="text-align:left;">ADR (VAT포함)</th><th>객실매출</th><th>F&amp;B</th><th>총매출</th><th>기본 대비</th></tr></thead>
+            <tbody>
+                <tr><td>80,000 (극비수기)</td><td>1.77억</td><td>0.29억</td><td>2.06억</td><td style="color:var(--danger);">-14%</td></tr>
+                <tr><td>85,000</td><td>1.88억</td><td>0.29억</td><td>2.17억</td><td style="color:var(--danger);">-9%</td></tr>
+                <tr><td>90,000</td><td>1.99억</td><td>0.29억</td><td>2.28억</td><td style="color:var(--danger);">-5%</td></tr>
+                <tr class="highlight"><td><strong>95,000 (기본)</strong></td><td>2.10억</td><td>0.29억</td><td>2.39억</td><td>-</td></tr>
+                <tr><td>100,000</td><td>2.21억</td><td>0.29억</td><td>2.50억</td><td style="color:var(--success);">+5%</td></tr>
+                <tr><td>110,000 (주말 프리미엄)</td><td>2.43억</td><td>0.29억</td><td>2.72억</td><td style="color:var(--success);">+14%</td></tr>
+            </tbody>
+        </table>
+
+        <h3>5-3. VaR (Value at Risk) 분석</h3>
+        <p>VaR는 주어진 신뢰수준에서 발생 가능한 최소 매출(하방 리스크)을 정량화합니다.</p>
+        <table>
+            <thead><tr><th style="text-align:left;">지표</th><th>2월</th><th>3월</th><th>설명</th></tr></thead>
+            <tbody>
+                <tr><td>기대값 (Mean)</td><td>834,579,584</td><td>217,994,180</td><td>평균 예상 매출</td></tr>
+                <tr><td>VaR 95%</td><td><strong>808,962,574</strong></td><td><strong>191,018,270</strong></td><td>95% 확률로 이 이상 달성</td></tr>
+                <tr><td>VaR 99%</td><td><strong>799,191,587</strong></td><td><strong>180,830,476</strong></td><td>99% 확률로 이 이상 달성</td></tr>
+                <tr><td>CVaR 95%<br>(Expected Shortfall)</td><td>802,987,712</td><td>184,711,919</td><td>하위 5% 시나리오 평균</td></tr>
+            </tbody>
+        </table>
+        <div class="callout blue">
+            <strong>해석:</strong> 3월 매출이 극도로 부진한 경우(하위 5%)에도 최소 <strong>1.91억</strong>은 확보 가능. 하위 1% 극단 시나리오에서도 <strong>1.81억</strong> 이상. 고정비 충당 가능 여부 판단에 활용.
+        </div>
+
+
+        <!-- SECTION 6: 종합 -->
+        <div class="page-break"></div>
+        <div class="section-divider">
+            <div class="num">6</div>
+            <h2>월별 매출 추이 종합 비교</h2>
+        </div>
+
+        <h3>6-1. 매출 흐름</h3>
+        <div class="compare-row">
+            <div class="compare-item">
+                <div class="month">12월 (실적)</div>
+                <div class="amount">4.23억</div>
+            </div>
+            <div class="compare-arrow up">&rarr;</div>
+            <div class="compare-item" style="background:#f0fff4;">
+                <div class="month">1월 (최고실적)</div>
+                <div class="amount" style="color:var(--success);">7.07억</div>
+            </div>
+            <div class="compare-arrow up">&rarr;</div>
+            <div class="compare-item" style="background:#ebf5ff;">
+                <div class="month">2월 (MC추정)</div>
+                <div class="amount">8.35억</div>
+            </div>
+            <div class="compare-arrow down">&rarr;</div>
+            <div class="compare-item" style="background:#fef2f2;">
+                <div class="month">3월 (MC추정)</div>
+                <div class="amount" style="color:var(--danger);">2.18억</div>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-title">월별 매출 추이 (실적 + MC 추정, 90% CI 포함)</div>
+            <div class="chart-wrapper"><canvas id="monthlyTrend"></canvas></div>
+        </div>
+
+        <h3>6-2. KPI 종합 비교</h3>
+        <table>
+            <thead>
+                <tr><th style="text-align:left;">KPI</th><th>12월(실적)</th><th>1월(실적)</th><th>2월(MC)</th><th>3월(MC)</th><th>AZMT</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>판매객실</td><td>2,680실</td><td>5,563실</td><td>6,295실</td><td>2,019실</td><td>-</td></tr>
+                <tr><td>OCC</td><td>23.8%</td><td>52.9%</td><td>64.2%</td><td>18.6%</td><td>35.0%</td></tr>
+                <tr><td>ADR(VAT포함)</td><td>139,215</td><td>111,237</td><td>~122,000</td><td>~95,000</td><td>125,083*</td></tr>
+                <tr><td>객실매출</td><td>3.73억</td><td>6.19억</td><td>7.61억</td><td>1.92억</td><td>-</td></tr>
+                <tr><td>F&amp;B매출</td><td>4,973만</td><td>8,800만</td><td>7,387만</td><td>2,625만</td><td>-</td></tr>
+                <tr class="total-row"><td>합계</td><td>4.23억</td><td>7.07억</td><td>8.35억</td><td>2.18억</td><td>6.82억</td></tr>
+                <tr><td>전월비</td><td>-</td><td>+67%</td><td>+18%</td><td style="color:var(--danger);"><strong>-74%</strong></td><td>-</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout red">
+            <strong>2월 &rarr; 3월 매출 낙폭: -74% (약 6.17억 감소)</strong><br>
+            동계 성수기 종료에 따른 구조적 계절 변동. 2월 8.35억에서 3월 2.18억으로, 약 1/4 수준까지 하락.
+        </div>
+
+        <h3>6-3. 불확실성 비교</h3>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="chart-title">2월 객실매출 분포 (CV=1.90%)</div>
+                <div class="chart-wrapper"><canvas id="febRevHist"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">3월 객실매출 분포 (CV=7.42%)</div>
+                <div class="chart-wrapper"><canvas id="marRevHist"></canvas></div>
+            </div>
+        </div>
+
+
+        <!-- SECTION 7 -->
+        <div class="page-break"></div>
+        <div class="section-divider">
+            <div class="num">7</div>
             <h2>시사점 및 대응 전략</h2>
         </div>
 
-        <h3>5-1. 2월 시사점</h3>
+        <h3>7-1. 2월 시사점</h3>
         <ul class="styled">
-            <li><strong>개관 이래 최고 월매출 달성 전망:</strong> 설 연휴 효과로 2월 매출 약 8.4억원 예상, 1월(7.07억) 대비 +19% 성장.</li>
-            <li><strong>AZMT 월 목표 최초 달성 가능:</strong> 객실매출 기준 VAT제외 약 6.92억으로 목표(6.82억) 초과 가능성.</li>
-            <li><strong>ADR 회복 긍정적:</strong> 설 연휴 프리미엄으로 ADR 124,405원 기록, 1월(111,237원) 대비 +11.8% 상승.</li>
-            <li><strong>다만, 설 연휴 효과 제외 시 실질 경쟁력 평가 필요:</strong> 비연휴 기간 OCC ~42% 수준으로, 구조적 수요 기반은 아직 제한적.</li>
+            <li><strong>개관 이래 최고 매출:</strong> MC 추정 8.35억으로, 1월(7.07억) 대비 +18% 성장. 8.0억 달성 확률 98.8%.</li>
+            <li><strong>AZMT 목표 최초 달성 가능:</strong> 객실매출(VAT제외) 기준 AZMT 목표 6.82억 달성 확률 76.6%.</li>
+            <li><strong>설 연휴 의존도 주의:</strong> 비연휴 평일 OCC ~38.6%는 연휴 기간(~76%) 대비 절반 수준. 구조적 수요 기반은 아직 제한적.</li>
         </ul>
 
-        <h3>5-2. 3월 비수기 대응 전략</h3>
+        <h3>7-2. 3월 비수기 핵심 대응</h3>
 
-        <h4>A. 객단가(ADR) 방어 전략</h4>
+        <h4>A. 가동률(OCC) 제고 (주중 OCC 10% &rarr; 13% 목표)</h4>
         <ul class="styled">
-            <li><strong>바닥 가격 설정:</strong> ADR 90,000원 이하 할인 지양. 무분별한 가격 경쟁은 브랜드 가치 훼손. 최저 가격 가이드라인 설정 필요.</li>
-            <li><strong>패키지 상품 개발:</strong> 객실 + F&B + 체험을 묶은 패키지로 체감 가치 상승 유도 (예: "평창 봄맞이 힐링 패키지" 1박 15만원대).</li>
-            <li><strong>장기 투숙 할인:</strong> 2박 이상 연박 시 10~15% 할인. 주중 체류 일수 증가 유도.</li>
+            <li><strong>워케이션 패키지:</strong> 주중 장기투숙(2~3박) 할인율 15~20% 적용. 주중 OCC 3%p 증가 시 월매출 약 2,000만원 추가.</li>
+            <li><strong>단체/MICE 유치:</strong> 기업 워크숍, 학교 MT, 세미나 등. Group 비율 0%인 현 상황에서 비수기에 B2B 채널 구축 필수.</li>
         </ul>
 
-        <h4>B. 가동률(OCC) 제고 전략</h4>
+        <h4>B. 객단가(ADR) 방어 (95,000원 &rarr; 100,000원 목표)</h4>
         <ul class="styled">
-            <li><strong>워케이션(Workation) 프로모션:</strong> 주중 비즈니스+레저 고객 유치. 와이파이, 업무 공간, 장기 할인 패키지 조합.</li>
-            <li><strong>단체/MICE 유치:</strong> 기업 워크숍, 세미나, 학교 MT 등 단체 수요 집중 영업. Group 비율 0% 현황 해소 시급.</li>
-            <li><strong>OTA 프로모션 강화:</strong> 여기어때, 야놀자, Booking.com 특가전 참여. 비수기 노출 확대.</li>
+            <li><strong>바닥 가격 가이드라인:</strong> ADR 90,000원 이하 진입 방지. 가격 경쟁보다 가치 제안(패키지) 중심.</li>
+            <li>ADR 5,000원 인상 시 매출 효과: 2,019실 &times; 5,000원 = <strong>+약 1,010만원/월</strong></li>
         </ul>
 
-        <h4>C. F&B 매출 유지 전략</h4>
+        <h4>C. 비용 관리 (손익분기 매출 하회 대비)</h4>
         <ul class="styled">
-            <li><strong>외부 고객 유치:</strong> 투숙객 이외 지역 주민, 관광객 대상 레스토랑 별도 마케팅.</li>
-            <li><strong>시즌 메뉴 개발:</strong> 봄 시즌 한정 메뉴로 F&B 매장 방문 동기 부여.</li>
-            <li><strong>룸서비스 활성화:</strong> 1월 룸서비스 매출 +218.8% 성장 모멘텀 유지. 로봇 배달 서비스 지속 활용.</li>
+            <li><strong>VaR 95% 기준 최소 매출 1.91억</strong>을 전제로 한 비용 구조 조정 필요.</li>
+            <li>변동비(일용인건비, 식자재) 축소 및 에너지 비용(난방) 자연 감소 활용.</li>
         </ul>
 
-        <h4>D. 비용 관리</h4>
-        <ul class="styled">
-            <li><strong>변동비 축소:</strong> 매출 감소에 비례한 인건비(일용직), 식자재, 소모품 조정.</li>
-            <li><strong>에너지 비용 절감:</strong> 겨울 난방 시즌 종료에 따른 전력비/수도광열비 자연 감소 예상.</li>
-            <li><strong>고정비 관리:</strong> 보험료, 임차료 등 고정비 대비 손익분기 매출 지속 모니터링.</li>
-        </ul>
-
-        <div class="callout blue">
-            <strong>비수기 핵심 경영 과제:</strong> 3월~4월은 동계 시즌 매출의 약 1/3 수준으로, <strong>비용 관리</strong>와 <strong>새로운 수요 창출</strong>이 동시에 요구됩니다. 특히 Group/MICE 매출이 0%인 현 상황에서, 비수기에 B2B 채널 개발에 집중하면 4분기 성수기 재진입 시 안정적 매출 기반을 확보할 수 있습니다.
-        </div>
+        <h4>D. 매출 시나리오별 경영 대응</h4>
+        <table>
+            <thead><tr><th style="text-align:left;">시나리오</th><th>매출</th><th>확률</th><th>경영 대응</th></tr></thead>
+            <tbody>
+                <tr><td>하방 리스크 (P5)</td><td>1.91억</td><td>5%</td><td>긴급 비용 절감, 비가동 객실 확대</td></tr>
+                <tr><td>보수적 (P25)</td><td>2.06억</td><td>25%</td><td>변동비 축소, 프로모션 강화</td></tr>
+                <tr class="highlight"><td><strong>기본 (P50)</strong></td><td><strong>2.18억</strong></td><td>50%</td><td>현행 운영 + 주중 프로모션</td></tr>
+                <tr><td>낙관적 (P75)</td><td>2.29억</td><td>75%</td><td>단체 유치 성과 시 달성 가능</td></tr>
+                <tr><td>상방 (P95)</td><td>2.46억</td><td>95%</td><td>복수 단체 + 주말 호조 시</td></tr>
+            </tbody>
+        </table>
 
     </div>
 
     <!-- Footer -->
     <div class="report-footer">
-        <p>본 보고서는 호텔어라운드 평창 운영 대시보드 데이터(2026.02.18 기준)를 기반으로 작성되었습니다.</p>
-        <p>실제 매출은 기상, 예약 트렌드, 프로모션 효과 등에 따라 달라질 수 있습니다.</p>
-        <p style="margin-top:8px; opacity:0.7;">HOTEL AROUND PYEONGCHANG &copy; 2026 | Confidential</p>
+        <p><strong>분석 모델:</strong> Beta Distribution (OCC) + Log-Normal Distribution (ADR) + Exponential Decay (Seasonality) | Monte Carlo N=100,000</p>
+        <p>본 보고서는 운영 대시보드 데이터(2026.02.18 기준)와 확률 모델을 기반으로 작성되었습니다. 실제 매출은 기상, 프로모션, 단체 예약 등에 따라 달라질 수 있습니다.</p>
+        <p style="margin-top:6px; opacity:0.6;">HOTEL AROUND PYEONGCHANG &copy; 2026 | Confidential</p>
     </div>
 
 </div>
+
+<!-- CHART.JS -->
+<script>
+const colors = {
+    blue: 'rgba(45,90,158,0.85)', lightBlue: 'rgba(45,90,158,0.35)',
+    orange: 'rgba(230,168,23,0.85)', lightOrange: 'rgba(230,168,23,0.35)',
+    red: 'rgba(220,53,69,0.85)', lightRed: 'rgba(220,53,69,0.25)',
+    green: 'rgba(40,167,69,0.85)', lightGreen: 'rgba(40,167,69,0.25)',
+};
+
+// Beta PDF
+function logGamma(z) {
+    if (z < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * z)) - logGamma(1 - z);
+    z -= 1;
+    const c = [0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,
+        -176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+    let x = c[0];
+    for (let i = 1; i < 9; i++) x += c[i] / (z + i);
+    const t = z + 7.5;
+    return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+}
+function betaPDF(x, a, b) {
+    if (x <= 0 || x >= 1) return 0;
+    return Math.exp((a-1)*Math.log(x) + (b-1)*Math.log(1-x) - logGamma(a) - logGamma(b) + logGamma(a+b));
+}
+
+function drawBetaChart(id, params) {
+    const xs = Array.from({length:101}, (_,i) => i);
+    const datasets = params.map(p => ({
+        label: p.label,
+        data: xs.map(x => betaPDF(x/100, p.alpha, p.beta) / 100),
+        borderColor: p.color, backgroundColor: p.fill,
+        borderWidth: 2, fill: true, pointRadius: 0, tension: 0.3
+    }));
+    new Chart(document.getElementById(id), {
+        type: 'line',
+        data: { labels: xs.map(x => x+'%'), datasets },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: { x: { title: { display: true, text: 'OCC (%)' }, ticks: { maxTicksLimit: 11 } }, y: { title: { display: true, text: 'PDF' }, beginAtZero: true } },
+            plugins: { legend: { position: 'top' } }
+        }
+    });
+}
+
+drawBetaChart('febOccBeta', [
+    { label: '평일 Beta(12.25, 19.53)', alpha: 12.25, beta: 19.53, color: colors.blue, fill: colors.lightBlue },
+    { label: '주말 Beta(12.78, 11.09)', alpha: 12.78, beta: 11.09, color: colors.orange, fill: colors.lightOrange }
+]);
+drawBetaChart('marOccBeta', [
+    { label: '평일 Beta(5.53, 49.73)', alpha: 5.53, beta: 49.73, color: colors.blue, fill: colors.lightBlue },
+    { label: '주말 Beta(6.97, 14.14)', alpha: 6.97, beta: 14.14, color: colors.orange, fill: colors.lightOrange }
+]);
+
+// Histograms
+function drawHist(id, labels, data, color, fillColor) {
+    new Chart(document.getElementById(id), {
+        type: 'bar',
+        data: { labels, datasets: [{ label: '확률(%)', data, backgroundColor: fillColor, borderColor: color, borderWidth: 1, borderRadius: 2 }] },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.raw.toFixed(1)+'%' } } },
+            scales: { x: { title: { display: true, text: '매출 (억원)' }, ticks: { maxTicksLimit: 8, font: { size: 10 } } }, y: { title: { display: true, text: '확률 (%)' }, beginAtZero: true } }
+        }
+    });
+}
+
+const febBins = ['7.74','7.84','7.94','8.04','8.13','8.23','8.33','8.43','8.53','8.63','8.73','8.83','8.93','9.02','9.12'];
+const febPct  = [0.0,0.3,1.9,6.8,15.7,23.2,23.0,16.3,8.4,3.1,1.0,0.2,0.0,0.0,0.0];
+drawHist('febTotalHist', febBins, febPct, colors.blue, colors.lightBlue);
+
+const marBins = ['1.53','1.63','1.73','1.82','1.92','2.02','2.12','2.22','2.32','2.41','2.51','2.61','2.71','2.81','2.91'];
+const marPct  = [0.0,0.2,1.1,4.6,11.5,19.5,22.9,19.6,12.1,5.6,2.0,0.6,0.1,0.0,0.0];
+drawHist('marTotalHist', marBins, marPct, colors.orange, colors.lightOrange);
+
+const febRevL = ['7.05','7.14','7.23','7.31','7.40','7.49','7.58','7.67','7.76','7.84','7.93','8.02','8.11','8.20','8.29'];
+const febRevP = [0.0,0.2,0.4,1.9,5.8,10.3,12.2,9.9,5.8,2.4,0.8,0.2,0.0,0.0,0.0];
+drawHist('febRevHist', febRevL, febRevP, colors.blue, colors.lightBlue);
+
+const marRevL = ['1.36','1.44','1.52','1.61','1.69','1.78','1.86','1.95','2.03','2.12','2.20','2.28','2.37','2.45','2.54'];
+const marRevP = [0.0,0.1,0.3,1.4,4.4,8.7,11.8,10.9,7.4,3.5,1.3,0.4,0.1,0.0,0.0];
+drawHist('marRevHist', marRevL, marRevP, colors.red, colors.lightRed);
+
+// Sensitivity
+new Chart(document.getElementById('sensitivityChart'), {
+    type: 'bar',
+    data: {
+        labels: ['비관적\n(6%/20%)', '보수적\n(8%/25%)', '기본\n(10%/33%)', '낙관적\n(13%/38%)', '최낙관\n(16%/45%)'],
+        datasets: [{ label: '총매출 (억원)', data: [1.44,1.84,2.39,2.85,3.41], backgroundColor: [colors.red,'rgba(230,168,23,0.5)',colors.blue,'rgba(40,167,69,0.4)',colors.green], borderRadius: 6 }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.raw.toFixed(2)+'억원' } } },
+        scales: { x: { title: { display: true, text: '매출 (억원)' }, beginAtZero: true, max: 4 } }
+    }
+});
+
+// Monthly Trend
+new Chart(document.getElementById('monthlyTrend'), {
+    type: 'bar',
+    data: {
+        labels: ['11월', '12월', '1월', '2월 (MC)', '3월 (MC)'],
+        datasets: [
+            { label: '총매출 (억원)', data: [0.48,4.23,7.07,8.35,2.18], backgroundColor: ['rgba(113,128,150,0.5)',colors.lightBlue,colors.green,colors.blue,colors.red], borderRadius: 6 },
+            { label: '90% CI 상한', data: [null,null,null,8.62,2.46], type: 'line', borderColor: 'rgba(45,90,158,0.4)', borderDash: [5,5], pointStyle: 'triangle', pointRadius: 6, pointBackgroundColor: 'rgba(45,90,158,0.6)', fill: false },
+            { label: '90% CI 하한', data: [null,null,null,8.09,1.91], type: 'line', borderColor: 'rgba(220,53,69,0.4)', borderDash: [5,5], pointStyle: 'triangle', pointRadius: 6, pointRotation: 180, pointBackgroundColor: 'rgba(220,53,69,0.6)', fill: false }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { tooltip: { callbacks: { label: c => c.dataset.label+': '+(c.raw?c.raw.toFixed(2):'-')+'억' } } },
+        scales: { y: { title: { display: true, text: '매출 (억원)' }, beginAtZero: true } }
+    }
+});
+</script>
 
 </body>
 </html>
