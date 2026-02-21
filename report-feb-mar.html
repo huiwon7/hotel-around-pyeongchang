@@ -1,849 +1,834 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>호텔어라운드 평창 - 2~3월 예상매출 보고서 (확률 모델)</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <style>
-        @media print {
-            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .page-break { page-break-before: always; }
-            .no-print { display: none; }
-            .chart-wrapper { max-height: 280px; }
-        }
-
-        :root {
-            --primary: #1a365d;
-            --primary-light: #2d5a9e;
-            --accent: #e6a817;
-            --danger: #dc3545;
-            --success: #28a745;
-            --bg: #ffffff;
-            --text: #2d3748;
-            --text-light: #718096;
-            --border: #e2e8f0;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Malgun Gothic', 'Segoe UI', sans-serif;
-            color: var(--text);
-            line-height: 1.7;
-            background: #f8f9fa;
-        }
-
-        .report {
-            max-width: 960px;
-            margin: 0 auto;
-            background: var(--bg);
-            box-shadow: 0 0 40px rgba(0,0,0,0.08);
-        }
-
-        .cover-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            padding: 48px 60px;
-            position: relative;
-        }
-        .cover-header .hotel-name { font-size: 13px; letter-spacing: 4px; opacity: 0.6; margin-bottom: 12px; }
-        .cover-header h1 { font-size: 26px; font-weight: 800; line-height: 1.4; margin-bottom: 6px; }
-        .cover-header .subtitle { font-size: 14px; opacity: 0.75; }
-        .cover-meta { display: flex; gap: 24px; margin-top: 20px; font-size: 12px; opacity: 0.6; flex-wrap: wrap; }
-
-        .content { padding: 40px 60px; }
-
-        .section-divider { display: flex; align-items: center; gap: 14px; margin: 44px 0 20px; }
-        .section-divider .num {
-            background: var(--primary); color: white;
-            width: 34px; height: 34px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 15px; font-weight: 700; flex-shrink: 0;
-        }
-        .section-divider h2 { font-size: 19px; color: var(--primary); }
-
-        h3 { font-size: 15px; color: var(--primary); margin: 24px 0 10px; padding-bottom: 4px; border-bottom: 2px solid var(--primary); display: inline-block; }
-        h4 { font-size: 13px; color: var(--text); margin: 16px 0 6px; font-weight: 700; }
-        p { font-size: 13px; margin-bottom: 10px; }
-
-        table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 12.5px; }
-        th { background: var(--primary); color: white; padding: 8px 10px; text-align: center; font-size: 11.5px; font-weight: 600; }
-        th:first-child { text-align: left; }
-        td { padding: 7px 10px; text-align: center; border-bottom: 1px solid var(--border); }
-        td:first-child { text-align: left; font-weight: 500; }
-        tr:nth-child(even) { background: #f8fafe; }
-        tr.highlight { background: #f0fff4 !important; font-weight: 600; }
-        tr.total-row { background: #edf2f7 !important; font-weight: 700; border-top: 2px solid var(--primary); }
-
-        .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 16px 0 24px; }
-        .kpi-box { background: #f7fafc; border-radius: 8px; padding: 14px; text-align: center; border-left: 4px solid var(--primary); }
-        .kpi-box.accent { border-left-color: var(--accent); }
-        .kpi-box.success { border-left-color: var(--success); }
-        .kpi-box.danger { border-left-color: var(--danger); }
-        .kpi-box .label { font-size: 10.5px; color: var(--text-light); font-weight: 600; margin-bottom: 3px; }
-        .kpi-box .value { font-size: 20px; font-weight: 800; color: var(--primary); }
-        .kpi-box .sub { font-size: 10.5px; color: var(--text-light); margin-top: 3px; }
-
-        .callout { border-radius: 6px; padding: 14px 18px; margin: 16px 0; font-size: 12.5px; border-left: 4px solid; }
-        .callout.yellow { background: #fffbeb; border-color: #fcd34d; border-left-color: var(--accent); }
-        .callout.blue { background: #eff6ff; border-color: #93c5fd; border-left-color: var(--primary-light); }
-        .callout.green { background: #f0fdf4; border-color: #86efac; border-left-color: var(--success); }
-        .callout.red { background: #fef2f2; border-color: #fca5a5; border-left-color: var(--danger); }
-        .callout strong { color: var(--primary); }
-
-        .formula-box {
-            background: #f8f9fa; border: 1px solid var(--border); border-radius: 8px;
-            padding: 16px 20px; margin: 14px 0; font-family: 'Consolas', 'Courier New', monospace; font-size: 13px;
-        }
-        .formula-box .label { font-size: 11px; color: var(--text-light); font-weight: 600; margin-bottom: 6px; font-family: 'Malgun Gothic', sans-serif; }
-        .formula-box .eq { margin: 4px 0; line-height: 1.8; }
-        .formula-box .note { font-size: 11px; color: var(--text-light); margin-top: 8px; font-family: 'Malgun Gothic', sans-serif; }
-
-        .result-box {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white; border-radius: 12px; padding: 24px 28px; margin: 20px 0; text-align: center;
-        }
-        .result-box .label { font-size: 12px; opacity: 0.8; margin-bottom: 6px; }
-        .result-box .amount { font-size: 32px; font-weight: 800; }
-        .result-box .range { font-size: 14px; opacity: 0.8; margin-top: 6px; }
-        .result-box.orange { background: linear-gradient(135deg, #92400e 0%, #b45309 100%); }
-
-        .chart-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin: 16px 0; }
-        .chart-title { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
-        .chart-wrapper { position: relative; height: 260px; }
-        .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-        .badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 700; }
-        .badge.green { background: #d4edda; color: #155724; }
-        .badge.yellow { background: #fff3cd; color: #856404; }
-        .badge.red { background: #f8d7da; color: #721c24; }
-        .badge.blue { background: #d1ecf1; color: #0c5460; }
-
-        ul.styled { margin: 6px 0 14px 18px; }
-        ul.styled li { font-size: 12.5px; margin-bottom: 5px; line-height: 1.6; }
-        ul.styled li strong { color: var(--primary); }
-
-        .prob-bar-bg { background: #e2e8f0; border-radius: 4px; height: 22px; position: relative; }
-        .prob-bar-fill { border-radius: 4px; height: 100%; display: flex; align-items: center; padding-left: 8px; font-size: 11px; font-weight: 700; color: white; min-width: 40px; }
-
-        .compare-row { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 20px 0; flex-wrap: wrap; }
-        .compare-item { text-align: center; padding: 14px 20px; background: #f7fafc; border-radius: 8px; min-width: 150px; }
-        .compare-item .month { font-size: 11px; color: var(--text-light); font-weight: 600; }
-        .compare-item .amount { font-size: 18px; font-weight: 800; color: var(--primary); margin-top: 3px; }
-        .compare-arrow { font-size: 20px; color: var(--text-light); }
-        .compare-arrow.down { color: var(--danger); }
-        .compare-arrow.up { color: var(--success); }
-
-        .report-footer {
-            background: #f7fafc; border-top: 1px solid var(--border);
-            padding: 16px 60px; font-size: 10.5px; color: var(--text-light); text-align: center;
-        }
-
-        @media (max-width: 768px) {
-            .content { padding: 20px; }
-            .cover-header { padding: 30px 20px; }
-            .kpi-row { grid-template-columns: 1fr 1fr; }
-            .chart-grid { grid-template-columns: 1fr; }
-            .report-footer { padding: 16px 20px; }
-        }
-    </style>
-</head>
-<body>
-
-<div class="report">
-
-    <!-- COVER -->
-    <div class="cover-header">
-        <div class="hotel-name">HOTEL AROUND PYEONGCHANG</div>
-        <h1>2월 예상매출액 및 3월 비수기 예상매출 분석 보고서</h1>
-        <div class="subtitle">Monte Carlo Simulation &amp; 확률 분포 모델 기반 매출 추정</div>
-        <div class="cover-meta">
-            <span>작성일: 2026.02.21</span>
-            <span>기준 데이터: 2026.02.18</span>
-            <span>시뮬레이션: N = 100,000회</span>
-            <span>작성: 운영관리팀</span>
-        </div>
-    </div>
-
-    <div class="content">
-
-        <!-- SECTION 1 -->
-        <div class="section-divider">
-            <div class="num">1</div>
-            <h2>분석 방법론 (Methodology)</h2>
-        </div>
-
-        <h3>1-1. 분석 프레임워크</h3>
-        <p>본 보고서는 <strong>확률 분포 모델링</strong>과 <strong>Monte Carlo 시뮬레이션(N=100,000)</strong>을 결합하여 2월 잔여기간 및 3월 전체 매출을 추정합니다. 단순 평균 추정 대비 확률적 불확실성을 명시적으로 반영하여 <strong>신뢰구간(Confidence Interval)</strong>과 <strong>목표 달성 확률</strong>을 산출합니다.</p>
-
-        <h3>1-2. 확률 분포 모델</h3>
-
-        <h4>A. 가동률 (OCC) &rarr; Beta Distribution</h4>
-        <div class="formula-box">
-            <div class="label">Beta 분포 선택 근거</div>
-            <div class="eq">OCC &isin; [0, 1] &rarr; 유계(bounded) 확률변수에 적합한 Beta(&alpha;, &beta;) 분포 적용</div>
-            <div class="eq">f(x; &alpha;, &beta;) = x<sup>&alpha;-1</sup>(1-x)<sup>&beta;-1</sup> / B(&alpha;, &beta;), &nbsp;&nbsp; x &isin; [0, 1]</div>
-            <div class="eq" style="margin-top:8px;">모수 추정 (Method of Moments):</div>
-            <div class="eq">&nbsp;&nbsp;&alpha; = &mu; &middot; (&mu;(1-&mu;)/&sigma;&sup2; &minus; 1)</div>
-            <div class="eq">&nbsp;&nbsp;&beta; = (1&minus;&mu;) &middot; (&mu;(1-&mu;)/&sigma;&sup2; &minus; 1)</div>
-            <div class="note">* OCC는 0~100% 범위로 제한되므로, 정규분포 대비 Beta 분포가 이론적으로 적합</div>
-        </div>
-
-        <h4>B. 평균 객실단가 (ADR) &rarr; Log-Normal Distribution</h4>
-        <div class="formula-box">
-            <div class="label">Log-Normal 분포 선택 근거</div>
-            <div class="eq">ADR &gt; 0 (양수), 우측 꼬리 분포(right-skewed) &rarr; Log-Normal 적합</div>
-            <div class="eq">ln(ADR) ~ N(&mu;<sub>ln</sub>, &sigma;<sub>ln</sub>&sup2;)</div>
-            <div class="eq" style="margin-top:8px;">모수 추정:</div>
-            <div class="eq">&nbsp;&nbsp;&mu;<sub>ln</sub> = ln(E[ADR]) &minus; &sigma;<sub>ln</sub>&sup2;/2</div>
-            <div class="eq">&nbsp;&nbsp;&sigma;<sub>ln</sub>&sup2; = ln(1 + (&sigma;/E[ADR])&sup2;)</div>
-        </div>
-
-        <h4>C. 일별 매출 생성 모델</h4>
-        <div class="formula-box">
-            <div class="label">Monte Carlo 일별 매출 생성 프로세스</div>
-            <div class="eq">For each day d = 1, ..., D:</div>
-            <div class="eq">&nbsp;&nbsp;1) OCC<sub>d</sub> ~ Beta(&alpha;<sub>type</sub>, &beta;<sub>type</sub>)&nbsp;&nbsp;&nbsp;// type &isin; {weekday, weekend}</div>
-            <div class="eq">&nbsp;&nbsp;2) Rooms<sub>d</sub> = &lfloor;OCC<sub>d</sub> &times; 350&rfloor;</div>
-            <div class="eq">&nbsp;&nbsp;3) ADR<sub>d</sub> ~ LogNormal(&mu;<sub>ln</sub>, &sigma;<sub>ln</sub>)</div>
-            <div class="eq">&nbsp;&nbsp;4) Rev<sub>d</sub> = Rooms<sub>d</sub> &times; ADR<sub>d</sub></div>
-            <div class="eq" style="margin-top:6px;">Monthly Revenue = &Sigma; Rev<sub>d</sub></div>
-            <div class="eq">F&amp;B = &Sigma; Rooms<sub>d</sub> &times; FnB_per_room&nbsp;&nbsp;&nbsp;// FnB_per_room ~ N(&mu;<sub>fnb</sub>, &sigma;<sub>fnb</sub>)</div>
-            <div class="note">* 3월은 스키 시즌 종료에 따른 계절 감쇠 함수 f(d) 추가 적용</div>
-        </div>
-
-        <h3>1-3. 추정 모수 요약</h3>
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">변수</th><th>분포</th><th>2월 잔여 (평일)</th><th>2월 잔여 (주말)</th><th>3월 (평일)</th><th>3월 (주말)</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>OCC</td><td>Beta(&alpha;, &beta;)</td>
-                    <td>Beta(12.25, 19.53)<br>&mu;=38.6%</td>
-                    <td>Beta(12.78, 11.09)<br>&mu;=53.6%</td>
-                    <td>Beta(5.53, 49.73)<br>&mu;=10.0%</td>
-                    <td>Beta(6.97, 14.14)<br>&mu;=33.0%</td>
-                </tr>
-                <tr>
-                    <td>ADR</td><td>LogNormal</td>
-                    <td colspan="2">LogN(11.59, 0.163)<br>E[ADR]=110,000원</td>
-                    <td colspan="2">LogN(11.45, 0.157)<br>E[ADR]=95,000원</td>
-                </tr>
-                <tr>
-                    <td>F&amp;B/Room</td><td>Normal</td>
-                    <td colspan="2">N(12,000, 3,000&sup2;)</td>
-                    <td colspan="2">N(13,000, 3,000&sup2;)</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h3>1-4. 3월 계절 감쇠 함수 (Seasonal Decay)</h3>
-        <p>스키 시즌 종료(3월 중순)에 따른 수요 감소를 반영하기 위해 지수 감쇠 함수를 적용합니다.</p>
-        <div class="formula-box">
-            <div class="eq">f(d) = 1.0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if d &le; 15</div>
-            <div class="eq">f(d) = exp(&minus;0.02 &times; (d &minus; 15)) &nbsp; if d &gt; 15</div>
-            <div class="eq" style="margin-top:6px;">OCC<sub>adjusted</sub> = OCC<sub>base</sub> &times; f(d)</div>
-        </div>
-        <table>
-            <thead><tr><th>일자</th><th>3/1</th><th>3/10</th><th>3/15</th><th>3/20</th><th>3/25</th><th>3/31</th></tr></thead>
-            <tbody><tr><td>f(d)</td><td>1.000</td><td>1.000</td><td>1.000</td><td>0.905</td><td>0.819</td><td>0.726</td></tr></tbody>
-        </table>
-
-
-        <!-- SECTION 2 -->
-        <div class="page-break"></div>
-        <div class="section-divider">
-            <div class="num">2</div>
-            <h2>관측 데이터 및 분포 적합</h2>
-        </div>
-
-        <h3>2-1. 월별 실적 현황</h3>
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">월</th><th>판매객실</th><th>OCC</th><th>ADR(VAT포함)</th><th>객실매출(VAT포함)</th><th>F&amp;B매출</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>11월</td><td>453실</td><td>3.7%</td><td>106,572</td><td>48,277,123</td><td>-</td></tr>
-                <tr><td>12월</td><td>2,680실</td><td>23.8%</td><td>139,215</td><td>373,096,290</td><td>49,726,474</td></tr>
-                <tr class="highlight"><td>1월</td><td>5,563실</td><td>52.9%</td><td>111,237</td><td>618,813,926</td><td>88,002,370</td></tr>
-                <tr><td>2월 (~18일)</td><td>4,741실</td><td>48.5%*</td><td>124,405</td><td>589,802,246</td><td>55,187,100</td></tr>
-                <tr><td>3월 (사전예약)</td><td>243실</td><td>2.2%</td><td>93,995</td><td>22,840,698</td><td>-</td></tr>
-            </tbody>
-        </table>
-        <div class="callout yellow">
-            <strong>* 2월 OCC 48.5%</strong>는 28일 분모 기준(4,741 &divide; 9,800). 실제 18일간 일평균 가동률 = 4,741 &divide; (350&times;18) = <strong>75.3%</strong> (설 연휴 포함).
-        </div>
-
-        <h3>2-2. 일별 관측 데이터 (분포 적합 기초)</h3>
-        <table>
-            <thead><tr><th style="text-align:left;">일자</th><th>요일</th><th>판매객실</th><th>OCC</th><th>유형</th><th>분포 적합 활용</th></tr></thead>
-            <tbody>
-                <tr><td>2/9</td><td>일</td><td>178실</td><td>50.9%</td><td>비연휴 주말</td><td><span class="badge blue">주말 OCC 추정</span></td></tr>
-                <tr><td>2/10</td><td>월</td><td>112실</td><td>32.0%</td><td>비연휴 평일</td><td><span class="badge blue">평일 OCC 추정</span></td></tr>
-                <tr><td>2/12</td><td>수</td><td>158실</td><td>45.1%</td><td>비연휴 평일</td><td><span class="badge blue">평일 OCC 추정</span></td></tr>
-                <tr style="background:#fff8f0;"><td>2/13</td><td>목</td><td>236실</td><td>67.4%</td><td>설연휴 전일</td><td><span class="badge yellow">연휴 효과</span></td></tr>
-                <tr style="background:#fff8f0;"><td>2/14</td><td>금</td><td>261실</td><td>74.6%</td><td>설 연휴</td><td><span class="badge yellow">연휴 효과</span></td></tr>
-                <tr style="background:#fff8f0;"><td>2/15</td><td>토</td><td>295실</td><td>84.3%</td><td>설 연휴</td><td><span class="badge yellow">연휴 효과</span></td></tr>
-                <tr style="background:#fff8f0;"><td>2/17</td><td>월</td><td>272실</td><td>77.7%</td><td>설 연휴</td><td><span class="badge yellow">연휴 효과</span></td></tr>
-                <tr><td>2/18</td><td>화</td><td>242실</td><td>69.1%</td><td>연휴 직후</td><td><span class="badge green">ADR 참고</span></td></tr>
-            </tbody>
-        </table>
-
-        <div class="callout blue">
-            <strong>분포 적합 전략:</strong> 비연휴 평일(2/10, 2/12)과 비연휴 주말(2/9) 데이터를 분리하여 Beta 분포를 적합합니다. 설 연휴 데이터는 잔여 기간 추정에서 제외하되, 이미 18일 실적에 반영된 상태입니다. 제한된 표본(n=2~3)의 한계를 보완하기 위해 분산에 보수적 가정을 적용합니다.
-        </div>
-
-        <h3>2-3. OCC Beta 분포 적합 시각화</h3>
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="chart-title">2월 잔여 OCC 분포 (평일 vs 주말)</div>
-                <div class="chart-wrapper"><canvas id="febOccBeta"></canvas></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-title">3월 OCC 분포 (평일 vs 주말)</div>
-                <div class="chart-wrapper"><canvas id="marOccBeta"></canvas></div>
-            </div>
-        </div>
-
-        <h3>2-4. F&amp;B 객실당 매출 추이</h3>
-        <table>
-            <thead><tr><th style="text-align:left;">월</th><th>F&amp;B매출</th><th>판매객실</th><th>객실당 F&amp;B</th><th>전월비</th></tr></thead>
-            <tbody>
-                <tr><td>12월</td><td>49,726,474</td><td>2,680실</td><td>18,554원</td><td>-</td></tr>
-                <tr><td>1월</td><td>88,002,370</td><td>5,563실</td><td>15,822원</td><td>-14.7%</td></tr>
-                <tr><td>2월 (~18일)</td><td>55,187,100</td><td>4,741실</td><td>11,641원</td><td>-26.4%</td></tr>
-            </tbody>
-        </table>
-
-
-        <!-- SECTION 3: 2월 -->
-        <div class="page-break"></div>
-        <div class="section-divider">
-            <div class="num">3</div>
-            <h2>2월 예상매출액 산출</h2>
-        </div>
-
-        <h3>3-1. 2월 잔여기간 구조 (2/19~2/28)</h3>
-        <table>
-            <thead><tr><th style="text-align:left;">일자</th><th>19(수)</th><th>20(목)</th><th>21(금)</th><th>22(토)</th><th>23(일)</th><th>24(월)</th><th>25(화)</th><th>26(수)</th><th>27(목)</th><th>28(금)</th></tr></thead>
-            <tbody>
-                <tr><td>유형</td><td>평일</td><td>평일</td><td>주말</td><td>주말</td><td>주말</td><td>평일</td><td>평일</td><td>평일</td><td>평일</td><td>주말</td></tr>
-            </tbody>
-        </table>
-        <p><strong>평일 6일</strong> &times; Beta(12.25, 19.53) + <strong>주말 4일</strong> &times; Beta(12.78, 11.09) &rarr; 10일 시뮬레이션</p>
-
-        <h3>3-2. Monte Carlo 시뮬레이션 결과 (잔여 10일)</h3>
-        <div class="kpi-row">
-            <div class="kpi-box">
-                <div class="label">판매객실 (평균)</div>
-                <div class="value">1,554실</div>
-                <div class="sub">&sigma; = 101실</div>
-            </div>
-            <div class="kpi-box accent">
-                <div class="label">객실매출 (평균)</div>
-                <div class="value">1.71억</div>
-                <div class="sub">&sigma; = 1,443만</div>
-            </div>
-            <div class="kpi-box">
-                <div class="label">F&amp;B매출 (평균)</div>
-                <div class="value">1,868만</div>
-                <div class="sub">18,678,070원</div>
-            </div>
-            <div class="kpi-box success">
-                <div class="label">잔여 합계 (평균)</div>
-                <div class="value">1.90억</div>
-                <div class="sub">189,590,238원</div>
-            </div>
-        </div>
-
-        <h3>3-3. 2월 전체 예상매출 (실적 + 시뮬레이션)</h3>
-        <div class="formula-box">
-            <div class="label">산출 구조</div>
-            <div class="eq">2월 총매출 = 18일 실적(확정) + 잔여 10일(MC 확률 추정)</div>
-            <div class="eq">&nbsp;&nbsp;객실매출 = 589,802,246 + MC<sub>room_rev</sub></div>
-            <div class="eq">&nbsp;&nbsp;F&amp;B매출  = 55,187,100 + MC<sub>fnb</sub></div>
-        </div>
-
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">통계량</th><th>객실매출 (VAT포함)</th><th>F&amp;B매출</th><th>총매출</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>평균 (Mean)</td><td>760,714,413</td><td>73,865,170</td><td><strong>834,579,584</strong></td></tr>
-                <tr><td>중앙값 (Median)</td><td>760,248,617</td><td>-</td><td><strong>834,060,701</strong></td></tr>
-                <tr><td>표준편차 (&sigma;)</td><td>14,430,635</td><td>-</td><td>16,081,633</td></tr>
-                <tr><td>변동계수 (CV)</td><td>1.90%</td><td>-</td><td>1.93%</td></tr>
-            </tbody>
-        </table>
-
-        <h3>3-4. 신뢰구간 및 분위수</h3>
-        <table>
-            <thead>
-                <tr><th>분위수</th><th>5%</th><th>10%</th><th>25%</th><th style="background:#2d5a9e;">50% (중앙값)</th><th>75%</th><th>90%</th><th>95%</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>총매출</strong></td>
-                    <td>8.09억</td><td>8.14억</td><td>8.23억</td>
-                    <td><strong>8.34억</strong></td>
-                    <td>8.45억</td><td>8.55억</td><td>8.62억</td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="callout green">
-            <strong>90% 신뢰구간:</strong> 2월 총매출은 <strong>8.09억 ~ 8.62억</strong> 범위 내에 90% 확률로 실현될 것으로 추정됩니다.
-        </div>
-
-        <div class="result-box">
-            <div class="label">2월 예상 총매출 (Monte Carlo 중앙값)</div>
-            <div class="amount">약 8.34억 원</div>
-            <div class="range">90% CI: 8.09억 ~ 8.62억 원 | &sigma; = 1,608만</div>
-        </div>
-
-        <h3>3-5. 2월 매출 확률 분포</h3>
-        <div class="chart-card">
-            <div class="chart-title">2월 총매출 확률 분포 (N=100,000 시뮬레이션)</div>
-            <div class="chart-wrapper"><canvas id="febTotalHist"></canvas></div>
-        </div>
-
-        <h3>3-6. 2월 목표 달성 확률</h3>
-        <table>
-            <thead><tr><th style="text-align:left;">매출 목표</th><th>달성 확률</th><th>확률 바</th></tr></thead>
-            <tbody>
-                <tr><td>총매출 &ge; 7.5억</td><td><strong>100.0%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:100%; background:var(--success);">100.0%</div></div></td></tr>
-                <tr><td>총매출 &ge; 8.0억</td><td><strong>98.8%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:98.8%; background:var(--success);">98.8%</div></div></td></tr>
-                <tr><td>총매출 &ge; 8.5억</td><td><strong>16.9%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:16.9%; background:var(--accent);">16.9%</div></div></td></tr>
-                <tr><td>총매출 &ge; 9.0억</td><td><strong>&approx; 0%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:1%; background:var(--danger);">&approx;0%</div></div></td></tr>
-                <tr><td>객실매출 &ge; 7.5억 (AZMT 근접)</td><td><strong>76.6%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:76.6%; background:var(--primary-light);">76.6%</div></div></td></tr>
-            </tbody>
-        </table>
-
-        <h3>3-7. 2월 추정 KPI vs AZMT 목표</h3>
-        <table>
-            <thead><tr><th style="text-align:left;">KPI</th><th>추정값 (Mean)</th><th>AZMT 목표</th><th>달성률</th></tr></thead>
-            <tbody>
-                <tr><td>판매객실</td><td>6,295실</td><td>-</td><td>-</td></tr>
-                <tr><td>OCC (28일 기준)</td><td>64.2%</td><td>35.0%</td><td><span class="badge green">183.6%</span></td></tr>
-                <tr><td>월 매출 (VAT제외 객실)</td><td>~6.92억</td><td>6.82억</td><td><span class="badge green">101.4%</span></td></tr>
-            </tbody>
-        </table>
-        <div class="callout green">
-            <strong>2월 핵심:</strong> 설 연휴 효과로 OCC 목표 대비 184% 초과 달성 전망. AZMT 월 매출 목표(6.82억, VAT제외) <strong>최초 달성 가능성 76.6%</strong>. 개관 이래 최고 월매출 기록 예상.
-        </div>
-
-
-        <!-- SECTION 4: 3월 -->
-        <div class="page-break"></div>
-        <div class="section-divider">
-            <div class="num">4</div>
-            <h2>3월 비수기 예상매출 분석</h2>
-        </div>
-
-        <h3>4-1. 3월 구조 분석</h3>
-        <table>
-            <thead><tr><th style="text-align:left;">구분</th><th>일수</th><th>OCC 분포</th><th>적용 감쇠</th></tr></thead>
-            <tbody>
-                <tr><td>평일 (Mon-Thu)</td><td>17일</td><td>Beta(5.53, 49.73), &mu;=10.0%</td><td>3/16 이후 감쇠</td></tr>
-                <tr><td>주말 (Fri-Sun)</td><td>14일</td><td>Beta(6.97, 14.14), &mu;=33.0%</td><td>3/16 이후 감쇠</td></tr>
-                <tr class="total-row"><td>합계</td><td>31일</td><td>총 가용: 10,850실</td><td>-</td></tr>
-            </tbody>
-        </table>
-
-        <div class="callout red">
-            <strong>사전예약 시그널:</strong> 3월 사전예약 ADR <strong>93,995원</strong>은 개관 이래 최저치 (12월 139,215 &rarr; 1월 111,237 &rarr; 2월 124,405 &rarr; 3월 93,995). 비수기 가격 경쟁 심화를 반영.
-        </div>
-
-        <h3>4-2. Monte Carlo 시뮬레이션 결과</h3>
-        <div class="kpi-row">
-            <div class="kpi-box danger">
-                <div class="label">판매객실 (평균)</div>
-                <div class="value">2,019실</div>
-                <div class="sub">&sigma; = 133실</div>
-            </div>
-            <div class="kpi-box">
-                <div class="label">월 OCC (평균)</div>
-                <div class="value">18.6%</div>
-                <div class="sub">AZMT 35% 대비 53%</div>
-            </div>
-            <div class="kpi-box accent">
-                <div class="label">객실매출 (평균)</div>
-                <div class="value">1.92억</div>
-                <div class="sub">&sigma; = 1,422만</div>
-            </div>
-            <div class="kpi-box">
-                <div class="label">F&amp;B매출 (평균)</div>
-                <div class="value">2,625만</div>
-                <div class="sub">26,248,124원</div>
-            </div>
-        </div>
-
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">통계량</th><th>객실매출 (VAT포함)</th><th>F&amp;B매출</th><th>총매출</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>평균 (Mean)</td><td>191,746,056</td><td>26,248,124</td><td><strong>217,994,180</strong></td></tr>
-                <tr><td>중앙값 (Median)</td><td>191,386,552</td><td>-</td><td><strong>217,573,467</strong></td></tr>
-                <tr><td>표준편차 (&sigma;)</td><td>14,220,381</td><td>-</td><td>16,878,280</td></tr>
-                <tr><td>변동계수 (CV)</td><td>7.42%</td><td>-</td><td>7.74%</td></tr>
-            </tbody>
-        </table>
-
-        <div class="callout yellow">
-            <strong>변동계수(CV) 비교:</strong> 3월 CV=7.74%로, 2월(1.93%) 대비 <strong>4배 높은 불확실성</strong>. 비수기 매출의 예측 난이도가 높아 넓은 신뢰구간으로 나타남.
-        </div>
-
-        <h3>4-3. 신뢰구간 및 분위수</h3>
-        <table>
-            <thead>
-                <tr><th>분위수</th><th>5%</th><th>10%</th><th>25%</th><th style="background:#2d5a9e;">50% (중앙값)</th><th>75%</th><th>90%</th><th>95%</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>총매출</strong></td>
-                    <td>1.91억</td><td>1.97억</td><td>2.06억</td>
-                    <td><strong>2.18억</strong></td>
-                    <td>2.29억</td><td>2.40억</td><td>2.46억</td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="callout blue">
-            <strong>90% 신뢰구간:</strong> 3월 총매출은 <strong>1.91억 ~ 2.46억</strong> 범위 내에 90% 확률로 실현될 것으로 추정.
-        </div>
-
-        <div class="result-box orange">
-            <div class="label">3월 예상 총매출 (Monte Carlo 중앙값)</div>
-            <div class="amount">약 2.18억 원</div>
-            <div class="range">90% CI: 1.91억 ~ 2.46억 원 | &sigma; = 1,688만</div>
-        </div>
-
-        <h3>4-4. 3월 매출 확률 분포</h3>
-        <div class="chart-card">
-            <div class="chart-title">3월 총매출 확률 분포 (N=100,000 시뮬레이션)</div>
-            <div class="chart-wrapper"><canvas id="marTotalHist"></canvas></div>
-        </div>
-
-        <h3>4-5. 3월 목표 달성 확률</h3>
-        <table>
-            <thead><tr><th style="text-align:left;">매출 목표</th><th>달성 확률</th><th>확률 바</th></tr></thead>
-            <tbody>
-                <tr><td>총매출 &ge; 1.5억</td><td><strong>100.0%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:100%; background:var(--success);">100.0%</div></div></td></tr>
-                <tr><td>총매출 &ge; 2.0억</td><td><strong>85.8%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:85.8%; background:var(--success);">85.8%</div></div></td></tr>
-                <tr><td>총매출 &ge; 2.5억</td><td><strong>3.3%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:5%; background:var(--danger);">3.3%</div></div></td></tr>
-                <tr><td>총매출 &ge; 3.0억</td><td><strong>&approx; 0%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:1%; background:var(--danger);">&approx;0%</div></div></td></tr>
-                <tr><td>AZMT 월 목표 (6.82억)</td><td><strong>0.00%</strong></td><td><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:1%; background:var(--danger);">0.0%</div></div></td></tr>
-            </tbody>
-        </table>
-
-        <h3>4-6. 3월 KPI vs AZMT 목표</h3>
-        <table>
-            <thead><tr><th style="text-align:left;">KPI</th><th>추정값</th><th>AZMT 목표</th><th>달성률</th></tr></thead>
-            <tbody>
-                <tr><td>OCC</td><td>18.6%</td><td>35.0%</td><td><span class="badge red">53.1%</span></td></tr>
-                <tr><td>ADR (VAT제외)</td><td>~86,364원</td><td>113,712원</td><td><span class="badge red">76.0%</span></td></tr>
-                <tr><td>RevPAR (VAT제외)</td><td>~16,063원</td><td>39,799원</td><td><span class="badge red">40.4%</span></td></tr>
-                <tr><td>월매출 (VAT제외)</td><td>~1.98억</td><td>6.82억</td><td><span class="badge red">29.0%</span></td></tr>
-            </tbody>
-        </table>
-
-
-        <!-- SECTION 5: 민감도 + VaR -->
-        <div class="page-break"></div>
-        <div class="section-divider">
-            <div class="num">5</div>
-            <h2>민감도 분석 및 리스크 평가</h2>
-        </div>
-
-        <h3>5-1. OCC 시나리오 민감도 (3월)</h3>
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">시나리오</th><th>주중 OCC</th><th>주말 OCC</th><th>월 OCC</th><th>판매객실</th><th>총매출</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>비관적</td><td>6%</td><td>20%</td><td>12.3%</td><td>1,337실</td><td><span class="badge red">1.44억</span></td></tr>
-                <tr><td>보수적</td><td>8%</td><td>25%</td><td>15.7%</td><td>1,701실</td><td><span class="badge yellow">1.84억</span></td></tr>
-                <tr class="highlight"><td><strong>기본 (MC)</strong></td><td>10%</td><td>33%</td><td>20.4%</td><td>2,212실</td><td><span class="badge blue">2.39억</span></td></tr>
-                <tr><td>낙관적</td><td>13%</td><td>38%</td><td>24.3%</td><td>2,636실</td><td><span class="badge green">2.85억</span></td></tr>
-                <tr><td>최낙관</td><td>16%</td><td>45%</td><td>29.1%</td><td>3,157실</td><td><span class="badge green">3.41억</span></td></tr>
-            </tbody>
-        </table>
-
-        <div class="chart-card">
-            <div class="chart-title">3월 OCC 시나리오별 매출 민감도</div>
-            <div class="chart-wrapper"><canvas id="sensitivityChart"></canvas></div>
-        </div>
-
-        <h3>5-2. ADR 시나리오 민감도 (기본 OCC 고정)</h3>
-        <table>
-            <thead><tr><th style="text-align:left;">ADR (VAT포함)</th><th>객실매출</th><th>F&amp;B</th><th>총매출</th><th>기본 대비</th></tr></thead>
-            <tbody>
-                <tr><td>80,000 (극비수기)</td><td>1.77억</td><td>0.29억</td><td>2.06억</td><td style="color:var(--danger);">-14%</td></tr>
-                <tr><td>85,000</td><td>1.88억</td><td>0.29억</td><td>2.17억</td><td style="color:var(--danger);">-9%</td></tr>
-                <tr><td>90,000</td><td>1.99억</td><td>0.29억</td><td>2.28억</td><td style="color:var(--danger);">-5%</td></tr>
-                <tr class="highlight"><td><strong>95,000 (기본)</strong></td><td>2.10억</td><td>0.29억</td><td>2.39억</td><td>-</td></tr>
-                <tr><td>100,000</td><td>2.21억</td><td>0.29억</td><td>2.50억</td><td style="color:var(--success);">+5%</td></tr>
-                <tr><td>110,000 (주말 프리미엄)</td><td>2.43억</td><td>0.29억</td><td>2.72억</td><td style="color:var(--success);">+14%</td></tr>
-            </tbody>
-        </table>
-
-        <h3>5-3. VaR (Value at Risk) 분석</h3>
-        <p>VaR는 주어진 신뢰수준에서 발생 가능한 최소 매출(하방 리스크)을 정량화합니다.</p>
-        <table>
-            <thead><tr><th style="text-align:left;">지표</th><th>2월</th><th>3월</th><th>설명</th></tr></thead>
-            <tbody>
-                <tr><td>기대값 (Mean)</td><td>834,579,584</td><td>217,994,180</td><td>평균 예상 매출</td></tr>
-                <tr><td>VaR 95%</td><td><strong>808,962,574</strong></td><td><strong>191,018,270</strong></td><td>95% 확률로 이 이상 달성</td></tr>
-                <tr><td>VaR 99%</td><td><strong>799,191,587</strong></td><td><strong>180,830,476</strong></td><td>99% 확률로 이 이상 달성</td></tr>
-                <tr><td>CVaR 95%<br>(Expected Shortfall)</td><td>802,987,712</td><td>184,711,919</td><td>하위 5% 시나리오 평균</td></tr>
-            </tbody>
-        </table>
-        <div class="callout blue">
-            <strong>해석:</strong> 3월 매출이 극도로 부진한 경우(하위 5%)에도 최소 <strong>1.91억</strong>은 확보 가능. 하위 1% 극단 시나리오에서도 <strong>1.81억</strong> 이상. 고정비 충당 가능 여부 판단에 활용.
-        </div>
-
-
-        <!-- SECTION 6: 종합 -->
-        <div class="page-break"></div>
-        <div class="section-divider">
-            <div class="num">6</div>
-            <h2>월별 매출 추이 종합 비교</h2>
-        </div>
-
-        <h3>6-1. 매출 흐름</h3>
-        <div class="compare-row">
-            <div class="compare-item">
-                <div class="month">12월 (실적)</div>
-                <div class="amount">4.23억</div>
-            </div>
-            <div class="compare-arrow up">&rarr;</div>
-            <div class="compare-item" style="background:#f0fff4;">
-                <div class="month">1월 (최고실적)</div>
-                <div class="amount" style="color:var(--success);">7.07억</div>
-            </div>
-            <div class="compare-arrow up">&rarr;</div>
-            <div class="compare-item" style="background:#ebf5ff;">
-                <div class="month">2월 (MC추정)</div>
-                <div class="amount">8.35억</div>
-            </div>
-            <div class="compare-arrow down">&rarr;</div>
-            <div class="compare-item" style="background:#fef2f2;">
-                <div class="month">3월 (MC추정)</div>
-                <div class="amount" style="color:var(--danger);">2.18억</div>
-            </div>
-        </div>
-
-        <div class="chart-card">
-            <div class="chart-title">월별 매출 추이 (실적 + MC 추정, 90% CI 포함)</div>
-            <div class="chart-wrapper"><canvas id="monthlyTrend"></canvas></div>
-        </div>
-
-        <h3>6-2. KPI 종합 비교</h3>
-        <table>
-            <thead>
-                <tr><th style="text-align:left;">KPI</th><th>12월(실적)</th><th>1월(실적)</th><th>2월(MC)</th><th>3월(MC)</th><th>AZMT</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>판매객실</td><td>2,680실</td><td>5,563실</td><td>6,295실</td><td>2,019실</td><td>-</td></tr>
-                <tr><td>OCC</td><td>23.8%</td><td>52.9%</td><td>64.2%</td><td>18.6%</td><td>35.0%</td></tr>
-                <tr><td>ADR(VAT포함)</td><td>139,215</td><td>111,237</td><td>~122,000</td><td>~95,000</td><td>125,083*</td></tr>
-                <tr><td>객실매출</td><td>3.73억</td><td>6.19억</td><td>7.61억</td><td>1.92억</td><td>-</td></tr>
-                <tr><td>F&amp;B매출</td><td>4,973만</td><td>8,800만</td><td>7,387만</td><td>2,625만</td><td>-</td></tr>
-                <tr class="total-row"><td>합계</td><td>4.23억</td><td>7.07억</td><td>8.35억</td><td>2.18억</td><td>6.82억</td></tr>
-                <tr><td>전월비</td><td>-</td><td>+67%</td><td>+18%</td><td style="color:var(--danger);"><strong>-74%</strong></td><td>-</td></tr>
-            </tbody>
-        </table>
-
-        <div class="callout red">
-            <strong>2월 &rarr; 3월 매출 낙폭: -74% (약 6.17억 감소)</strong><br>
-            동계 성수기 종료에 따른 구조적 계절 변동. 2월 8.35억에서 3월 2.18억으로, 약 1/4 수준까지 하락.
-        </div>
-
-        <h3>6-3. 불확실성 비교</h3>
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="chart-title">2월 객실매출 분포 (CV=1.90%)</div>
-                <div class="chart-wrapper"><canvas id="febRevHist"></canvas></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-title">3월 객실매출 분포 (CV=7.42%)</div>
-                <div class="chart-wrapper"><canvas id="marRevHist"></canvas></div>
-            </div>
-        </div>
-
-
-        <!-- SECTION 7 -->
-        <div class="page-break"></div>
-        <div class="section-divider">
-            <div class="num">7</div>
-            <h2>시사점 및 대응 전략</h2>
-        </div>
-
-        <h3>7-1. 2월 시사점</h3>
-        <ul class="styled">
-            <li><strong>개관 이래 최고 매출:</strong> MC 추정 8.35억으로, 1월(7.07억) 대비 +18% 성장. 8.0억 달성 확률 98.8%.</li>
-            <li><strong>AZMT 목표 최초 달성 가능:</strong> 객실매출(VAT제외) 기준 AZMT 목표 6.82억 달성 확률 76.6%.</li>
-            <li><strong>설 연휴 의존도 주의:</strong> 비연휴 평일 OCC ~38.6%는 연휴 기간(~76%) 대비 절반 수준. 구조적 수요 기반은 아직 제한적.</li>
-        </ul>
-
-        <h3>7-2. 3월 비수기 핵심 대응</h3>
-
-        <h4>A. 가동률(OCC) 제고 (주중 OCC 10% &rarr; 13% 목표)</h4>
-        <ul class="styled">
-            <li><strong>워케이션 패키지:</strong> 주중 장기투숙(2~3박) 할인율 15~20% 적용. 주중 OCC 3%p 증가 시 월매출 약 2,000만원 추가.</li>
-            <li><strong>단체/MICE 유치:</strong> 기업 워크숍, 학교 MT, 세미나 등. Group 비율 0%인 현 상황에서 비수기에 B2B 채널 구축 필수.</li>
-        </ul>
-
-        <h4>B. 객단가(ADR) 방어 (95,000원 &rarr; 100,000원 목표)</h4>
-        <ul class="styled">
-            <li><strong>바닥 가격 가이드라인:</strong> ADR 90,000원 이하 진입 방지. 가격 경쟁보다 가치 제안(패키지) 중심.</li>
-            <li>ADR 5,000원 인상 시 매출 효과: 2,019실 &times; 5,000원 = <strong>+약 1,010만원/월</strong></li>
-        </ul>
-
-        <h4>C. 비용 관리 (손익분기 매출 하회 대비)</h4>
-        <ul class="styled">
-            <li><strong>VaR 95% 기준 최소 매출 1.91억</strong>을 전제로 한 비용 구조 조정 필요.</li>
-            <li>변동비(일용인건비, 식자재) 축소 및 에너지 비용(난방) 자연 감소 활용.</li>
-        </ul>
-
-        <h4>D. 매출 시나리오별 경영 대응</h4>
-        <table>
-            <thead><tr><th style="text-align:left;">시나리오</th><th>매출</th><th>확률</th><th>경영 대응</th></tr></thead>
-            <tbody>
-                <tr><td>하방 리스크 (P5)</td><td>1.91억</td><td>5%</td><td>긴급 비용 절감, 비가동 객실 확대</td></tr>
-                <tr><td>보수적 (P25)</td><td>2.06억</td><td>25%</td><td>변동비 축소, 프로모션 강화</td></tr>
-                <tr class="highlight"><td><strong>기본 (P50)</strong></td><td><strong>2.18억</strong></td><td>50%</td><td>현행 운영 + 주중 프로모션</td></tr>
-                <tr><td>낙관적 (P75)</td><td>2.29억</td><td>75%</td><td>단체 유치 성과 시 달성 가능</td></tr>
-                <tr><td>상방 (P95)</td><td>2.46억</td><td>95%</td><td>복수 단체 + 주말 호조 시</td></tr>
-            </tbody>
-        </table>
-
-    </div>
-
-    <!-- Footer -->
-    <div class="report-footer">
-        <p><strong>분석 모델:</strong> Beta Distribution (OCC) + Log-Normal Distribution (ADR) + Exponential Decay (Seasonality) | Monte Carlo N=100,000</p>
-        <p>본 보고서는 운영 대시보드 데이터(2026.02.18 기준)와 확률 모델을 기반으로 작성되었습니다. 실제 매출은 기상, 프로모션, 단체 예약 등에 따라 달라질 수 있습니다.</p>
-        <p style="margin-top:6px; opacity:0.6;">HOTEL AROUND PYEONGCHANG &copy; 2026 | Confidential</p>
-    </div>
-
-</div>
-
-<!-- CHART.JS -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>호텔어라운드 평창 | 2-3월 매출 전망 보고서</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>
-const colors = {
-    blue: 'rgba(45,90,158,0.85)', lightBlue: 'rgba(45,90,158,0.35)',
-    orange: 'rgba(230,168,23,0.85)', lightOrange: 'rgba(230,168,23,0.35)',
-    red: 'rgba(220,53,69,0.85)', lightRed: 'rgba(220,53,69,0.25)',
-    green: 'rgba(40,167,69,0.85)', lightGreen: 'rgba(40,167,69,0.25)',
+tailwind.config={theme:{extend:{fontFamily:{sans:['Noto Sans KR','sans-serif']}}}}
+</script>
+<style>
+  *{-webkit-tap-highlight-color:transparent}
+  body{font-family:'Noto Sans KR',sans-serif}
+  .accordion-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1)}
+  .accordion-body.open{max-height:15000px}
+  .chevron{transition:transform .3s ease}
+  .chevron.open{transform:rotate(180deg)}
+  ::-webkit-scrollbar{display:none}
+  .fade-in{animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+<div id="root"></div>
+
+<script type="text/babel">
+const {useState, useEffect, useRef} = React;
+
+/* ── Reusable Components ── */
+
+const Chevron = ({open}) => (
+  <svg className={`chevron w-5 h-5 text-slate-400 ${open?'open':''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"/>
+  </svg>
+);
+
+const Accordion = ({id, icon, title, badge, badgeColor='bg-blue-100 text-blue-700', children, defaultOpen=false}) => {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <section className="mb-3" id={id}>
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between bg-white rounded-2xl px-5 py-4 shadow-sm active:scale-[0.99] transition-transform">
+        <div className="flex items-center gap-3">
+          <span className="text-xl">{icon}</span>
+          <div className="text-left">
+            <h2 className="text-[15px] font-bold leading-tight">{title}</h2>
+            {badge && <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full mt-1 inline-block ${badgeColor}`}>{badge}</span>}
+          </div>
+        </div>
+        <Chevron open={open}/>
+      </button>
+      <div className={`accordion-body ${open?'open':''}`}>
+        <div className="px-4 pt-3 pb-1 fade-in">{children}</div>
+      </div>
+    </section>
+  );
 };
 
-// Beta PDF
-function logGamma(z) {
-    if (z < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * z)) - logGamma(1 - z);
-    z -= 1;
-    const c = [0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,
-        -176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
-    let x = c[0];
-    for (let i = 1; i < 9; i++) x += c[i] / (z + i);
-    const t = z + 7.5;
-    return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
-}
-function betaPDF(x, a, b) {
-    if (x <= 0 || x >= 1) return 0;
-    return Math.exp((a-1)*Math.log(x) + (b-1)*Math.log(1-x) - logGamma(a) - logGamma(b) + logGamma(a+b));
-}
+const KPI = ({label, value, sub, color='border-l-blue-500'}) => (
+  <div className={`bg-white rounded-xl p-3.5 ${color} border-l-4 shadow-sm`}>
+    <p className="text-[10px] text-slate-400 font-semibold">{label}</p>
+    <p className="text-[20px] font-black">{value}</p>
+    {sub && <p className="text-[10px] text-slate-400 mt-0.5">{sub}</p>}
+  </div>
+);
 
-function drawBetaChart(id, params) {
-    const xs = Array.from({length:101}, (_,i) => i);
-    const datasets = params.map(p => ({
-        label: p.label,
-        data: xs.map(x => betaPDF(x/100, p.alpha, p.beta) / 100),
-        borderColor: p.color, backgroundColor: p.fill,
-        borderWidth: 2, fill: true, pointRadius: 0, tension: 0.3
-    }));
-    new Chart(document.getElementById(id), {
-        type: 'line',
-        data: { labels: xs.map(x => x+'%'), datasets },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            scales: { x: { title: { display: true, text: 'OCC (%)' }, ticks: { maxTicksLimit: 11 } }, y: { title: { display: true, text: 'PDF' }, beginAtZero: true } },
-            plugins: { legend: { position: 'top' } }
-        }
-    });
-}
+const ProbBar = ({label, pct}) => {
+  const barColor = pct >= 80 ? 'bg-emerald-500' : pct >= 50 ? 'bg-blue-500' : pct >= 10 ? 'bg-amber-500' : 'bg-red-400';
+  return (
+    <div className="mb-3">
+      <div className="flex justify-between items-center mb-1">
+        <span className="text-[11px] text-slate-600">{label}</span>
+        <span className="text-[12px] font-bold">{pct > 0 ? pct+'%' : '\u2248 0%'}</span>
+      </div>
+      <div className="bg-slate-200 rounded-full h-2">
+        <div className={`${barColor} rounded-full h-2`} style={{width: `${Math.max(pct, 1.5)}%`}}/>
+      </div>
+    </div>
+  );
+};
 
-drawBetaChart('febOccBeta', [
-    { label: '평일 Beta(12.25, 19.53)', alpha: 12.25, beta: 19.53, color: colors.blue, fill: colors.lightBlue },
-    { label: '주말 Beta(12.78, 11.09)', alpha: 12.78, beta: 11.09, color: colors.orange, fill: colors.lightOrange }
-]);
-drawBetaChart('marOccBeta', [
-    { label: '평일 Beta(5.53, 49.73)', alpha: 5.53, beta: 49.73, color: colors.blue, fill: colors.lightBlue },
-    { label: '주말 Beta(6.97, 14.14)', alpha: 6.97, beta: 14.14, color: colors.orange, fill: colors.lightOrange }
-]);
+const ChartCanvas = ({configFn, height='h-52'}) => {
+  const ref = useRef(null);
+  const chartInst = useRef(null);
+  useEffect(() => {
+    if (!ref.current || typeof Chart === 'undefined') return;
+    if (chartInst.current) chartInst.current.destroy();
+    chartInst.current = new Chart(ref.current, configFn());
+    return () => { if (chartInst.current) chartInst.current.destroy(); };
+  }, []);
+  return (
+    <div className={`bg-white rounded-xl p-4 shadow-sm mb-3`}>
+      <div className={height}><canvas ref={ref}/></div>
+    </div>
+  );
+};
 
-// Histograms
-function drawHist(id, labels, data, color, fillColor) {
-    new Chart(document.getElementById(id), {
-        type: 'bar',
-        data: { labels, datasets: [{ label: '확률(%)', data, backgroundColor: fillColor, borderColor: color, borderWidth: 1, borderRadius: 2 }] },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.raw.toFixed(1)+'%' } } },
-            scales: { x: { title: { display: true, text: '매출 (억원)' }, ticks: { maxTicksLimit: 8, font: { size: 10 } } }, y: { title: { display: true, text: '확률 (%)' }, beginAtZero: true } }
-        }
-    });
-}
+/* ── Main App ── */
 
-const febBins = ['7.74','7.84','7.94','8.04','8.13','8.23','8.33','8.43','8.53','8.63','8.73','8.83','8.93','9.02','9.12'];
-const febPct  = [0.0,0.3,1.9,6.8,15.7,23.2,23.0,16.3,8.4,3.1,1.0,0.2,0.0,0.0,0.0];
-drawHist('febTotalHist', febBins, febPct, colors.blue, colors.lightBlue);
+const App = () => {
 
-const marBins = ['1.53','1.63','1.73','1.82','1.92','2.02','2.12','2.22','2.32','2.41','2.51','2.61','2.71','2.81','2.91'];
-const marPct  = [0.0,0.2,1.1,4.6,11.5,19.5,22.9,19.6,12.1,5.6,2.0,0.6,0.1,0.0,0.0];
-drawHist('marTotalHist', marBins, marPct, colors.orange, colors.lightOrange);
-
-const febRevL = ['7.05','7.14','7.23','7.31','7.40','7.49','7.58','7.67','7.76','7.84','7.93','8.02','8.11','8.20','8.29'];
-const febRevP = [0.0,0.2,0.4,1.9,5.8,10.3,12.2,9.9,5.8,2.4,0.8,0.2,0.0,0.0,0.0];
-drawHist('febRevHist', febRevL, febRevP, colors.blue, colors.lightBlue);
-
-const marRevL = ['1.36','1.44','1.52','1.61','1.69','1.78','1.86','1.95','2.03','2.12','2.20','2.28','2.37','2.45','2.54'];
-const marRevP = [0.0,0.1,0.3,1.4,4.4,8.7,11.8,10.9,7.4,3.5,1.3,0.4,0.1,0.0,0.0];
-drawHist('marRevHist', marRevL, marRevP, colors.red, colors.lightRed);
-
-// Sensitivity
-new Chart(document.getElementById('sensitivityChart'), {
-    type: 'bar',
-    data: {
-        labels: ['비관적\n(6%/20%)', '보수적\n(8%/25%)', '기본\n(10%/33%)', '낙관적\n(13%/38%)', '최낙관\n(16%/45%)'],
-        datasets: [{ label: '총매출 (억원)', data: [1.44,1.84,2.39,2.85,3.41], backgroundColor: [colors.red,'rgba(230,168,23,0.5)',colors.blue,'rgba(40,167,69,0.4)',colors.green], borderRadius: 6 }]
+  const trendCfg = () => ({
+    type:'bar',
+    data:{
+      labels:['11\uc6d4','12\uc6d4','1\uc6d4','2\uc6d4(MC)','3\uc6d4(MC)'],
+      datasets:[
+        {label:'\ucd1d\ub9e4\ucd9c(\uc5b5)', data:[0.48,4.23,7.07,8.35,2.18],
+         backgroundColor:['rgba(148,163,184,0.5)','rgba(59,130,246,0.4)','rgba(16,185,129,0.6)','rgba(37,99,235,0.7)','rgba(239,68,68,0.6)'],
+         borderRadius:6},
+        {label:'90% CI \uc0c1\ud55c', data:[null,null,null,8.62,2.46], type:'line',
+         borderColor:'rgba(37,99,235,0.4)', borderDash:[5,5], pointStyle:'triangle', pointRadius:6, pointBackgroundColor:'rgba(37,99,235,0.6)', fill:false},
+        {label:'90% CI \ud558\ud55c', data:[null,null,null,8.09,1.91], type:'line',
+         borderColor:'rgba(239,68,68,0.4)', borderDash:[5,5], pointStyle:'triangle', pointRadius:6, pointRotation:180, pointBackgroundColor:'rgba(239,68,68,0.6)', fill:false}
+      ]
     },
-    options: {
-        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.raw.toFixed(2)+'억원' } } },
-        scales: { x: { title: { display: true, text: '매출 (억원)' }, beginAtZero: true, max: 4 } }
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.raw?c.raw.toFixed(2):'-')+'\uc5b5'}}},
+      scales:{y:{beginAtZero:true, title:{display:true, text:'\uc5b5\uc6d0', font:{size:10}}, ticks:{font:{size:10}}}, x:{ticks:{font:{size:10}}}}
     }
-});
+  });
 
-// Monthly Trend
-new Chart(document.getElementById('monthlyTrend'), {
-    type: 'bar',
-    data: {
-        labels: ['11월', '12월', '1월', '2월 (MC)', '3월 (MC)'],
-        datasets: [
-            { label: '총매출 (억원)', data: [0.48,4.23,7.07,8.35,2.18], backgroundColor: ['rgba(113,128,150,0.5)',colors.lightBlue,colors.green,colors.blue,colors.red], borderRadius: 6 },
-            { label: '90% CI 상한', data: [null,null,null,8.62,2.46], type: 'line', borderColor: 'rgba(45,90,158,0.4)', borderDash: [5,5], pointStyle: 'triangle', pointRadius: 6, pointBackgroundColor: 'rgba(45,90,158,0.6)', fill: false },
-            { label: '90% CI 하한', data: [null,null,null,8.09,1.91], type: 'line', borderColor: 'rgba(220,53,69,0.4)', borderDash: [5,5], pointStyle: 'triangle', pointRadius: 6, pointRotation: 180, pointBackgroundColor: 'rgba(220,53,69,0.6)', fill: false }
-        ]
+  const febHistCfg = () => ({
+    type:'bar',
+    data:{
+      labels:['7.74','7.84','7.94','8.04','8.13','8.23','8.33','8.43','8.53','8.63','8.73','8.83','8.93','9.02','9.12'],
+      datasets:[{label:'\ud655\ub960(%)', data:[0.0,0.3,1.9,6.8,15.7,23.2,23.0,16.3,8.4,3.1,1.0,0.2,0.0,0.0,0.0],
+        backgroundColor:'rgba(37,99,235,0.35)', borderColor:'rgba(37,99,235,0.85)', borderWidth:1, borderRadius:2}]
     },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { tooltip: { callbacks: { label: c => c.dataset.label+': '+(c.raw?c.raw.toFixed(2):'-')+'억' } } },
-        scales: { y: { title: { display: true, text: '매출 (억원)' }, beginAtZero: true } }
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>c.raw.toFixed(1)+'%'}}},
+      scales:{x:{title:{display:true, text:'\ub9e4\ucd9c (\uc5b5\uc6d0)', font:{size:9}}, ticks:{font:{size:8}, maxTicksLimit:8}},
+              y:{title:{display:true, text:'\ud655\ub960(%)', font:{size:9}}, beginAtZero:true, ticks:{font:{size:8}}}}
     }
-});
+  });
+
+  const marHistCfg = () => ({
+    type:'bar',
+    data:{
+      labels:['1.53','1.63','1.73','1.82','1.92','2.02','2.12','2.22','2.32','2.41','2.51','2.61','2.71','2.81','2.91'],
+      datasets:[{label:'\ud655\ub960(%)', data:[0.0,0.2,1.1,4.6,11.5,19.5,22.9,19.6,12.1,5.6,2.0,0.6,0.1,0.0,0.0],
+        backgroundColor:'rgba(245,158,11,0.35)', borderColor:'rgba(245,158,11,0.85)', borderWidth:1, borderRadius:2}]
+    },
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>c.raw.toFixed(1)+'%'}}},
+      scales:{x:{title:{display:true, text:'\ub9e4\ucd9c (\uc5b5\uc6d0)', font:{size:9}}, ticks:{font:{size:8}, maxTicksLimit:8}},
+              y:{title:{display:true, text:'\ud655\ub960(%)', font:{size:9}}, beginAtZero:true, ticks:{font:{size:8}}}}
+    }
+  });
+
+  const sensitivityCfg = () => ({
+    type:'bar',
+    data:{
+      labels:['\ube44\uad00\uc801\n(6%/20%)','\ubcf4\uc218\uc801\n(8%/25%)','\uae30\ubcf8\n(10%/33%)','\ub099\uad00\uc801\n(13%/38%)','\ucd5c\ub099\uad00\n(16%/45%)'],
+      datasets:[{label:'\ucd1d\ub9e4\ucd9c(\uc5b5)', data:[1.44,1.84,2.39,2.85,3.41],
+        backgroundColor:['rgba(239,68,68,0.6)','rgba(245,158,11,0.5)','rgba(37,99,235,0.6)','rgba(16,185,129,0.4)','rgba(16,185,129,0.7)'],
+        borderRadius:6}]
+    },
+    options:{responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>c.raw.toFixed(2)+'\uc5b5\uc6d0'}}},
+      scales:{x:{beginAtZero:true, max:4, title:{display:true, text:'\ub9e4\ucd9c (\uc5b5\uc6d0)', font:{size:9}}, ticks:{font:{size:9}}},
+              y:{ticks:{font:{size:9}}}}
+    }
+  });
+
+  return (
+    <div className="max-w-lg mx-auto pb-8">
+
+      {/* ===== HERO ===== */}
+      <header className="relative overflow-hidden">
+        <div className="bg-gradient-to-br from-blue-950 via-blue-900 to-blue-800 px-6 pt-14 pb-10 text-white relative">
+          <div className="absolute -top-20 -right-20 w-60 h-60 bg-blue-400/10 rounded-full"/>
+          <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-blue-950/40 to-transparent"/>
+          <div className="absolute top-6 right-6 text-[40px] opacity-10">📊</div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-xs">◇</span>
+              <span className="text-[10px] font-semibold tracking-widest text-blue-300">HOTEL AROUND PYEONGCHANG</span>
+            </div>
+            <h1 className="text-[22px] font-black leading-tight mb-1">2-3월 매출 전망<br/>분석 보고서</h1>
+            <p className="text-[11px] text-blue-300 tracking-[2px] mb-1">REVENUE FORECAST REPORT</p>
+            <span className="inline-block text-[9px] bg-blue-500/30 text-blue-200 px-2.5 py-0.5 rounded-full mb-5 border border-blue-400/20">Monte Carlo Simulation · N = 100,000</span>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="bg-white/[0.08] border border-white/10 rounded-2xl p-3.5 text-center">
+                <p className="text-[10px] text-emerald-300 mb-0.5">2월 예상매출</p>
+                <p className="text-[22px] font-black text-emerald-400">8.34억</p>
+                <p className="text-[9px] text-slate-400">90% CI: 8.09 ~ 8.62억</p>
+              </div>
+              <div className="bg-white/[0.08] border border-white/10 rounded-2xl p-3.5 text-center">
+                <p className="text-[10px] text-red-300 mb-0.5">3월 예상매출</p>
+                <p className="text-[22px] font-black text-red-400">2.18억</p>
+                <p className="text-[9px] text-slate-400">90% CI: 1.91 ~ 2.46억</p>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center mt-5 text-[10px] text-slate-500">
+              <span>운영관리팀 · 2026.02.21</span>
+              <span>기준: 2026.02.18</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* ===== NAV ===== */}
+      <nav className="sticky top-0 z-50 bg-white flex overflow-x-auto border-b border-slate-100 shadow-sm" style={{scrollbarWidth:'none'}}>
+        {[
+          {h:'#summary',l:'핵심요약'},
+          {h:'#feb',l:'2월분석'},
+          {h:'#mar',l:'3월분석'},
+          {h:'#risk',l:'리스크'},
+          {h:'#trend',l:'월별추이'},
+          {h:'#strategy',l:'대응전략'},
+          {h:'#method',l:'방법론'},
+        ].map((n,i) => (
+          <a key={i} href={n.h} className="flex-shrink-0 px-4 py-3 text-[12px] font-medium text-slate-400 hover:text-blue-600 whitespace-nowrap border-b-2 border-transparent hover:border-blue-500 transition-all">{n.l}</a>
+        ))}
+      </nav>
+
+      {/* ===== CONTENT ===== */}
+      <div className="px-4 pt-4">
+
+        {/* ── SECTION 1: 핵심 요약 ── */}
+        <Accordion id="summary" icon="📊" title="핵심 요약" badge="EXECUTIVE SUMMARY" defaultOpen={true}>
+
+          {/* 2월 핵심 */}
+          <div className="bg-gradient-to-r from-blue-900 to-blue-800 rounded-2xl p-5 text-white mb-3">
+            <p className="text-[10px] font-semibold text-blue-300 tracking-wider mb-2">FEBRUARY 2026</p>
+            <div className="flex items-baseline gap-2 mb-1">
+              <p className="text-[28px] font-black">8.34억 원</p>
+              <span className="text-[10px] bg-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded-full">개관 최고</span>
+            </div>
+            <p className="text-[11px] text-blue-200 mb-3">90% 신뢰구간: 8.09억 ~ 8.62억</p>
+            <div className="grid grid-cols-3 gap-2">
+              <div className="bg-white/10 rounded-lg p-2 text-center">
+                <p className="text-[9px] text-blue-300">OCC</p>
+                <p className="text-[16px] font-bold">64.2%</p>
+              </div>
+              <div className="bg-white/10 rounded-lg p-2 text-center">
+                <p className="text-[9px] text-blue-300">8억 달성</p>
+                <p className="text-[16px] font-bold text-emerald-400">98.8%</p>
+              </div>
+              <div className="bg-white/10 rounded-lg p-2 text-center">
+                <p className="text-[9px] text-blue-300">AZMT 달성</p>
+                <p className="text-[16px] font-bold text-amber-400">76.6%</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 3월 핵심 */}
+          <div className="bg-gradient-to-r from-amber-800 to-amber-700 rounded-2xl p-5 text-white mb-3">
+            <p className="text-[10px] font-semibold text-amber-200 tracking-wider mb-2">MARCH 2026 · 비수기</p>
+            <div className="flex items-baseline gap-2 mb-1">
+              <p className="text-[28px] font-black">2.18억 원</p>
+              <span className="text-[10px] bg-red-500/30 text-red-300 px-2 py-0.5 rounded-full">-74% 급락</span>
+            </div>
+            <p className="text-[11px] text-amber-200 mb-3">90% 신뢰구간: 1.91억 ~ 2.46억</p>
+            <div className="grid grid-cols-3 gap-2">
+              <div className="bg-white/10 rounded-lg p-2 text-center">
+                <p className="text-[9px] text-amber-200">OCC</p>
+                <p className="text-[16px] font-bold">18.6%</p>
+              </div>
+              <div className="bg-white/10 rounded-lg p-2 text-center">
+                <p className="text-[9px] text-amber-200">2억 달성</p>
+                <p className="text-[16px] font-bold text-emerald-400">85.8%</p>
+              </div>
+              <div className="bg-white/10 rounded-lg p-2 text-center">
+                <p className="text-[9px] text-amber-200">AZMT 달성</p>
+                <p className="text-[16px] font-bold text-red-400">0.0%</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 매출 흐름 */}
+          <h4 className="text-[13px] font-bold mb-3">매출 추이 흐름</h4>
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-3">
+            {[
+              {m:'12월',v:'4.23억',cls:'bg-blue-100 text-blue-700'},
+              {m:'1월',v:'7.07억',cls:'bg-emerald-100 text-emerald-700'},
+              {m:'2월',v:'8.35억',cls:'bg-blue-600 text-white'},
+              {m:'3월',v:'2.18억',cls:'bg-red-100 text-red-600'},
+            ].map((item,i) => (
+              <React.Fragment key={i}>
+                {i > 0 && <span className="text-slate-300 text-sm flex-shrink-0">&rarr;</span>}
+                <div className={`${item.cls} rounded-xl px-3 py-2 text-center flex-shrink-0 min-w-[70px]`}>
+                  <p className="text-[9px] font-semibold">{item.m}</p>
+                  <p className="text-[14px] font-black">{item.v}</p>
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+
+          <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-1">
+            <p className="text-[11px] text-red-700">
+              <strong>2월→3월 매출 낙폭: -74%</strong> (약 6.17억 감소)<br/>
+              동계 성수기 종료에 따른 구조적 계절 변동. 비수기 대응 전략 필수.
+            </p>
+          </div>
+        </Accordion>
+
+        {/* ── SECTION 2: 2월 상세 ── */}
+        <Accordion id="feb" icon="📈" title="2월 예상매출 상세 분석" badge="FEBRUARY" badgeColor="bg-emerald-100 text-emerald-700">
+
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-4">
+            <p className="text-[11px] text-blue-800">
+              <strong>산출 구조:</strong> 18일 실적(확정) + 잔여 10일(MC 확률 추정)<br/>
+              <span className="text-[10px] text-blue-600">평일 6일 × Beta(12.25, 19.53) + 주말 4일 × Beta(12.78, 11.09)</span>
+            </p>
+          </div>
+
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">18일 확정 실적</h4>
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            <KPI label="판매객실" value="4,741실" color="border-l-slate-400"/>
+            <KPI label="객실매출" value="5.90억" sub="VAT포함" color="border-l-blue-500"/>
+            <KPI label="F&B매출" value="5,519만" color="border-l-amber-500"/>
+          </div>
+
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">MC 추정 (잔여 10일)</h4>
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            <KPI label="판매객실" value="1,554실" sub="σ = 101실" color="border-l-slate-300"/>
+            <KPI label="객실매출" value="1.71억" sub="σ = 1,443만" color="border-l-blue-400"/>
+            <KPI label="F&B매출" value="1,868만" color="border-l-amber-400"/>
+          </div>
+
+          {/* 결과 */}
+          <div className="bg-gradient-to-r from-blue-900 to-blue-700 rounded-2xl p-5 text-white text-center mb-4">
+            <p className="text-[10px] text-blue-200 mb-1">2월 예상 총매출 (MC 중앙값)</p>
+            <p className="text-[32px] font-black">8.34억 원</p>
+            <p className="text-[12px] text-blue-200 mt-1">90% CI: 8.09억 ~ 8.62억 | σ = 1,608만</p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            <KPI label="객실매출(평균)" value="7.61억" sub="760,714,413원" color="border-l-blue-500"/>
+            <KPI label="F&B(평균)" value="7,387만" sub="73,865,170원" color="border-l-amber-500"/>
+            <KPI label="총매출(평균)" value="8.35억" sub="834,579,584원" color="border-l-emerald-500"/>
+            <KPI label="변동계수(CV)" value="1.93%" sub="낮은 불확실성" color="border-l-slate-300"/>
+          </div>
+
+          {/* 신뢰구간 시각화 */}
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">신뢰구간 분위수</h4>
+          <div className="bg-white rounded-xl p-4 shadow-sm mb-4">
+            <div className="flex justify-between text-[10px] text-slate-400 mb-1.5">
+              <span>P5</span><span>P25</span><span className="font-bold text-blue-600">P50</span><span>P75</span><span>P95</span>
+            </div>
+            <div className="relative bg-blue-100 rounded-full h-4 mb-1.5">
+              <div className="absolute left-[22%] right-[22%] bg-blue-300 rounded-full h-4"/>
+              <div className="absolute left-[47%] w-2 bg-blue-700 rounded-full h-4"/>
+            </div>
+            <div className="flex justify-between text-[11px] font-bold text-slate-600">
+              <span>8.09</span><span>8.23</span><span className="text-blue-700">8.34</span><span>8.45</span><span>8.62</span>
+            </div>
+            <p className="text-[9px] text-center text-slate-400 mt-1.5">(단위: 억원)</p>
+          </div>
+
+          {/* 확률분포 히스토그램 */}
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">2월 총매출 확률 분포</h4>
+          <ChartCanvas configFn={febHistCfg} height="h-44"/>
+
+          {/* 목표 달성 확률 */}
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">목표 달성 확률</h4>
+          <div className="bg-white rounded-xl p-4 shadow-sm mb-4">
+            <ProbBar label="총매출 ≥ 7.5억" pct={100}/>
+            <ProbBar label="총매출 ≥ 8.0억" pct={98.8}/>
+            <ProbBar label="총매출 ≥ 8.5억" pct={16.9}/>
+            <ProbBar label="총매출 ≥ 9.0억" pct={0}/>
+            <ProbBar label="AZMT 목표 달성 (객실 7.5억)" pct={76.6}/>
+          </div>
+
+          {/* AZMT 비교 */}
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">AZMT 목표 비교</h4>
+          {[
+            {kpi:'OCC (28일 기준)', est:'64.2%', target:'35.0%', pct:'183.6%', good:true},
+            {kpi:'월 매출 (VAT제외 객실)', est:'~6.92억', target:'6.82억', pct:'101.4%', good:true},
+          ].map((item,i) => (
+            <div key={i} className={`bg-white rounded-xl p-3.5 mb-2 shadow-sm border-l-4 ${item.good?'border-l-emerald-500':'border-l-red-400'}`}>
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-[12px] font-bold">{item.kpi}</p>
+                  <p className="text-[10px] text-slate-400">AZMT 목표: {item.target}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[18px] font-black">{item.est}</p>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${item.good?'bg-emerald-100 text-emerald-700':'bg-red-100 text-red-700'}`}>{item.pct}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mt-3 mb-1">
+            <p className="text-[11px] text-emerald-800">
+              <strong>핵심:</strong> 설 연휴 효과로 OCC 목표 184% 초과 달성 전망. AZMT 월 매출 목표 <strong>최초 달성 가능성 76.6%</strong>. 개관 이래 최고 월매출 기록 예상.
+            </p>
+          </div>
+        </Accordion>
+
+        {/* ── SECTION 3: 3월 상세 ── */}
+        <Accordion id="mar" icon="📉" title="3월 비수기 예상매출" badge="MARCH" badgeColor="bg-red-100 text-red-700">
+
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4">
+            <p className="text-[11px] text-amber-800">
+              <strong>⚠ 사전예약 ADR 93,995원</strong> — 개관 이래 최저치 (12월 139,215 → 1월 111,237 → 2월 124,405 → <strong>3월 93,995</strong>). 비수기 가격 경쟁 심화.
+            </p>
+          </div>
+
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">3월 구조</h4>
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            <div className="bg-white rounded-xl p-3 shadow-sm border-l-4 border-l-blue-400">
+              <p className="text-[10px] text-slate-400 font-semibold">평일 17일</p>
+              <p className="text-[14px] font-bold">Beta(5.53, 49.73)</p>
+              <p className="text-[10px] text-slate-400">μ = 10.0%</p>
+            </div>
+            <div className="bg-white rounded-xl p-3 shadow-sm border-l-4 border-l-amber-400">
+              <p className="text-[10px] text-slate-400 font-semibold">주말 14일</p>
+              <p className="text-[14px] font-bold">Beta(6.97, 14.14)</p>
+              <p className="text-[10px] text-slate-400">μ = 33.0%</p>
+            </div>
+          </div>
+
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">MC 시뮬레이션 결과</h4>
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            <KPI label="판매객실" value="2,019실" sub="σ = 133실" color="border-l-red-400"/>
+            <KPI label="월 OCC" value="18.6%" sub="AZMT 35% 대비 53%" color="border-l-red-400"/>
+            <KPI label="객실매출" value="1.92억" sub="σ = 1,422만" color="border-l-amber-500"/>
+            <KPI label="F&B매출" value="2,625만" sub="26,248,124원" color="border-l-amber-500"/>
+          </div>
+
+          {/* 결과 */}
+          <div className="bg-gradient-to-r from-amber-800 to-amber-600 rounded-2xl p-5 text-white text-center mb-4">
+            <p className="text-[10px] text-amber-200 mb-1">3월 예상 총매출 (MC 중앙값)</p>
+            <p className="text-[32px] font-black">2.18억 원</p>
+            <p className="text-[12px] text-amber-200 mt-1">90% CI: 1.91억 ~ 2.46억 | σ = 1,688만</p>
+          </div>
+
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4">
+            <p className="text-[11px] text-amber-800">
+              <strong>변동계수 CV = 7.74%</strong> — 2월(1.93%) 대비 <strong>4배 높은 불확실성</strong>. 비수기 매출 예측 난이도 높음.
+            </p>
+          </div>
+
+          {/* 신뢰구간 시각화 */}
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">신뢰구간 분위수</h4>
+          <div className="bg-white rounded-xl p-4 shadow-sm mb-4">
+            <div className="flex justify-between text-[10px] text-slate-400 mb-1.5">
+              <span>P5</span><span>P25</span><span className="font-bold text-amber-600">P50</span><span>P75</span><span>P95</span>
+            </div>
+            <div className="relative bg-amber-100 rounded-full h-4 mb-1.5">
+              <div className="absolute left-[22%] right-[22%] bg-amber-300 rounded-full h-4"/>
+              <div className="absolute left-[47%] w-2 bg-amber-700 rounded-full h-4"/>
+            </div>
+            <div className="flex justify-between text-[11px] font-bold text-slate-600">
+              <span>1.91</span><span>2.06</span><span className="text-amber-700">2.18</span><span>2.29</span><span>2.46</span>
+            </div>
+            <p className="text-[9px] text-center text-slate-400 mt-1.5">(단위: 억원)</p>
+          </div>
+
+          {/* 확률분포 히스토그램 */}
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">3월 총매출 확률 분포</h4>
+          <ChartCanvas configFn={marHistCfg} height="h-44"/>
+
+          {/* 목표 달성 확률 */}
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">목표 달성 확률</h4>
+          <div className="bg-white rounded-xl p-4 shadow-sm mb-4">
+            <ProbBar label="총매출 ≥ 1.5억" pct={100}/>
+            <ProbBar label="총매출 ≥ 2.0억" pct={85.8}/>
+            <ProbBar label="총매출 ≥ 2.5억" pct={3.3}/>
+            <ProbBar label="총매출 ≥ 3.0억" pct={0}/>
+            <ProbBar label="AZMT 월 목표 (6.82억)" pct={0}/>
+          </div>
+
+          {/* AZMT 비교 */}
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">AZMT 목표 비교</h4>
+          {[
+            {kpi:'OCC', est:'18.6%', target:'35.0%', pct:'53.1%'},
+            {kpi:'ADR (VAT제외)', est:'~86,364원', target:'113,712원', pct:'76.0%'},
+            {kpi:'RevPAR (VAT제외)', est:'~16,063원', target:'39,799원', pct:'40.4%'},
+            {kpi:'월매출 (VAT제외)', est:'~1.98억', target:'6.82억', pct:'29.0%'},
+          ].map((item,i) => (
+            <div key={i} className="bg-white rounded-xl p-3.5 mb-2 shadow-sm border-l-4 border-l-red-400">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-[12px] font-bold">{item.kpi}</p>
+                  <p className="text-[10px] text-slate-400">AZMT: {item.target}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[16px] font-black">{item.est}</p>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700">{item.pct}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </Accordion>
+
+        {/* ── SECTION 4: 리스크 & 민감도 ── */}
+        <Accordion id="risk" icon="⚡" title="민감도 분석 & 리스크" badge="RISK" badgeColor="bg-amber-100 text-amber-700">
+
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">OCC 시나리오 민감도 (3월)</h4>
+          {[
+            {name:'비관적', wd:'6%', we:'20%', occ:'12.3%', rooms:'1,337실', rev:'1.44억', color:'border-l-red-400', badge:'bg-red-100 text-red-700'},
+            {name:'보수적', wd:'8%', we:'25%', occ:'15.7%', rooms:'1,701실', rev:'1.84억', color:'border-l-amber-400', badge:'bg-amber-100 text-amber-700'},
+            {name:'기본 (MC)', wd:'10%', we:'33%', occ:'20.4%', rooms:'2,212실', rev:'2.39억', color:'border-l-blue-500', badge:'bg-blue-100 text-blue-700', highlight:true},
+            {name:'낙관적', wd:'13%', we:'38%', occ:'24.3%', rooms:'2,636실', rev:'2.85억', color:'border-l-emerald-400', badge:'bg-emerald-100 text-emerald-700'},
+            {name:'최낙관', wd:'16%', we:'45%', occ:'29.1%', rooms:'3,157실', rev:'3.41억', color:'border-l-emerald-500', badge:'bg-emerald-100 text-emerald-700'},
+          ].map((s,i) => (
+            <div key={i} className={`bg-white rounded-xl p-3.5 mb-2 shadow-sm border-l-4 ${s.color} ${s.highlight?'ring-2 ring-blue-300':''}`}>
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-[13px] font-bold">{s.name}</p>
+                    {s.highlight && <span className="text-[8px] bg-blue-600 text-white px-1.5 py-0.5 rounded font-bold">BASE</span>}
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-0.5">주중 {s.wd} / 주말 {s.we} / 월 {s.occ}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[20px] font-black">{s.rev}</p>
+                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${s.badge}`}>{s.rooms}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          <ChartCanvas configFn={sensitivityCfg} height="h-48"/>
+
+          <h4 className="text-[12px] font-bold text-slate-500 mt-2 mb-2">ADR 시나리오 민감도 (기본 OCC 고정)</h4>
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {[
+              {adr:'80,000', rev:'2.06억', diff:'-14%', good:false},
+              {adr:'90,000', rev:'2.28억', diff:'-5%', good:false},
+              {adr:'95,000', rev:'2.39억', diff:'기본', good:null},
+              {adr:'100,000', rev:'2.50억', diff:'+5%', good:true},
+              {adr:'110,000', rev:'2.72억', diff:'+14%', good:true},
+              {adr:'85,000', rev:'2.17억', diff:'-9%', good:false},
+            ].map((item,i) => (
+              <div key={i} className={`bg-white rounded-xl p-3 shadow-sm text-center ${item.good===null?'ring-2 ring-blue-300':''}`}>
+                <p className="text-[10px] text-slate-400">ADR {item.adr}원</p>
+                <p className="text-[18px] font-black">{item.rev}</p>
+                <span className={`text-[10px] font-bold ${item.good===true?'text-emerald-600':item.good===false?'text-red-500':'text-blue-600'}`}>{item.diff}</span>
+              </div>
+            ))}
+          </div>
+
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">VaR (Value at Risk)</h4>
+          <p className="text-[11px] text-slate-500 mb-3">주어진 신뢰수준에서 발생 가능한 최소 매출</p>
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-3.5">
+              <p className="text-[10px] text-blue-600 font-semibold mb-2">2월 VaR</p>
+              <div className="mb-2">
+                <p className="text-[10px] text-slate-400">VaR 95%</p>
+                <p className="text-[16px] font-black text-blue-700">8.09억</p>
+              </div>
+              <div className="mb-2">
+                <p className="text-[10px] text-slate-400">VaR 99%</p>
+                <p className="text-[16px] font-black text-blue-700">7.99억</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-slate-400">CVaR 95% (ES)</p>
+                <p className="text-[14px] font-bold text-blue-600">8.03억</p>
+              </div>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5">
+              <p className="text-[10px] text-amber-600 font-semibold mb-2">3월 VaR</p>
+              <div className="mb-2">
+                <p className="text-[10px] text-slate-400">VaR 95%</p>
+                <p className="text-[16px] font-black text-amber-700">1.91억</p>
+              </div>
+              <div className="mb-2">
+                <p className="text-[10px] text-slate-400">VaR 99%</p>
+                <p className="text-[16px] font-black text-amber-700">1.81억</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-slate-400">CVaR 95% (ES)</p>
+                <p className="text-[14px] font-bold text-amber-600">1.85억</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-1">
+            <p className="text-[11px] text-blue-800">
+              <strong>해석:</strong> 3월 매출이 극도로 부진한 경우(하위 5%)에도 최소 <strong>1.91억</strong>은 확보 가능. 하위 1% 극단 시나리오에서도 <strong>1.81억</strong> 이상. 고정비 충당 가능 여부 판단 기준.
+            </p>
+          </div>
+        </Accordion>
+
+        {/* ── SECTION 5: 월별 추이 ── */}
+        <Accordion id="trend" icon="📅" title="월별 추이 종합 비교" badge="TREND" badgeColor="bg-slate-200 text-slate-600">
+
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">월별 매출 추이 (실적 + MC 추정, 90% CI)</h4>
+          <ChartCanvas configFn={trendCfg} height="h-56"/>
+
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">KPI 종합 비교</h4>
+          {[
+            {kpi:'판매객실', vals:['2,680','5,563','6,295','2,019'], unit:'실', azmt:'-'},
+            {kpi:'OCC', vals:['23.8%','52.9%','64.2%','18.6%'], unit:'', azmt:'35.0%'},
+            {kpi:'ADR(VAT포함)', vals:['139,215','111,237','~122,000','~95,000'], unit:'원', azmt:'125,083'},
+            {kpi:'총매출', vals:['4.23억','7.07억','8.35억','2.18억'], unit:'', azmt:'6.82억', bold:true},
+          ].map((row,i) => (
+            <div key={i} className={`bg-white rounded-xl p-3.5 mb-2 shadow-sm ${row.bold?'border-2 border-blue-300':''}`}>
+              <div className="flex justify-between items-center mb-2">
+                <p className={`text-[12px] ${row.bold?'font-black':'font-bold'}`}>{row.kpi}</p>
+                {row.azmt !== '-' && <span className="text-[9px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">AZMT: {row.azmt}</span>}
+              </div>
+              <div className="grid grid-cols-4 gap-1.5 text-center">
+                {['12월','1월','2월','3월'].map((m,j) => (
+                  <div key={j} className={`rounded-lg py-1.5 px-1 ${j===2?'bg-blue-50':j===3?'bg-red-50':'bg-slate-50'}`}>
+                    <p className="text-[9px] text-slate-400">{m}</p>
+                    <p className={`text-[11px] font-bold ${j===3&&row.bold?'text-red-600':j===2&&row.bold?'text-blue-700':''}`}>{row.vals[j]}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          <div className="bg-white rounded-xl p-3.5 shadow-sm mb-1 border-l-4 border-l-red-400">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-[12px] font-bold">2월→3월 전월비</p>
+                <p className="text-[10px] text-slate-400">약 6.17억 감소 · 2월의 약 1/4 수준</p>
+              </div>
+              <p className="text-[24px] font-black text-red-600">-74%</p>
+            </div>
+          </div>
+        </Accordion>
+
+        {/* ── SECTION 6: 대응 전략 ── */}
+        <Accordion id="strategy" icon="🎯" title="시사점 & 대응 전략" badge="ACTION" badgeColor="bg-emerald-100 text-emerald-700">
+
+          <h4 className="text-[12px] font-bold text-emerald-700 mb-2">2월 시사점</h4>
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4">
+            {[
+              '개관 이래 최고 매출: MC 추정 8.35억 (1월 대비 +18%)',
+              'AZMT 월 매출 목표 최초 달성 가능성 76.6%',
+              '설 연휴 의존도 주의: 비연휴 평일 OCC ~38.6% (연휴 ~76% 대비 절반)',
+            ].map((item,i) => (
+              <div key={i} className="flex gap-2 mb-1.5 last:mb-0">
+                <span className="text-emerald-500 text-[10px] mt-0.5">●</span>
+                <p className="text-[11px] text-emerald-800">{item}</p>
+              </div>
+            ))}
+          </div>
+
+          <h4 className="text-[12px] font-bold text-red-600 mb-2">3월 비수기 핵심 대응</h4>
+
+          {[
+            {title:'A. 가동률(OCC) 제고', sub:'주중 OCC 10% → 13% 목표', color:'border-l-blue-500',
+              items:[
+                '워케이션 패키지: 주중 2~3박 할인 15~20%. 주중 OCC 3%p↑ 시 월매출 약 2,000만 추가',
+                '단체/MICE 유치: 기업 워크숍, 학교 MT, 세미나 등. B2B 채널 구축 필수'
+              ]},
+            {title:'B. 객단가(ADR) 방어', sub:'95,000원 → 100,000원 목표', color:'border-l-amber-500',
+              items:[
+                '바닥 가격 가이드라인: ADR 90,000원 이하 진입 방지',
+                'ADR 5,000원 인상 시 효과: 2,019실 × 5,000 = +약 1,010만원/월'
+              ]},
+            {title:'C. 비용 관리', sub:'손익분기 매출 하회 대비', color:'border-l-red-400',
+              items:[
+                'VaR 95% 기준 최소 매출 1.91억 전제로 비용 구조 조정',
+                '변동비(일용인건비, 식자재) 축소 및 에너지 비용 자연 감소 활용'
+              ]},
+          ].map((section,i) => (
+            <div key={i} className={`bg-white rounded-xl p-4 mb-3 shadow-sm border-l-4 ${section.color}`}>
+              <p className="text-[13px] font-bold">{section.title}</p>
+              <p className="text-[10px] text-slate-400 mb-2">{section.sub}</p>
+              {section.items.map((item,j) => (
+                <div key={j} className="flex gap-2 mb-1.5 last:mb-0">
+                  <span className="text-blue-500 text-[10px] mt-0.5">▸</span>
+                  <p className="text-[11px] text-slate-600">{item}</p>
+                </div>
+              ))}
+            </div>
+          ))}
+
+          <h4 className="text-[12px] font-bold text-slate-500 mt-4 mb-2">시나리오별 경영 대응</h4>
+          {[
+            {name:'하방 리스크 (P5)', rev:'1.91억', action:'긴급 비용 절감, 비가동 객실 확대', color:'border-l-red-400'},
+            {name:'보수적 (P25)', rev:'2.06억', action:'변동비 축소, 프로모션 강화', color:'border-l-amber-400'},
+            {name:'기본 (P50)', rev:'2.18억', action:'현행 운영 + 주중 프로모션', color:'border-l-blue-500', highlight:true},
+            {name:'낙관적 (P75)', rev:'2.29억', action:'단체 유치 성과 시 달성 가능', color:'border-l-emerald-400'},
+            {name:'상방 (P95)', rev:'2.46억', action:'복수 단체 + 주말 호조 시', color:'border-l-emerald-500'},
+          ].map((s,i) => (
+            <div key={i} className={`bg-white rounded-xl p-3.5 mb-2 shadow-sm border-l-4 ${s.color} ${s.highlight?'ring-2 ring-blue-200':''}`}>
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-[12px] font-bold">{s.name}</p>
+                  <p className="text-[10px] text-slate-400 mt-1">→ {s.action}</p>
+                </div>
+                <p className="text-[18px] font-black flex-shrink-0 ml-2">{s.rev}</p>
+              </div>
+            </div>
+          ))}
+        </Accordion>
+
+        {/* ── SECTION 7: 방법론 ── */}
+        <Accordion id="method" icon="🔬" title="분석 방법론" badge="METHODOLOGY" badgeColor="bg-slate-200 text-slate-600">
+
+          <p className="text-[11px] text-slate-600 mb-3">확률 분포 모델링 + Monte Carlo 시뮬레이션(N=100,000)을 결합하여 매출 추정. 신뢰구간(CI) 및 목표 달성 확률 산출.</p>
+
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">확률 분포 모델</h4>
+          {[
+            {name:'가동률 (OCC)', dist:'Beta Distribution', reason:'OCC \u2208 [0,1] → 유계 확률변수에 적합', icon:'📊',
+             formula:'f(x; α, β) = x^(α-1)(1-x)^(β-1) / B(α, β)'},
+            {name:'객실단가 (ADR)', dist:'Log-Normal Distribution', reason:'ADR > 0, 우측 꼬리 분포 → LogNormal 적합', icon:'💰',
+             formula:'ln(ADR) ~ N(μ_ln, σ_ln²)'},
+            {name:'계절 감쇠 (3월)', dist:'Exponential Decay', reason:'스키 시즌 종료(3/15이후) 수요 감소 반영', icon:'📉',
+             formula:'f(d) = exp(-0.02 × (d-15)), d > 15'},
+          ].map((item,i) => (
+            <div key={i} className="bg-white rounded-xl p-3.5 mb-2 shadow-sm border-l-4 border-l-slate-300">
+              <p className="text-[13px] font-bold">{item.icon} {item.name}</p>
+              <p className="text-[11px] text-blue-600 font-semibold">{item.dist}</p>
+              <p className="text-[10px] text-slate-400 mb-1.5">{item.reason}</p>
+              <div className="bg-slate-50 rounded-lg px-3 py-1.5">
+                <p className="text-[10px] font-mono text-slate-600">{item.formula}</p>
+              </div>
+            </div>
+          ))}
+
+          <h4 className="text-[12px] font-bold text-slate-500 mt-3 mb-2">추정 모수 요약</h4>
+          <div className="bg-white rounded-xl p-3.5 shadow-sm mb-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-[10px] font-bold text-blue-600 mb-1.5">2월 잔여 (10일)</p>
+                <p className="text-[10px] text-slate-600 mb-0.5">평일 OCC: Beta(12.25, 19.53)</p>
+                <p className="text-[10px] text-slate-600 mb-0.5">주말 OCC: Beta(12.78, 11.09)</p>
+                <p className="text-[10px] text-slate-600 mb-0.5">ADR: LogN(11.59, 0.163)</p>
+                <p className="text-[10px] text-slate-600">F&B/Room: N(12,000, 3,000²)</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-amber-600 mb-1.5">3월 (31일)</p>
+                <p className="text-[10px] text-slate-600 mb-0.5">평일 OCC: Beta(5.53, 49.73)</p>
+                <p className="text-[10px] text-slate-600 mb-0.5">주말 OCC: Beta(6.97, 14.14)</p>
+                <p className="text-[10px] text-slate-600 mb-0.5">ADR: LogN(11.45, 0.157)</p>
+                <p className="text-[10px] text-slate-600">F&B/Room: N(13,000, 3,000²)</p>
+              </div>
+            </div>
+          </div>
+
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">MC 일별 매출 생성 프로세스</h4>
+          <div className="bg-slate-800 text-slate-200 rounded-xl p-3.5 mb-3 font-mono text-[10px] leading-relaxed">
+            <p className="text-blue-300 mb-1">// For each simulation n = 1,...,100,000</p>
+            <p>For each day d = 1, ..., D:</p>
+            <p className="pl-3">1) OCC_d ~ Beta(α_type, β_type)</p>
+            <p className="pl-3">2) Rooms_d = ⌊OCC_d × 350⌋</p>
+            <p className="pl-3">3) ADR_d ~ LogNormal(μ_ln, σ_ln)</p>
+            <p className="pl-3">4) Rev_d = Rooms_d × ADR_d</p>
+            <p className="mt-1.5 text-emerald-300">Monthly Rev = Σ Rev_d</p>
+            <p className="text-emerald-300">F&B = Σ Rooms_d × FnB_per_room</p>
+          </div>
+
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">3월 계절 감쇠 함수</h4>
+          <div className="bg-white rounded-xl p-3.5 shadow-sm mb-3">
+            <div className="bg-slate-50 rounded-lg p-2.5 font-mono text-[10px] text-slate-700 mb-2">
+              <p>f(d) = 1.0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if d ≤ 15</p>
+              <p>f(d) = exp(-0.02×(d-15)) &nbsp; if d {'>'} 15</p>
+              <p className="mt-1 text-slate-400">OCC_adjusted = OCC_base × f(d)</p>
+            </div>
+            <div className="flex justify-between text-[10px]">
+              {[{d:'3/1',v:'1.000'},{d:'3/10',v:'1.000'},{d:'3/15',v:'1.000'},{d:'3/20',v:'0.905'},{d:'3/25',v:'0.819'},{d:'3/31',v:'0.726'}].map((item,i) => (
+                <div key={i} className="text-center">
+                  <p className="text-slate-400">{item.d}</p>
+                  <p className="font-bold">{item.v}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <h4 className="text-[12px] font-bold text-slate-500 mb-2">관측 데이터 (분포 적합 기초)</h4>
+          {[
+            {date:'2/9 (일)', rooms:'178실', occ:'50.9%', type:'비연휴 주말', badge:'bg-blue-100 text-blue-600'},
+            {date:'2/10 (월)', rooms:'112실', occ:'32.0%', type:'비연휴 평일', badge:'bg-blue-100 text-blue-600'},
+            {date:'2/12 (수)', rooms:'158실', occ:'45.1%', type:'비연휴 평일', badge:'bg-blue-100 text-blue-600'},
+            {date:'2/13~17', rooms:'236~295실', occ:'67~84%', type:'설 연휴', badge:'bg-amber-100 text-amber-600'},
+            {date:'2/18 (화)', rooms:'242실', occ:'69.1%', type:'연휴 직후', badge:'bg-emerald-100 text-emerald-600'},
+          ].map((item,i) => (
+            <div key={i} className="flex items-center gap-3 bg-white rounded-lg p-2.5 mb-1.5 shadow-sm">
+              <p className="text-[11px] font-bold w-16 flex-shrink-0">{item.date}</p>
+              <p className="text-[11px] flex-1">{item.rooms} / {item.occ}</p>
+              <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${item.badge}`}>{item.type}</span>
+            </div>
+          ))}
+
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 mt-3 mb-1">
+            <p className="text-[11px] text-blue-800">
+              <strong>분포 적합 전략:</strong> 비연휴 평일/주말 데이터를 분리하여 Beta 분포 적합. 설 연휴 데이터는 잔여 기간 추정에서 제외하되, 18일 실적에 이미 반영됨. 제한된 표본(n=2~3)의 한계를 보완하기 위해 분산에 보수적 가정 적용.
+            </p>
+          </div>
+
+          {/* 월별 실적 현황 */}
+          <h4 className="text-[12px] font-bold text-slate-500 mt-4 mb-2">월별 실적 현황</h4>
+          {[
+            {m:'11월', rooms:'453실', occ:'3.7%', adr:'106,572', rev:'4,828만', fnb:'-'},
+            {m:'12월', rooms:'2,680실', occ:'23.8%', adr:'139,215', rev:'3.73억', fnb:'4,973만'},
+            {m:'1월', rooms:'5,563실', occ:'52.9%', adr:'111,237', rev:'6.19억', fnb:'8,800만', highlight:true},
+            {m:'2월(~18일)', rooms:'4,741실', occ:'48.5%*', adr:'124,405', rev:'5.90억', fnb:'5,519만'},
+            {m:'3월(사전)', rooms:'243실', occ:'2.2%', adr:'93,995', rev:'2,284만', fnb:'-'},
+          ].map((item,i) => (
+            <div key={i} className={`bg-white rounded-xl p-3 mb-1.5 shadow-sm ${item.highlight?'border-l-4 border-l-emerald-500':''}`}>
+              <div className="flex justify-between items-center mb-1">
+                <p className="text-[12px] font-bold">{item.m}</p>
+                <span className="text-[10px] text-slate-400">{item.rooms} · OCC {item.occ}</span>
+              </div>
+              <div className="flex justify-between text-[11px]">
+                <span className="text-slate-500">ADR {item.adr}원</span>
+                <span className="font-bold">객실 {item.rev}</span>
+                <span className="text-slate-400">F&B {item.fnb}</span>
+              </div>
+            </div>
+          ))}
+
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mt-2 mb-1">
+            <p className="text-[10px] text-amber-700">
+              * 2월 OCC 48.5%는 28일 분모 기준. 실제 18일간 일평균 가동률 = <strong>75.3%</strong> (설 연휴 포함).
+            </p>
+          </div>
+        </Accordion>
+
+      </div>
+
+      {/* ===== FOOTER ===== */}
+      <footer className="bg-blue-950 text-white text-center py-8 px-6 mt-4">
+        <p className="text-[10px] text-blue-300 tracking-widest mb-1">HOTEL AROUND PYEONGCHANG</p>
+        <h3 className="text-lg font-bold mb-1">2-3월 매출 전망 보고서</h3>
+        <p className="text-[10px] text-slate-500 mb-1">Beta Distribution + Log-Normal + Exponential Decay</p>
+        <p className="text-[10px] text-slate-500 mb-2">Monte Carlo N = 100,000 · 기준일 2026.02.18</p>
+        <p className="text-[10px] text-slate-600">운영관리팀 · Confidential</p>
+      </footer>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
-
 </body>
 </html>
