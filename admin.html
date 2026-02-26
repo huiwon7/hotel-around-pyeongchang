@@ -211,9 +211,60 @@ function doGet(e) {
       </div>
     </section>
 
+    <!-- Telegram Setup Section -->
+    <section class="setup-section" id="telegramSection" style="display:none;">
+      <div class="setup-card">
+        <h2>Telegram 알림 설정</h2>
+        <p>새 예약문의가 접수되면 텔레그램으로 실시간 알림을 받을 수 있습니다.</p>
+
+        <div class="setup-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>봇 생성</h3>
+            <p>텔레그램에서 <a href="https://t.me/BotFather" target="_blank">@BotFather</a>를 검색하고 대화를 시작하세요.</p>
+            <p><code>/newbot</code> 명령어를 보내고 봇 이름과 유저네임을 설정하면 <strong>Bot Token</strong>을 받습니다.</p>
+          </div>
+        </div>
+
+        <div class="setup-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Chat ID 확인</h3>
+            <p>생성된 봇에게 아무 메시지를 보낸 뒤, 아래 URL에 접속하세요:</p>
+            <code>https://api.telegram.org/bot{YOUR_TOKEN}/getUpdates</code>
+            <p>응답에서 <strong>"chat":{"id": 숫자}</strong> 부분이 Chat ID입니다.</p>
+          </div>
+        </div>
+
+        <div class="setup-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>설정 등록</h3>
+            <p>Bot Token과 Chat ID를 아래에 입력하고 저장하세요.</p>
+            <div class="telegram-input-group">
+              <div class="url-input-row">
+                <input type="text" id="telegramTokenInput" placeholder="Bot Token (예: 123456:ABC-DEF...)">
+              </div>
+              <div class="url-input-row" style="margin-top:0.5rem;">
+                <input type="text" id="telegramChatIdInput" placeholder="Chat ID (예: 123456789)">
+              </div>
+              <div class="url-input-row" style="margin-top:0.5rem;">
+                <button class="btn-save-url" id="btnSaveTelegram">저장</button>
+                <button class="btn-test-telegram" id="btnTestTelegram">테스트 알림</button>
+              </div>
+            </div>
+            <p class="url-status" id="telegramStatus"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Footer -->
     <footer class="admin-footer">
-      <button class="btn-setup" id="btnSetup">Google Sheets 설정</button>
+      <div class="footer-buttons">
+        <button class="btn-setup" id="btnSetup">Google Sheets 설정</button>
+        <button class="btn-setup" id="btnTelegramSetup">Telegram 알림 설정</button>
+      </div>
       <span>&copy; 2025 Hotel Around Pyeongchang - Admin</span>
     </footer>
 

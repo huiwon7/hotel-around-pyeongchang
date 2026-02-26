@@ -316,6 +316,39 @@ function storeInquiry(data) {
       body: JSON.stringify(data)
     }).catch(err => console.error('Google Sheets 전송 실패:', err));
   }
+
+  sendTelegramNotification(data);
+}
+
+function sendTelegramNotification(data) {
+  const botToken = '8680394108:AAG63i0ZdjqiSOnfKc8xbCZMlpooto8VE7w';
+  const chatId = '338769898';
+
+  const packageNames = {
+    starter: 'Starter (7박)',
+    professional: 'Professional (14박)',
+    nomad: 'Nomad (30박)',
+    paradise: 'Paradise (90박)',
+    custom: '기업 맞춤'
+  };
+
+  const pkgName = packageNames[data.package] || data.package || '-';
+  const text = `🔔 새 예약문의\n\n` +
+    `이름: ${data.name || '-'}\n` +
+    `회사: ${data.company || '-'}\n` +
+    `패키지: ${pkgName}\n` +
+    `체크인: ${data.checkin || '-'}\n` +
+    `인원: ${data.guests || '-'}명\n` +
+    `연락처: ${data.phone || '-'}\n` +
+    `이메일: ${data.email || '-'}\n` +
+    (data.message ? `메시지: ${data.message}\n` : '') +
+    `\n📋 관리자 페이지에서 확인하세요.`;
+
+  fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId, text: text })
+  }).catch(err => console.error('텔레그램 알림 전송 실패:', err));
 }
 
 function showModal() {

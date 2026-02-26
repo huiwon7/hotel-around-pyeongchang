@@ -89,6 +89,7 @@ function initDashboard() {
   document.getElementById('btnSetup')?.addEventListener('click', () => {
     const section = document.getElementById('setupSection');
     section.style.display = section.style.display === 'none' ? 'block' : 'none';
+    document.getElementById('telegramSection').style.display = 'none';
 
     // Pre-fill saved URL
     const savedUrl = localStorage.getItem(STORAGE_KEY_URL);
@@ -99,6 +100,25 @@ function initDashboard() {
 
   // Save URL
   document.getElementById('btnSaveUrl')?.addEventListener('click', saveScriptUrl);
+
+  // Telegram setup toggle
+  document.getElementById('btnTelegramSetup')?.addEventListener('click', () => {
+    const section = document.getElementById('telegramSection');
+    section.style.display = section.style.display === 'none' ? 'block' : 'none';
+    document.getElementById('setupSection').style.display = 'none';
+
+    // Pre-fill saved values
+    const savedToken = localStorage.getItem('telegramBotToken');
+    const savedChatId = localStorage.getItem('telegramChatId');
+    if (savedToken) document.getElementById('telegramTokenInput').value = savedToken;
+    if (savedChatId) document.getElementById('telegramChatIdInput').value = savedChatId;
+  });
+
+  // Save Telegram settings
+  document.getElementById('btnSaveTelegram')?.addEventListener('click', saveTelegramSettings);
+
+  // Test Telegram notification
+  document.getElementById('btnTestTelegram')?.addEventListener('click', testTelegramNotification);
 }
 
 /**
@@ -124,6 +144,68 @@ function saveScriptUrl() {
   status.style.color = '#27ae60';
 
   loadData();
+}
+
+/**
+ * Save Telegram settings
+ */
+function saveTelegramSettings() {
+  const token = document.getElementById('telegramTokenInput').value.trim();
+  const chatId = document.getElementById('telegramChatIdInput').value.trim();
+  const status = document.getElementById('telegramStatus');
+
+  if (!token || !chatId) {
+    status.textContent = 'Bot Token과 Chat ID를 모두 입력해주세요.';
+    status.style.color = '#e74c3c';
+    return;
+  }
+
+  localStorage.setItem('telegramBotToken', token);
+  localStorage.setItem('telegramChatId', chatId);
+
+  status.textContent = '텔레그램 설정이 저장되었습니다.';
+  status.style.color = '#27ae60';
+}
+
+/**
+ * Test Telegram notification
+ */
+async function testTelegramNotification() {
+  const token = localStorage.getItem('telegramBotToken');
+  const chatId = localStorage.getItem('telegramChatId');
+  const status = document.getElementById('telegramStatus');
+
+  if (!token || !chatId) {
+    status.textContent = '먼저 설정을 저장해주세요.';
+    status.style.color = '#e74c3c';
+    return;
+  }
+
+  status.textContent = '테스트 알림 전송 중...';
+  status.style.color = '#2980b9';
+
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: '✅ 호텔어라운드 평창 알림 테스트\n\n텔레그램 알림이 정상적으로 연동되었습니다.'
+      })
+    });
+
+    const result = await response.json();
+    if (result.ok) {
+      status.textContent = '테스트 알림이 전송되었습니다. 텔레그램을 확인하세요!';
+      status.style.color = '#27ae60';
+    } else {
+      status.textContent = `전송 실패: ${result.description || '설정을 다시 확인해주세요.'}`;
+      status.style.color = '#e74c3c';
+    }
+  } catch (err) {
+    status.textContent = '전송 실패: 네트워크 오류가 발생했습니다.';
+    status.style.color = '#e74c3c';
+  }
 }
 
 /**

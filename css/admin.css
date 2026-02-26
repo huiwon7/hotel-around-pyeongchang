@@ -646,6 +646,27 @@ body {
   color: #27ae60;
 }
 
+.btn-test-telegram {
+  padding: 0.6rem 1.2rem;
+  background: #0088cc;
+  color: var(--color-white);
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.btn-test-telegram:hover {
+  background: #006da3;
+}
+
+.footer-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
 /* =============================================
    Footer
    ============================================= */
