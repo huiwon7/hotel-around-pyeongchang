@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>호텔어라운드평창 — 투자자 보고 요약 (2026.03)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Noto Sans KR',sans-serif; background:#f8f9fb; color:#1a1a2e; line-height:1.7; }
+.page { max-width:800px; margin:0 auto; background:#fff; }
+
+/* Cover */
+.cover { background:linear-gradient(135deg,#0f2027 0%,#203a43 50%,#2c5364 100%); color:#fff; padding:80px 60px 60px; position:relative; overflow:hidden; }
+.cover::after { content:''; position:absolute; top:-60px; right:-60px; width:260px; height:260px; border-radius:50%; background:rgba(255,255,255,0.04); }
+.cover .label { font-size:12px; letter-spacing:4px; text-transform:uppercase; opacity:0.6; margin-bottom:24px; }
+.cover h1 { font-size:32px; font-weight:900; line-height:1.3; margin-bottom:8px; }
+.cover .sub { font-size:15px; font-weight:300; opacity:0.8; margin-bottom:40px; }
+.cover .date { font-size:13px; opacity:0.5; }
+.cover .badge { display:inline-block; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); border-radius:20px; padding:6px 16px; font-size:12px; font-weight:500; margin-bottom:24px; }
+
+/* Section */
+.section { padding:48px 60px; border-bottom:1px solid #eee; }
+.section:last-child { border-bottom:none; }
+.section-num { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:#2c5364; font-weight:700; margin-bottom:8px; }
+.section h2 { font-size:20px; font-weight:700; color:#0f2027; margin-bottom:24px; }
+
+/* KPI Row */
+.kpi-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+.kpi-row.four { grid-template-columns:repeat(4,1fr); }
+.kpi-box { background:#f8f9fb; border-radius:10px; padding:20px; text-align:center; border:1px solid #eef0f2; }
+.kpi-box.highlight { background:linear-gradient(135deg,#e8f5e9,#f1f8e9); border-color:#a5d6a7; }
+.kpi-box.warn { background:#fff8e1; border-color:#ffe082; }
+.kpi-box.danger { background:#ffebee; border-color:#ef9a9a; }
+.kpi-box .label { font-size:11px; color:#666; font-weight:500; margin-bottom:6px; letter-spacing:0.5px; }
+.kpi-box .value { font-size:24px; font-weight:900; color:#0f2027; }
+.kpi-box .value.green { color:#2e7d32; }
+.kpi-box .value.red { color:#c62828; }
+.kpi-box .sub { font-size:11px; color:#999; margin-top:4px; }
+
+/* Table */
+table { width:100%; border-collapse:collapse; font-size:13px; margin:16px 0; }
+th { background:#f3f4f6; font-weight:600; padding:10px 12px; text-align:right; border-bottom:2px solid #ddd; }
+th:first-child { text-align:left; }
+td { padding:9px 12px; text-align:right; border-bottom:1px solid #eee; }
+td:first-child { text-align:left; font-weight:500; }
+tr.best { background:#f0fff4; }
+tr.total { background:#f3f4f6; font-weight:700; }
+
+/* Bar */
+.bar-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.bar-label { width:80px; font-size:12px; font-weight:500; text-align:right; color:#555; flex-shrink:0; }
+.bar-track { flex:1; height:22px; background:#eee; border-radius:11px; overflow:hidden; position:relative; }
+.bar-fill { height:100%; border-radius:11px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:11px; font-weight:600; color:#fff; min-width:40px; transition:width 0.6s; }
+.bar-fill.green { background:linear-gradient(90deg,#43a047,#66bb6a); }
+.bar-fill.amber { background:linear-gradient(90deg,#f9a825,#fdd835); color:#333; }
+.bar-fill.red { background:linear-gradient(90deg,#e53935,#ef5350); }
+.bar-target { position:absolute; top:0; height:100%; width:2px; background:#c62828; }
+.bar-pct { width:56px; font-size:12px; font-weight:700; color:#333; flex-shrink:0; }
+
+/* Bullet */
+ul.bullets { padding-left:0; list-style:none; }
+ul.bullets li { position:relative; padding-left:20px; margin-bottom:10px; font-size:13.5px; line-height:1.7; }
+ul.bullets li::before { content:''; position:absolute; left:0; top:9px; width:8px; height:8px; border-radius:50%; background:#2c5364; }
+ul.bullets li strong { color:#0f2027; }
+
+/* Compare */
+.compare { display:grid; grid-template-columns:1fr 40px 1fr; gap:0; align-items:center; margin:20px 0; }
+.compare-box { background:#f8f9fb; border-radius:10px; padding:20px; text-align:center; }
+.compare-box .name { font-size:11px; color:#999; font-weight:500; margin-bottom:4px; }
+.compare-box .val { font-size:22px; font-weight:900; color:#0f2027; }
+.compare-box .detail { font-size:11px; color:#888; margin-top:4px; }
+.compare-arrow { text-align:center; font-size:20px; color:#2e7d32; font-weight:900; }
+
+/* Quote */
+.quote-box { background:linear-gradient(135deg,#f0f4ff,#e8ecf4); border-left:4px solid #2c5364; border-radius:0 10px 10px 0; padding:24px 28px; margin:24px 0; }
+.quote-box p { font-style:italic; font-size:14px; line-height:1.8; color:#333; }
+.quote-box .author { font-style:normal; font-size:12px; color:#888; text-align:right; margin-top:8px; }
+
+/* Risk Grid */
+.risk-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0; }
+.risk-item { padding:16px; border-radius:8px; border:1px solid #eee; }
+.risk-item.red { border-left:3px solid #e53935; background:#fff8f8; }
+.risk-item.amber { border-left:3px solid #f9a825; background:#fffdf0; }
+.risk-item .risk-title { font-size:12px; font-weight:700; color:#333; margin-bottom:4px; }
+.risk-item .risk-desc { font-size:11.5px; color:#666; line-height:1.6; }
+
+/* Footer */
+.footer { padding:40px 60px; background:#f3f4f6; text-align:center; font-size:11px; color:#999; }
+.footer a { color:#2c5364; text-decoration:none; font-weight:500; }
+
+/* Print */
+@media print {
+    body { background:#fff; }
+    .page { max-width:100%; box-shadow:none; }
+    .section { break-inside:avoid; }
+}
+@media (max-width:700px) {
+    .cover { padding:48px 28px 36px; }
+    .cover h1 { font-size:24px; }
+    .section { padding:32px 24px; }
+    .kpi-row { grid-template-columns:repeat(2,1fr); }
+    .kpi-row.four { grid-template-columns:repeat(2,1fr); }
+    .risk-grid { grid-template-columns:1fr; }
+    .compare { grid-template-columns:1fr; gap:8px; }
+    .compare-arrow { transform:rotate(90deg); }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+    <!-- ===== COVER ===== -->
+    <div class="cover">
+        <div class="label">Investor Executive Summary</div>
+        <div class="badge">Confidential</div>
+        <h1>호텔어라운드평창<br>운영 성과 보고서</h1>
+        <div class="sub">AZMT 위탁운영 | 2025년 10월 ~ 2026년 3월 1일 기준</div>
+        <div class="date">보고일: 2026년 3월 3일</div>
+    </div>
+
+    <!-- ===== 1. 핵심 성과 요약 ===== -->
+    <div class="section">
+        <div class="section-num">01</div>
+        <h2>핵심 성과 요약</h2>
+        <div class="kpi-row">
+            <div class="kpi-box highlight">
+                <div class="label">누적 총매출</div>
+                <div class="value green">19.39억</div>
+                <div class="sub">객실 16.93억 + F&B 2.19억 + 기타 0.27억</div>
+            </div>
+            <div class="kpi-box highlight">
+                <div class="label">2월 매출 (역대 최고)</div>
+                <div class="value green">7.34억</div>
+                <div class="sub">객실 6.52억 + F&B 0.82억</div>
+            </div>
+            <div class="kpi-box">
+                <div class="label">누적 판매 객실</div>
+                <div class="value">13,960실</div>
+                <div class="sub">11월~2월 합산</div>
+            </div>
+        </div>
+        <div class="kpi-row four">
+            <div class="kpi-box">
+                <div class="label">2월 OCC</div>
+                <div class="value green">54.2%</div>
+                <div class="sub">목표 35% 대비 155%</div>
+            </div>
+            <div class="kpi-box">
+                <div class="label">2월 ADR</div>
+                <div class="value">113,094원</div>
+                <div class="sub">목표 대비 99.5%</div>
+            </div>
+            <div class="kpi-box">
+                <div class="label">2월 RevPAR</div>
+                <div class="value green">61,297원</div>
+                <div class="sub">목표 대비 154%</div>
+            </div>
+            <div class="kpi-box danger">
+                <div class="label">10~12월 순손실</div>
+                <div class="value red">-0.79억</div>
+                <div class="sub">비용 5.4억 > 매출 4.19억</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 2. 매출 성장 추이 ===== -->
+    <div class="section">
+        <div class="section-num">02</div>
+        <h2>매출 성장 추이</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>구분</th>
+                    <th>11월</th>
+                    <th>12월</th>
+                    <th>1월</th>
+                    <th>2월</th>
+                    <th>누적</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>객실매출</td>
+                    <td>4,828만</td>
+                    <td>3.73억</td>
+                    <td>6.19억</td>
+                    <td><strong>6.52억</strong></td>
+                    <td><strong>16.93억</strong></td>
+                </tr>
+                <tr>
+                    <td>F&B매출</td>
+                    <td>-</td>
+                    <td>4,973만</td>
+                    <td>8,800만</td>
+                    <td>8,168만</td>
+                    <td><strong>2.19억</strong></td>
+                </tr>
+                <tr>
+                    <td>판매 객실</td>
+                    <td>453실</td>
+                    <td>2,680실</td>
+                    <td>5,563실</td>
+                    <td>5,264실</td>
+                    <td><strong>13,960실</strong></td>
+                </tr>
+                <tr>
+                    <td>OCC</td>
+                    <td>3.7%</td>
+                    <td>23.8%</td>
+                    <td>52.9%</td>
+                    <td><strong>54.2%</strong></td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>ADR (VAT별도)</td>
+                    <td>96,884</td>
+                    <td>126,559</td>
+                    <td>101,125</td>
+                    <td><strong>113,094</strong></td>
+                    <td>-</td>
+                </tr>
+                <tr class="total">
+                    <td>월 총매출</td>
+                    <td>4,828만</td>
+                    <td>4.50억</td>
+                    <td>7.07억</td>
+                    <td><strong>7.34억</strong></td>
+                    <td><strong>19.39억</strong></td>
+                </tr>
+            </tbody>
+        </table>
+        <p style="font-size:12px;color:#888;margin-top:4px;">* 객실매출: VAT 포함 기준 / ADR: VAT 별도 기준 / 3월 1일 기준 3월 누적 매출 4,939만원 별도</p>
+    </div>
+
+    <!-- ===== 3. AZMT 목표 달성률 ===== -->
+    <div class="section">
+        <div class="section-num">03</div>
+        <h2>AZMT 경영 목표 달성률 (2월 기준)</h2>
+
+        <div class="bar-row">
+            <div class="bar-label">월매출</div>
+            <div class="bar-track">
+                <div class="bar-fill amber" style="width:87%;">5.93억</div>
+                <div class="bar-target" style="left:100%;"></div>
+            </div>
+            <div class="bar-pct">87.0%</div>
+        </div>
+        <div class="bar-row">
+            <div class="bar-label">OCC</div>
+            <div class="bar-track">
+                <div class="bar-fill green" style="width:100%;">54.2%</div>
+            </div>
+            <div class="bar-pct" style="color:#2e7d32;">154.9%</div>
+        </div>
+        <div class="bar-row">
+            <div class="bar-label">ADR</div>
+            <div class="bar-track">
+                <div class="bar-fill amber" style="width:99.5%;">113,094원</div>
+                <div class="bar-target" style="left:100%;"></div>
+            </div>
+            <div class="bar-pct">99.5%</div>
+        </div>
+        <div class="bar-row">
+            <div class="bar-label">RevPAR</div>
+            <div class="bar-track">
+                <div class="bar-fill green" style="width:100%;">61,297원</div>
+            </div>
+            <div class="bar-pct" style="color:#2e7d32;">154.0%</div>
+        </div>
+        <div class="bar-row">
+            <div class="bar-label">Group</div>
+            <div class="bar-track">
+                <div class="bar-fill red" style="width:3%;">0%</div>
+                <div class="bar-target" style="left:100%;"></div>
+            </div>
+            <div class="bar-pct" style="color:#c62828;">0%</div>
+        </div>
+        <p style="font-size:12px;color:#888;margin-top:12px;">목표: 월매출 6.82억 / OCC 35% / ADR 113,712원 / RevPAR 39,799원 / Group 20% (VAT 별도 기준)</p>
+    </div>
+
+    <!-- ===== 4. 전 운영사 대비 성과 ===== -->
+    <div class="section">
+        <div class="section-num">04</div>
+        <h2>전 운영사 대비 성과 비교 (동기간 12~2월)</h2>
+        <div class="compare">
+            <div class="compare-box">
+                <div class="name">바로네트웍스 (24.12~25.2)</div>
+                <div class="val">7,580실</div>
+                <div class="detail">12월 2,101 + 1월 3,453 + 2월 2,026</div>
+            </div>
+            <div class="compare-arrow">→</div>
+            <div class="compare-box" style="border:2px solid #2e7d32;">
+                <div class="name">AZMT (25.12~26.2)</div>
+                <div class="val" style="color:#2e7d32;">13,507실</div>
+                <div class="detail">12월 2,680 + 1월 5,563 + 2월 5,264</div>
+            </div>
+        </div>
+        <div style="text-align:center;margin:12px 0;">
+            <span style="display:inline-block;background:#e8f5e9;color:#2e7d32;font-weight:700;font-size:18px;padding:8px 24px;border-radius:20px;">+78.2% 성장 (약 1.8배)</span>
+        </div>
+        <ul class="bullets" style="margin-top:20px;">
+            <li>1월 객실 판매: 3,453실 → <strong>5,563실 (+61.1%)</strong></li>
+            <li>2월 객실 판매: 2,026실 → <strong>5,264실 (+159.8%)</strong></li>
+            <li>RevPAR: 전 운영사 동기 대비 <strong>+150% 성장</strong></li>
+        </ul>
+    </div>
+
+    <!-- ===== 5. 비용 구조 & 손익 ===== -->
+    <div class="section">
+        <div class="section-num">05</div>
+        <h2>비용 구조 및 손익 (10~12월)</h2>
+        <div class="kpi-row">
+            <div class="kpi-box">
+                <div class="label">총 수익</div>
+                <div class="value">4.61억</div>
+                <div class="sub">매출 4.19억 + 영업외 0.42억</div>
+            </div>
+            <div class="kpi-box">
+                <div class="label">총 비용</div>
+                <div class="value red">5.40억</div>
+                <div class="sub">인건비+시설+수수료+소모품 등</div>
+            </div>
+            <div class="kpi-box danger">
+                <div class="label">당기순손실</div>
+                <div class="value red">-0.79억</div>
+                <div class="sub">영업이익률 -28.8%</div>
+            </div>
+        </div>
+        <p style="font-size:13px;color:#555;line-height:1.8;margin-top:8px;">
+            <strong>주요 비용:</strong> 지급수수료 28.3%(1.61억) / 소모품비 21.5%(1.16억) / 시설운영비 17.0%(0.92억) / 인건비 12.7%(0.69억)
+        </p>
+        <p style="font-size:13px;color:#555;line-height:1.8;margin-top:8px;">
+            <strong>참고:</strong> 10~12월은 운영 초기 세팅 비용이 포함된 시기로, 1~2월 매출(14.41억) 급증에 따른 손익 개선이 기대됨. 1~2월 비용 데이터는 ERP 마감 후 확정 예정.
+        </p>
+    </div>
+
+    <!-- ===== 6. 리스크 & 과제 ===== -->
+    <div class="section">
+        <div class="section-num">06</div>
+        <h2>핵심 리스크 및 개선 과제</h2>
+        <div class="risk-grid">
+            <div class="risk-item amber">
+                <div class="risk-title">주말 매출 편중</div>
+                <div class="risk-desc">금~토 매출이 전체의 약 58% 차지. 주중 ADR이 주말의 약 48% 수준. 주중 수요 창출 패키지 개발 필요.</div>
+            </div>
+            <div class="risk-item red">
+                <div class="risk-title">Group/MICE 매출 전무</div>
+                <div class="risk-desc">100% FIT 의존 구조. Group 목표 20% 대비 0%. B2B/MICE 채널 개발 시급.</div>
+            </div>
+            <div class="risk-item amber">
+                <div class="risk-title">객실 가용성 제한</div>
+                <div class="risk-desc">518실 중 House Use 146실(28%) 비가용. 실제 판매 가능 객실 약 340~350실. 가용 확대 검토 필요.</div>
+            </div>
+            <div class="risk-item amber">
+                <div class="risk-title">비수기 전략 부재</div>
+                <div class="risk-desc">동계 성수기(12~2월) 집중 구조. 3월 이후 비수기 ADR·OCC 급락 대비 전략 수립 필요.</div>
+            </div>
+        </div>
+
+        <div class="quote-box">
+            <p>"호텔의 컨셉은 성수기가 아니라 비수기에 맞춰 만들어야 한다"</p>
+            <div class="author">— 호시노리조트 호시노 요시하루</div>
+        </div>
+    </div>
+
+    <!-- ===== 7. 핵심 메시지 ===== -->
+    <div class="section" style="background:linear-gradient(135deg,#f8fffe,#f0f7ff);">
+        <div class="section-num">07</div>
+        <h2>투자자 핵심 메시지</h2>
+        <ul class="bullets">
+            <li><strong>성수기 실적 입증:</strong> 운영 5개월 만에 누적 매출 19.39억 달성. 2월 역대 최고 매출 7.34억 기록으로 성수기 운영 역량 검증 완료.</li>
+            <li><strong>전 운영사 대비 1.8배 성장:</strong> 동기간(12~2월) 객실 판매 7,580실 → 13,507실. 운영 효율성 및 마케팅 전략 효과 입증.</li>
+            <li><strong>AZMT 목표 4/5개 달성·근접:</strong> OCC(155%), RevPAR(154%) 초과 달성, ADR(99.5%) 목표 근접. 월매출(87%) 상향 추세.</li>
+            <li><strong>F&B 신규 매출원 창출:</strong> 로봇 배달 서비스를 통한 야식 매출 2,400만원 신규 창출. F&B 누적 2.19억 달성.</li>
+            <li><strong>비수기 전략이 핵심 과제:</strong> 3월 이후 비수기 대응 전략(워케이션, MICE, 체험 패키지 등) 수립 및 Group 채널 개발이 지속 성장의 관건.</li>
+        </ul>
+    </div>
+
+    <!-- ===== Footer ===== -->
+    <div class="footer">
+        <p style="margin-bottom:8px;">본 자료는 투자자 보고 목적으로 작성되었으며, 내부 경영 데이터를 기반으로 합니다.</p>
+        <p>호텔어라운드평창 | AZMT 위탁운영 | <a href="dashboard.html">상세 대시보드 바로가기 →</a></p>
+        <p style="margin-top:12px;font-size:10px;opacity:0.6;">Data as of 2026.03.01 | Generated 2026.03.03</p>
+    </div>
+
+</div>
+</body>
+</html>
