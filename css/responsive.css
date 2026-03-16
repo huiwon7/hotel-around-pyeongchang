@@ -85,9 +85,9 @@
    Tablet Portrait (max-width: 768px)
    ============================================ */
 @media (max-width: 768px) {
-  /* Nav height override */
+  /* Nav height override (includes season bar) */
   :root {
-    --nav-height: 64px;
+    --nav-height: 100px;
   }
 
   /* Mobile menu - slide-in panel */
@@ -184,6 +184,10 @@
     align-items: center;
     text-align: center;
     gap: var(--space-sm);
+  }
+
+  .footer {
+    padding-bottom: calc(var(--space-xl) + 52px);
   }
 
   /* Package details responsive */

@@ -3,11 +3,17 @@
    Triggered by data-season attribute on <body>
    ============================================ */
 
+/* ---- Season Variable Mappings ---- */
+
 /* Spring Theme */
 [data-season="spring"] {
   --season-active: var(--season-spring-primary);
   --season-active-bg: var(--season-spring-bg);
   --season-hero-gradient: var(--season-spring-gradient);
+  --season-active-tint: var(--season-spring-tint);
+  --season-active-tint-alt: var(--season-spring-tint-alt);
+  --season-active-border: var(--season-spring-border);
+  --season-active-shadow: var(--season-spring-shadow);
 }
 
 /* Summer Theme */
@@ -15,6 +21,10 @@
   --season-active: var(--season-summer-primary);
   --season-active-bg: var(--season-summer-bg);
   --season-hero-gradient: var(--season-summer-gradient);
+  --season-active-tint: var(--season-summer-tint);
+  --season-active-tint-alt: var(--season-summer-tint-alt);
+  --season-active-border: var(--season-summer-border);
+  --season-active-shadow: var(--season-summer-shadow);
 }
 
 /* Fall Theme */
@@ -22,6 +32,10 @@
   --season-active: var(--season-fall-primary);
   --season-active-bg: var(--season-fall-bg);
   --season-hero-gradient: var(--season-fall-gradient);
+  --season-active-tint: var(--season-fall-tint);
+  --season-active-tint-alt: var(--season-fall-tint-alt);
+  --season-active-border: var(--season-fall-border);
+  --season-active-shadow: var(--season-fall-shadow);
 }
 
 /* Winter Theme */
@@ -29,9 +43,239 @@
   --season-active: var(--season-winter-primary);
   --season-active-bg: var(--season-winter-bg);
   --season-hero-gradient: var(--season-winter-gradient);
+  --season-active-tint: var(--season-winter-tint);
+  --season-active-tint-alt: var(--season-winter-tint-alt);
+  --season-active-border: var(--season-winter-border);
+  --season-active-shadow: var(--season-winter-shadow);
 }
 
-/* Season Selector Pills */
+
+/* ============================================
+   Hero Crossfade Layers
+   ============================================ */
+
+.hero__bg-layer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  will-change: opacity;
+}
+
+.hero__bg-layer.active {
+  opacity: 1;
+}
+
+.hero__bg-layer--spring { background-image: url('../images/hero/hero-spring.jpg'); }
+.hero__bg-layer--summer { background-image: url('../images/hero/hero-summer.jpg'); }
+.hero__bg-layer--fall   { background-image: url('../images/hero/hero-fall.jpg'); }
+.hero__bg-layer--winter { background-image: url('../images/hero/hero-winter.jpg'); }
+
+
+/* ============================================
+   Hero Overlay - Seasonal Tinting
+   ============================================ */
+
+.hero__overlay {
+  transition: background 0.8s ease;
+}
+
+[data-season="spring"] .hero__overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(248, 187, 208, 0.2) 0%,
+    rgba(0, 0, 0, 0.2) 40%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+}
+
+[data-season="summer"] .hero__overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(165, 214, 183, 0.2) 0%,
+    rgba(0, 0, 0, 0.2) 40%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+}
+
+[data-season="fall"] .hero__overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(240, 196, 155, 0.2) 0%,
+    rgba(0, 0, 0, 0.2) 40%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+}
+
+[data-season="winter"] .hero__overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(168, 204, 224, 0.2) 0%,
+    rgba(0, 0, 0, 0.2) 40%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+}
+
+
+/* ============================================
+   Section Atmosphere - Seasonal Background Tinting
+   ============================================ */
+
+/* Light sections get seasonal background */
+.section--alt,
+.video-section,
+.work-env-section,
+.facilities,
+.package-detail-section {
+  transition: background-color 0.8s ease;
+  background-color: var(--season-active-bg, var(--color-off-white));
+}
+
+/* Warm-tinted sections: slightly deeper seasonal tint */
+.rooms,
+.local-food-section,
+.corporate-section {
+  transition: background-color 0.8s ease;
+}
+
+[data-season="spring"] .rooms,
+[data-season="spring"] .local-food-section,
+[data-season="spring"] .corporate-section {
+  background-color: #fdf0f4;
+}
+
+[data-season="summer"] .rooms,
+[data-season="summer"] .local-food-section,
+[data-season="summer"] .corporate-section {
+  background-color: #edf8f2;
+}
+
+[data-season="fall"] .rooms,
+[data-season="fall"] .local-food-section,
+[data-season="fall"] .corporate-section {
+  background-color: #fdf3ec;
+}
+
+[data-season="winter"] .rooms,
+[data-season="winter"] .local-food-section,
+[data-season="winter"] .corporate-section {
+  background-color: #edf2f8;
+}
+
+/* Community section seasonal gradient */
+[data-season="spring"] .community-section {
+  background: linear-gradient(135deg, #2a1f28 0%, #3a2e3a 100%);
+}
+
+[data-season="summer"] .community-section {
+  background: linear-gradient(135deg, #1e2a1f 0%, #2d3a2e 100%);
+}
+
+[data-season="fall"] .community-section {
+  background: linear-gradient(135deg, #2a221e 0%, #3a322e 100%);
+}
+
+[data-season="winter"] .community-section {
+  background: linear-gradient(135deg, #1e2530 0%, #2d3540 100%);
+}
+
+/* Stat numbers get seasonal color */
+.intro-stat__number {
+  color: var(--season-active, var(--color-accent));
+  transition: color 0.8s ease;
+}
+
+/* Section labels */
+.section-label {
+  transition: color 0.8s ease;
+}
+
+
+/* ============================================
+   Dark Sections - Seasonal Gradient Variations
+   ============================================ */
+
+[data-season="spring"] .packages,
+[data-season="spring"] .target-section {
+  background: linear-gradient(135deg, #2a1f28 0%, #3a2e3a 100%);
+}
+
+[data-season="summer"] .packages,
+[data-season="summer"] .target-section {
+  background: linear-gradient(135deg, #1e2a1f 0%, #2d3a2e 100%);
+}
+
+[data-season="fall"] .packages,
+[data-season="fall"] .target-section {
+  background: linear-gradient(135deg, #2a221e 0%, #3a322e 100%);
+}
+
+[data-season="winter"] .packages,
+[data-season="winter"] .target-section {
+  background: linear-gradient(135deg, #1e2530 0%, #2d3540 100%);
+}
+
+/* Award section seasonal accent */
+[data-season] .award-section {
+  transition: background-color 0.8s ease;
+}
+
+[data-season="spring"] .award-section { background-color: #fdf2f6; }
+[data-season="summer"] .award-section { background-color: #f0faf5; }
+[data-season="fall"] .award-section   { background-color: #fdf5ef; }
+[data-season="winter"] .award-section { background-color: #f0f5fa; }
+
+/* Award text colors for seasonal light backgrounds */
+[data-season] .award-badge { color: var(--season-active); }
+[data-season] .award-title { color: var(--color-primary); }
+[data-season] .award-desc  { color: var(--color-gray-500); }
+
+
+/* ============================================
+   Cards & Components - Seasonal Hover Effects
+   ============================================ */
+
+/* Card hover gets seasonal border and shadow */
+[data-season] .icon-card:hover {
+  border-color: var(--season-active-border);
+  box-shadow: 0 8px 30px var(--season-active-shadow);
+}
+
+[data-season] .food-card:hover,
+[data-season] .workspace-item:hover {
+  box-shadow: 0 8px 30px var(--season-active-shadow);
+}
+
+
+/* ============================================
+   Global Seasonal Transitions
+   All elements using --season-active get smooth transition
+   ============================================ */
+
+[data-season] .btn--primary,
+[data-season] .tab-btn.active,
+[data-season] .pricing-card--featured,
+[data-season] .pricing-card__badge,
+[data-season] .pkg-detail-badge.best,
+[data-season] .food-badge,
+[data-season] .icon-card__icon,
+[data-season] .accordion-item.active .accordion-icon,
+[data-season] .form-input:focus,
+[data-season] .form-textarea:focus {
+  transition: background-color 0.8s ease,
+              color 0.8s ease,
+              border-color 0.8s ease,
+              box-shadow 0.8s ease;
+}
+
+
+/* ============================================
+   Season Selector Pills (unchanged)
+   ============================================ */
+
 .season-selector {
   display: flex;
   gap: 4px;

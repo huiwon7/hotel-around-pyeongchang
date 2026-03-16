@@ -29,6 +29,7 @@
         <li><a href="#packages" class="nav__link">패키지</a></li>
         <li><a href="#rooms" class="nav__link">객실</a></li>
         <li><a href="#facilities" class="nav__link">시설</a></li>
+        <li><a href="#gallery" class="nav__link">갤러리</a></li>
         <li><a href="#contact" class="nav__link">문의</a></li>
       </ul>
       <div class="season-selector" id="seasonSelector">
@@ -42,12 +43,25 @@
         <span></span><span></span><span></span>
       </button>
     </div>
+    <div class="nav-season-mobile" id="navSeasonMobile">
+      <button class="nav-season-btn" data-season="spring">봄</button>
+      <button class="nav-season-btn" data-season="summer">여름</button>
+      <button class="nav-season-btn" data-season="fall">가을</button>
+      <button class="nav-season-btn active" data-season="winter">겨울</button>
+    </div>
   </nav>
   <div class="nav-overlay" id="navOverlay"></div>
+
+  <!-- Mobile Fixed CTA -->
+  <a href="#contact" class="mobile-fixed-cta" id="mobileFixedCta">예약 문의</a>
 
   <!-- Hero Section -->
   <section class="hero" id="hero">
     <div class="hero__bg">
+      <div class="hero__bg-layer hero__bg-layer--spring" data-hero-season="spring"></div>
+      <div class="hero__bg-layer hero__bg-layer--summer" data-hero-season="summer"></div>
+      <div class="hero__bg-layer hero__bg-layer--fall" data-hero-season="fall"></div>
+      <div class="hero__bg-layer hero__bg-layer--winter active" data-hero-season="winter"></div>
       <div class="hero__overlay"></div>
     </div>
     <div class="hero__content">
@@ -128,7 +142,7 @@
       </div>
 
       <!-- Stats (merged into about section) -->
-      <div class="intro-grid" style="margin-top: var(--space-2xl)">
+      <div class="intro-grid" style="margin-top: var(--space-xl)">
         <div class="intro-stat">
           <span class="intro-stat__number" data-count="518">0</span>
           <span class="intro-stat__label">객실</span>
@@ -392,8 +406,15 @@
         </p>
       </div>
 
+      <div class="tabs pkg-tabs fade-in">
+        <button class="tab-btn active" data-pkg="starter">STARTER · 7박</button>
+        <button class="tab-btn" data-pkg="professional">PROFESSIONAL · 14박</button>
+        <button class="tab-btn" data-pkg="nomad">NOMAD · 30박</button>
+        <button class="tab-btn" data-pkg="paradise">PARADISE · 90박</button>
+      </div>
+
       <!-- STARTER Detail -->
-      <div class="pkg-detail" id="pkg-starter">
+      <div class="pkg-detail pkg-panel active" id="pkg-starter">
         <div class="pkg-detail-header">
           <div class="pkg-detail-title">
             <span class="pkg-detail-badge">STARTER</span>
@@ -469,7 +490,7 @@
       </div>
 
       <!-- PROFESSIONAL Detail -->
-      <div class="pkg-detail" id="pkg-professional">
+      <div class="pkg-detail pkg-panel" id="pkg-professional">
         <div class="pkg-detail-header">
           <div class="pkg-detail-title">
             <span class="pkg-detail-badge best">PROFESSIONAL</span>
@@ -545,7 +566,7 @@
       </div>
 
       <!-- NOMAD Detail -->
-      <div class="pkg-detail" id="pkg-nomad">
+      <div class="pkg-detail pkg-panel" id="pkg-nomad">
         <div class="pkg-detail-header">
           <div class="pkg-detail-title">
             <span class="pkg-detail-badge">NOMAD</span>
@@ -621,7 +642,7 @@
       </div>
 
       <!-- PARADISE Detail -->
-      <div class="pkg-detail" id="pkg-paradise">
+      <div class="pkg-detail pkg-panel" id="pkg-paradise">
         <div class="pkg-detail-header">
           <div class="pkg-detail-title">
             <span class="pkg-detail-badge premium">PARADISE</span>
@@ -713,7 +734,7 @@
 
       <div class="rooms-slider" id="roomsSlider">
         <div class="rooms-track">
-          <div class="room-card">
+          <div class="room-card" data-gallery="hotel-standard" role="button" tabindex="0">
             <div class="room-image" style="background-image: url('images/room-hotel/room-hotel1-5.jpg')"></div>
             <div class="room-content">
               <span class="room-type">HOTEL</span>
@@ -724,9 +745,10 @@
                 <li>퀸베드 1</li>
                 <li>마운틴뷰</li>
               </ul>
+              <span class="room-view-more">사진 더보기 →</span>
             </div>
           </div>
-          <div class="room-card">
+          <div class="room-card" data-gallery="hotel-deluxe" role="button" tabindex="0">
             <div class="room-image" style="background-image: url('images/room-hotel/room-hotel1-8.jpg')"></div>
             <div class="room-content">
               <span class="room-type">HOTEL</span>
@@ -737,9 +759,10 @@
                 <li>킹베드 1</li>
                 <li>밸리뷰</li>
               </ul>
+              <span class="room-view-more">사진 더보기 →</span>
             </div>
           </div>
-          <div class="room-card">
+          <div class="room-card" data-gallery="terrace" role="button" tabindex="0">
             <div class="room-image" style="background-image: url('images/room-terrace/room-terrace1-1.jpg')"></div>
             <div class="room-content">
               <span class="room-type">TERRACE</span>
@@ -750,9 +773,24 @@
                 <li>킹베드 1</li>
                 <li>테라스 포함</li>
               </ul>
+              <span class="room-view-more">사진 더보기 →</span>
             </div>
           </div>
-          <div class="room-card">
+          <div class="room-card" data-gallery="terrace-pet" role="button" tabindex="0">
+            <div class="room-image" style="background-image: url('images/gallery/rooms/terrace-pet-1.jpg')"></div>
+            <div class="room-content">
+              <span class="room-type">TERRACE</span>
+              <h3>펫룸</h3>
+              <p>반려동물과 함께하는 특별한 워케이션 공간</p>
+              <ul class="room-specs">
+                <li>45㎡</li>
+                <li>킹베드 1</li>
+                <li>펫 어메니티</li>
+              </ul>
+              <span class="room-view-more">사진 더보기 →</span>
+            </div>
+          </div>
+          <div class="room-card" data-gallery="villa" role="button" tabindex="0">
             <div class="room-image" style="background-image: url('images/room-villa/room-villa1-1.jpg')"></div>
             <div class="room-content">
               <span class="room-type">VILLA</span>
@@ -763,6 +801,7 @@
                 <li>침실 2~3</li>
                 <li>전용정원</li>
               </ul>
+              <span class="room-view-more">사진 더보기 →</span>
             </div>
           </div>
         </div>
@@ -795,46 +834,46 @@
       </div>
 
       <div class="facilities-grid">
-        <div class="facility-item">
+        <div class="facility-item" data-gallery="fitness" role="button" tabindex="0">
           <div class="facility-image" style="background-image: url('images/fitness/fitness.1-1.jpg')"></div>
           <div class="facility-content">
             <h4>피트니스 센터</h4>
             <p>24시간 운영</p>
           </div>
         </div>
-        <div class="facility-item">
+        <div class="facility-item" data-gallery="breakfast" role="button" tabindex="0">
           <div class="facility-image" style="background-image: url('images/restaurant/restaurant1-1.jpg')"></div>
           <div class="facility-content">
             <h4>레스토랑</h4>
             <p>조식 · 중식 · 석식</p>
           </div>
         </div>
-        <div class="facility-item">
+        <div class="facility-item" data-gallery="bbq" role="button" tabindex="0">
           <div class="facility-image" style="background-image: url('images/TSO07756-3-HDR.jpg')"></div>
           <div class="facility-content">
             <h4>BBQ 가든</h4>
             <p>프라이빗 바베큐</p>
           </div>
         </div>
-        <div class="facility-item">
+        <div class="facility-item" data-gallery="banquet" role="button" tabindex="0">
           <div class="facility-image" style="background-image: url('images/TSO07978-HDR.jpg')"></div>
           <div class="facility-content">
             <h4>연회장</h4>
             <p>세미나 · 워크숍</p>
           </div>
         </div>
-        <div class="facility-item">
+        <div class="facility-item" data-gallery="shuttle" role="button" tabindex="0">
           <div class="facility-image" style="background-image: url('images/shuttle-bus.png')"></div>
           <div class="facility-content">
             <h4>셔틀버스</h4>
             <p>KTX 평창역 연결</p>
           </div>
         </div>
-        <div class="facility-item">
-          <div class="facility-image" style="background-image: url('images/yoga1-1.jpg')"></div>
+        <div class="facility-item" data-gallery="lobby" role="button" tabindex="0">
+          <div class="facility-image" style="background-image: url('images/gallery/facilities/lobby-1.jpg')"></div>
           <div class="facility-content">
-            <h4>웰니스 요가</h4>
-            <p>소규모 맞춤 클래스</p>
+            <h4>로비 & 라운지</h4>
+            <p>프리미엄 공용 공간</p>
           </div>
         </div>
       </div>
@@ -870,7 +909,7 @@
         <!-- 황태 -->
         <div class="food-card">
           <div class="food-image">
-            <img src="images/황태.png" alt="황태" loading="lazy">
+            <img src="images/hwangtae.png" alt="황태" loading="lazy">
           </div>
           <div class="food-content">
             <h3 class="food-name">황태</h3>
@@ -1021,90 +1060,522 @@
     </div>
   </section>
 
-  <!-- Contact Section -->
-  <section class="section booking-section" id="contact">
+  <!-- Work Environment Section -->
+  <section class="section work-env-section" id="work-env">
     <div class="container">
-      <div class="booking-grid">
-        <div class="booking-info">
-          <h2 class="booking-info__title">워케이션을<br>시작하세요</h2>
-          <p class="booking-info__desc">워케이션 패키지에 대한 상담을 원하시면 아래 양식을 작성해 주세요. 담당자가 24시간 내 연락드리겠습니다.</p>
-          <div class="booking-contact">
-            <div class="booking-contact__item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              02-0000-0000
+      <div class="section-header fade-in">
+        <span class="section-label">Work Environment</span>
+        <h2 class="section-title">업무 환경 스펙</h2>
+        <p class="section-desc">워케이션의 핵심은 '일이 되는 환경'입니다<br>호텔어라운드는 이를 증명합니다</p>
+      </div>
+
+      <div class="env-specs-grid fade-in">
+        <div class="env-spec-card">
+          <div class="env-spec-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div class="env-spec-info">
+            <h4>인터넷 속도</h4>
+            <span class="env-spec-value">100 Mbps</span>
+            <p>유선 + 무선 듀얼 제공<br>전 객실 & 공용공간 동일 속도</p>
+          </div>
+        </div>
+        <div class="env-spec-card">
+          <div class="env-spec-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="env-spec-info">
+            <h4>모니터 & 장비</h4>
+            <span class="env-spec-value">27" QHD</span>
+            <p>높이 조절 모션 데스크<br>인체공학 의자 (허먼밀러급)</p>
+          </div>
+        </div>
+        <div class="env-spec-card">
+          <div class="env-spec-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="env-spec-info">
+            <h4>회의실</h4>
+            <span class="env-spec-value">4~12인</span>
+            <p>65" 대형 모니터 & 웹캠<br>화상회의 전용 장비 구비</p>
+          </div>
+        </div>
+        <div class="env-spec-card">
+          <div class="env-spec-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="env-spec-info">
+            <h4>보안 환경</h4>
+            <span class="env-spec-value">Enterprise</span>
+            <p>VPN 지원 네트워크<br>방음 폰부스 3개소</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="daily-timeline fade-in">
+        <h3 class="timeline-title">워케이션 하루 일과</h3>
+        <p class="timeline-subtitle">일과 휴식의 완벽한 밸런스</p>
+        <div class="timeline-track">
+          <div class="timeline-item">
+            <div class="timeline-time">07:00</div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>모닝 루틴</h4>
+              <p>호텔 조식 & 산책</p>
             </div>
-            <div class="booking-contact__item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              around@hotelaround.co.kr
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">09:00</div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>집중 업무</h4>
+              <p>코워킹 라운지 또는 객실</p>
             </div>
-            <div class="booking-contact__item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              강원 평창군 봉평면 태기로 228-95
+          </div>
+          <div class="timeline-item timeline-item--highlight">
+            <div class="timeline-time">12:00</div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>점심 & 리프레시</h4>
+              <p>레스토랑 또는 로컬 맛집</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">13:30</div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>오후 업무</h4>
+              <p>미팅룸 또는 폰부스</p>
+            </div>
+          </div>
+          <div class="timeline-item timeline-item--highlight">
+            <div class="timeline-time">17:00</div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>액티비티</h4>
+              <p>피트니스 · 요가 · 계곡 산책</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">19:00</div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>저녁 & 네트워킹</h4>
+              <p>소셜 다이닝 또는 BBQ</p>
             </div>
           </div>
         </div>
-        <form class="booking-form" id="contactForm">
-          <h3 class="booking-form__title">예약 문의</h3>
-          <div class="booking-form__row">
-            <div class="form-group">
-              <label class="form-label" for="name">이름 *</label>
-              <input class="form-input" type="text" id="name" name="name" required placeholder="홍길동">
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="company">회사/소속</label>
-              <input class="form-input" type="text" id="company" name="company" placeholder="회사명">
-            </div>
-          </div>
-          <div class="booking-form__row">
-            <div class="form-group">
-              <label class="form-label" for="email">이메일 *</label>
-              <input class="form-input" type="email" id="email" name="email" required placeholder="email@example.com">
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="phone">연락처 *</label>
-              <input class="form-input" type="tel" id="phone" name="phone" required placeholder="010-0000-0000">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="package">관심 패키지</label>
-            <select class="form-select" id="package" name="package">
-              <option value="">패키지를 선택하세요</option>
-              <option value="starter">Starter - 7박 패키지</option>
-              <option value="professional">Professional - 14박 패키지</option>
-              <option value="nomad">Nomad - 30박 패키지</option>
-              <option value="paradise">Paradise - 90박 패키지</option>
-              <option value="custom">기업 맞춤 패키지</option>
-            </select>
-          </div>
-          <div class="booking-form__row">
-            <div class="form-group">
-              <label class="form-label" for="checkin">희망 체크인</label>
-              <input class="form-input" type="date" id="checkin" name="checkin">
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="guests">인원</label>
-              <select class="form-select" id="guests" name="guests">
-                <option value="1">1명</option>
-                <option value="2">2명</option>
-                <option value="3-5">3~5명</option>
-                <option value="6-10">6~10명</option>
-                <option value="10+">10명 이상</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="message">문의 내용</label>
-            <textarea class="form-textarea" id="message" name="message" rows="4" placeholder="문의하실 내용을 입력해 주세요"></textarea>
-          </div>
-          <div class="form-group" style="display:flex;align-items:center;gap:0.75rem;">
-            <input type="checkbox" id="privacy" name="privacy" required>
-            <label for="privacy" style="margin-bottom:0;font-weight:400;">개인정보 수집 및 이용에 동의합니다. *</label>
-          </div>
-          <button type="submit" class="btn btn--primary btn--lg" style="width:100%">문의 보내기</button>
-        </form>
       </div>
     </div>
   </section>
+
+  <!-- Reviews Section -->
+  <section class="section reviews-section" id="reviews">
+    <div class="container">
+      <div class="section-header fade-in">
+        <span class="section-label">Reviews</span>
+        <h2 class="section-title">장기 체류 후기</h2>
+        <p class="section-desc">실제 워케이션을 경험한 분들의 이야기</p>
+      </div>
+
+      <div class="reviews-grid fade-in">
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-avatar">김</div>
+            <div class="review-meta">
+              <h4>김서연</h4>
+              <span>UX 디자이너 · 프리랜서</span>
+            </div>
+            <div class="review-stay">14박 체류</div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"서울 카페에서 작업하던 것과 차원이 달라요. 아침에 산을 보며 조식 먹고, 라운지에서 집중해서 일하면 생산성이 확 올라갑니다. 2주 동안 밀린 프로젝트 3개를 끝냈어요."</p>
+          <div class="review-tags">
+            <span>생산성 향상</span>
+            <span>코워킹 라운지</span>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-avatar">이</div>
+            <div class="review-meta">
+              <h4>이준혁</h4>
+              <span>풀스택 개발자 · 스타트업 CTO</span>
+            </div>
+            <div class="review-stay">30박 체류</div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"인터넷 속도가 진짜 100Mbps 나옵니다. 화상회의도 끊김 없고, 폰부스에서 클라이언트 미팅도 가능해요. 서울 월세+공유오피스비보다 저렴한데 환경은 비교 불가입니다."</p>
+          <div class="review-tags">
+            <span>인터넷 속도</span>
+            <span>가성비</span>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-avatar">박</div>
+            <div class="review-meta">
+              <h4>박지은</h4>
+              <span>콘텐츠 크리에이터</span>
+            </div>
+            <div class="review-stay">7박 체류</div>
+          </div>
+          <div class="review-stars">★★★★☆</div>
+          <p class="review-text">"처음 워케이션을 해봤는데 완전 중독됐어요. 오전에 집중해서 일하고 오후에 계곡 산책하면 아이디어가 막 떠올라요. 다음 달에 30박으로 재방문 예정입니다."</p>
+          <div class="review-tags">
+            <span>창의력 향상</span>
+            <span>재방문</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Community Section -->
+  <section class="section community-section" id="community">
+    <div class="container">
+      <div class="section-header light fade-in">
+        <span class="section-label">Community</span>
+        <h2 class="section-title">커뮤니티 & 네트워킹</h2>
+        <p class="section-desc">혼자 일하지만 외롭지 않은,<br>워케이션 커뮤니티를 만나보세요</p>
+      </div>
+
+      <div class="community-grid fade-in">
+        <div class="community-card community-card--profiles">
+          <h4>현재 체류 중인 분들</h4>
+          <div class="resident-list">
+            <div class="resident-item">
+              <div class="resident-avatar">S</div>
+              <div class="resident-info">
+                <span class="resident-role">프론트엔드 개발자</span>
+                <span class="resident-period">30박 체류 중</span>
+              </div>
+            </div>
+            <div class="resident-item">
+              <div class="resident-avatar">M</div>
+              <div class="resident-info">
+                <span class="resident-role">브랜드 디자이너</span>
+                <span class="resident-period">14박 체류 중</span>
+              </div>
+            </div>
+            <div class="resident-item">
+              <div class="resident-avatar">J</div>
+              <div class="resident-info">
+                <span class="resident-role">마케팅 컨설턴트</span>
+                <span class="resident-period">7박 체류 중</span>
+              </div>
+            </div>
+            <div class="resident-item">
+              <div class="resident-avatar">K</div>
+              <div class="resident-info">
+                <span class="resident-role">영상 프로듀서</span>
+                <span class="resident-period">90박 체류 중</span>
+              </div>
+            </div>
+          </div>
+          <p class="resident-note">* 개인정보 보호를 위해 이니셜로 표기됩니다</p>
+        </div>
+
+        <div class="community-card community-card--events">
+          <h4>이달의 네트워킹 이벤트</h4>
+          <div class="event-list">
+            <div class="event-item">
+              <div class="event-date">
+                <span class="event-month">MAR</span>
+                <span class="event-day">15</span>
+              </div>
+              <div class="event-info">
+                <h5>소셜 다이닝</h5>
+                <p>평창 로컬 식재료로 만드는 공동 저녁</p>
+              </div>
+            </div>
+            <div class="event-item">
+              <div class="event-date">
+                <span class="event-month">MAR</span>
+                <span class="event-day">22</span>
+              </div>
+              <div class="event-info">
+                <h5>프리랜서 밋업</h5>
+                <p>직군별 경험 공유 & 네트워킹</p>
+              </div>
+            </div>
+            <div class="event-item">
+              <div class="event-date">
+                <span class="event-month">MAR</span>
+                <span class="event-day">29</span>
+              </div>
+              <div class="event-info">
+                <h5>BBQ 파티</h5>
+                <p>봄맞이 야외 바베큐 & 네트워킹</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seasonal Activities Section -->
+  <section class="section activities-section" id="activities">
+    <div class="container">
+      <div class="section-header fade-in">
+        <span class="section-label">Activities</span>
+        <h2 class="section-title">계절별 액티비티 가이드</h2>
+        <p class="section-desc">업무 후 리프레시를 위한<br>평창만의 사계절 액티비티</p>
+      </div>
+
+      <div class="tabs fade-in">
+        <button class="tab-btn active" data-tab="act-spring">봄 (3~5월)</button>
+        <button class="tab-btn" data-tab="act-summer">여름 (6~8월)</button>
+        <button class="tab-btn" data-tab="act-fall">가을 (9~11월)</button>
+        <button class="tab-btn" data-tab="act-winter">겨울 (12~2월)</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-act-spring">
+        <div class="activity-grid">
+          <div class="activity-card">
+            <div class="activity-icon">🌸</div>
+            <h4>봉평 메밀꽃밭 산책</h4>
+            <p>이효석 문학마을의 아름다운 꽃밭길을 걸으며 영감 충전</p>
+          </div>
+          <div class="activity-card">
+            <div class="activity-icon">🚴</div>
+            <h4>자전거 트레일</h4>
+            <p>평창강 따라 이어지는 자전거 도로에서 봄바람 만끽</p>
+          </div>
+          <div class="activity-card">
+            <div class="activity-icon">🧘</div>
+            <h4>야외 요가</h4>
+            <p>호텔 정원에서 봄 아침 요가 클래스</p>
+          </div>
+          <div class="activity-card">
+            <div class="activity-icon">🌿</div>
+            <h4>산채나물 체험</h4>
+            <p>오대산 자락에서 직접 채취하는 봄나물 체험</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-act-summer">
+        <div class="activity-grid">
+          <div class="activity-card">
+            <div class="activity-icon">🏊</div>
+            <h4>계곡 물놀이</h4>
+            <p>호텔 인근 청정 계곡에서 시원한 물놀이</p>
+          </div>
+          <div class="activity-card">
+            <div class="activity-icon">🚣</div>
+            <h4>동강 래프팅</h4>
+            <p>대한민국 대표 래프팅 코스에서 짜릿한 모험</p>
+          </div>
+          <div class="activity-card">
+            <div class="activity-icon">⛺</div>
+            <h4>글램핑 & BBQ</h4>
+            <p>호텔 가든에서 즐기는 프라이빗 바베큐</p>
+          </div>
+          <div class="activity-card">
+            <div class="activity-icon">🌙</div>
+            <h4>별빛 관측</h4>
+            <p>해발 700m 맑은 밤하늘의 별빛 감상</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-act-fall">
+        <div class="activity-grid">
+          <div class="activity-card">
+            <div class="activity-icon">🍂</div>
+            <h4>오대산 단풍 트레킹</h4>
+            <p>월정사~상원사 전나무 숲길 단풍 하이킹</p>
+          </div>
+          <div class="activity-card">
+            <div class="activity-icon">🎣</div>
+            <h4>송어 낚시 체험</h4>
+            <p>평창 1급수에서 즐기는 송어 낚시</p>
+          </div>
+          <div class="activity-card">
+            <div class="activity-icon">🍷</div>
+            <h4>로컬 와인 테이스팅</h4>
+            <p>평창 지역 와이너리 방문 & 시음</p>
+          </div>
+          <div class="activity-card">
+            <div class="activity-icon">📸</div>
+            <h4>사진 출사</h4>
+            <p>대관령 양떼목장 & 허브나라 가을 풍경</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-act-winter">
+        <div class="activity-grid">
+          <div class="activity-card">
+            <div class="activity-icon">⛷️</div>
+            <h4>스키 & 보드</h4>
+            <p>알펜시아, 용평 리조트 스키장 (차량 15분)</p>
+          </div>
+          <div class="activity-card">
+            <div class="activity-icon">🎿</div>
+            <h4>크로스컨트리</h4>
+            <p>2018 평창올림픽 크로스컨트리 코스 체험</p>
+          </div>
+          <div class="activity-card">
+            <div class="activity-icon">♨️</div>
+            <h4>온천 & 스파</h4>
+            <p>업무 후 따뜻한 온천에서 피로 회복</p>
+          </div>
+          <div class="activity-card">
+            <div class="activity-icon">🐟</div>
+            <h4>송어 축제</h4>
+            <p>겨울 대표 축제, 얼음낚시 & 맨손잡기 체험</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Corporate Section -->
+  <section class="section corporate-section" id="corporate">
+    <div class="container">
+      <div class="section-header fade-in">
+        <span class="section-label">For Business</span>
+        <h2 class="section-title">기업 팀 워케이션</h2>
+        <p class="section-desc">팀 빌딩, 오프사이트, 워크숍을 위한<br>올인원 기업 맞춤 프로그램</p>
+      </div>
+
+      <div class="corporate-benefits fade-in">
+        <div class="corp-benefit">
+          <div class="corp-benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h4>단체 맞춤 견적</h4>
+          <p>10인 이상 단체 특별 할인<br>프로그램 커스터마이징 가능</p>
+        </div>
+        <div class="corp-benefit">
+          <div class="corp-benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h4>세미나룸 & 연회장</h4>
+          <p>최대 100인 수용<br>빔프로젝터, 음향 장비 완비</p>
+        </div>
+        <div class="corp-benefit">
+          <div class="corp-benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <h4>세금계산서 발행</h4>
+          <p>법인카드 결제 가능<br>정산 서류 즉시 발행</p>
+        </div>
+        <div class="corp-benefit">
+          <div class="corp-benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <h4>팀빌딩 프로그램</h4>
+          <p>BBQ, 래프팅, 트레킹 등<br>맞춤 액티비티 설계</p>
+        </div>
+      </div>
+
+      <div class="corporate-reviews fade-in">
+        <h3 class="corp-reviews-title">기업 이용 후기</h3>
+        <div class="corp-review-list">
+          <div class="corp-review">
+            <div class="corp-review-header">
+              <span class="corp-review-company">스타트업 A사</span>
+              <span class="corp-review-info">개발팀 8명 · 5박</span>
+            </div>
+            <p>"오프사이트 미팅 장소로 최고였습니다. 낮에는 세미나룸에서 집중 회의, 저녁에는 BBQ로 팀 화합. 서울 회의실 빌리는 것보다 오히려 저렴했어요."</p>
+          </div>
+          <div class="corp-review">
+            <div class="corp-review-header">
+              <span class="corp-review-company">마케팅 에이전시 B사</span>
+              <span class="corp-review-info">전 직원 15명 · 3박</span>
+            </div>
+            <p>"워크숍 + 팀빌딩을 한 곳에서 해결했습니다. 세금계산서 발행도 깔끔하고, 단체 할인도 큰 폭이라 팀 예산 내에서 충분했습니다."</p>
+          </div>
+          <div class="corp-review">
+            <div class="corp-review-header">
+              <span class="corp-review-company">IT 기업 C사</span>
+              <span class="corp-review-info">PM팀 6명 · 7박</span>
+            </div>
+            <p>"스프린트 주간을 여기서 진행했는데 결과물이 서울에서의 2주치였습니다. 회의실 장비도 완벽하고, 퇴근 후 산책이 가능해서 번아웃 없이 진행했어요."</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="corporate-cta fade-in">
+        <p>기업 맞춤 견적이 필요하신가요?</p>
+        <a href="#contact" class="btn btn--primary btn--lg">기업 문의하기</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section class="section gallery-section" id="gallery">
+    <div class="container">
+      <div class="section-header fade-in">
+        <span class="section-label">Gallery</span>
+        <h2 class="section-title">호텔 포토 갤러리</h2>
+        <p class="section-desc">호텔어라운드 평창의 공간을<br>사진으로 미리 만나보세요</p>
+      </div>
+
+      <div class="gallery-filters fade-in">
+        <button class="gallery-filter active" data-filter="all">전체</button>
+        <button class="gallery-filter" data-filter="rooms">객실</button>
+        <button class="gallery-filter" data-filter="facilities">시설</button>
+        <button class="gallery-filter" data-filter="exterior">외관</button>
+        <button class="gallery-filter" data-filter="dining">조식 & 다이닝</button>
+      </div>
+
+      <div class="gallery-grid fade-in" id="galleryGrid">
+        <!-- Exterior -->
+        <div class="gallery-item" data-category="exterior"><img src="images/gallery/exterior/exterior-1.jpg" alt="호텔 외관 드론샷" loading="lazy"><span class="gallery-label">외관 · 드론 전경</span></div>
+        <div class="gallery-item" data-category="exterior"><img src="images/gallery/exterior/exterior-7.jpg" alt="호텔 외관" loading="lazy"><span class="gallery-label">외관 · 전면</span></div>
+        <div class="gallery-item" data-category="exterior"><img src="images/gallery/exterior/exterior-3.jpg" alt="호텔 외관" loading="lazy"><span class="gallery-label">외관 · 야경</span></div>
+        <div class="gallery-item" data-category="exterior"><img src="images/gallery/exterior/exterior-5.jpg" alt="호텔 외관" loading="lazy"><span class="gallery-label">외관 · 입구</span></div>
+
+        <!-- Rooms -->
+        <div class="gallery-item" data-category="rooms"><img src="images/gallery/rooms/hotel-standard-1.jpg" alt="스탠다드 룸" loading="lazy"><span class="gallery-label">스탠다드 룸</span></div>
+        <div class="gallery-item" data-category="rooms"><img src="images/gallery/rooms/hotel-deluxe-1.jpg" alt="디럭스 룸" loading="lazy"><span class="gallery-label">디럭스 룸</span></div>
+        <div class="gallery-item" data-category="rooms"><img src="images/gallery/rooms/hotel-suite-1.jpg" alt="스위트 룸" loading="lazy"><span class="gallery-label">스위트 룸</span></div>
+        <div class="gallery-item" data-category="rooms"><img src="images/gallery/rooms/hotel-ondol-1.jpg" alt="온돌 룸" loading="lazy"><span class="gallery-label">온돌 룸</span></div>
+        <div class="gallery-item" data-category="rooms"><img src="images/gallery/rooms/terrace-1.jpg" alt="테라스 룸" loading="lazy"><span class="gallery-label">테라스 룸</span></div>
+        <div class="gallery-item" data-category="rooms"><img src="images/gallery/rooms/terrace-pet-3.jpg" alt="펫룸" loading="lazy"><span class="gallery-label">테라스 펫룸</span></div>
+        <div class="gallery-item" data-category="rooms"><img src="images/gallery/rooms/villa-1.jpg" alt="빌라" loading="lazy"><span class="gallery-label">빌라</span></div>
+        <div class="gallery-item" data-category="rooms"><img src="images/gallery/rooms/villa-5.jpg" alt="빌라 거실" loading="lazy"><span class="gallery-label">빌라 · 거실</span></div>
+
+        <!-- Facilities -->
+        <div class="gallery-item" data-category="facilities"><img src="images/gallery/facilities/lobby-2.jpg" alt="로비" loading="lazy"><span class="gallery-label">로비 & 라운지</span></div>
+        <div class="gallery-item" data-category="facilities"><img src="images/gallery/facilities/bbq-1.jpg" alt="BBQ 가든" loading="lazy"><span class="gallery-label">BBQ 가든</span></div>
+        <div class="gallery-item" data-category="facilities"><img src="images/gallery/facilities/banquet-2.jpg" alt="연회장" loading="lazy"><span class="gallery-label">연회장</span></div>
+        <div class="gallery-item" data-category="facilities"><img src="images/gallery/facilities/fitness-1.jpg" alt="피트니스" loading="lazy"><span class="gallery-label">피트니스 센터</span></div>
+        <div class="gallery-item" data-category="facilities"><img src="images/gallery/facilities/parking-1.jpg" alt="주차장" loading="lazy"><span class="gallery-label">주차장</span></div>
+        <div class="gallery-item" data-category="facilities"><img src="images/gallery/facilities/shuttle-1.jpg" alt="셔틀버스" loading="lazy"><span class="gallery-label">셔틀버스</span></div>
+
+        <!-- Dining -->
+        <div class="gallery-item" data-category="dining"><img src="images/gallery/dining/breakfast-1.jpg" alt="조식" loading="lazy"><span class="gallery-label">조식 뷔페</span></div>
+        <div class="gallery-item" data-category="dining"><img src="images/gallery/dining/breakfast-3.jpg" alt="조식" loading="lazy"><span class="gallery-label">조식 · 한식</span></div>
+        <div class="gallery-item" data-category="dining"><img src="images/gallery/dining/breakfast-5.jpg" alt="조식" loading="lazy"><span class="gallery-label">조식 · 양식</span></div>
+        <div class="gallery-item" data-category="dining"><img src="images/gallery/dining/breakfast-7.jpg" alt="조식" loading="lazy"><span class="gallery-label">레스토랑 전경</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox Modal -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="이미지 뷰어">
+    <button class="lightbox-close" id="lightboxClose" aria-label="닫기">&times;</button>
+    <div class="lightbox-content">
+      <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="이전">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="lightbox-image-wrapper">
+        <img class="lightbox-image" id="lightboxImage" src="" alt="">
+        <div class="lightbox-caption" id="lightboxCaption"></div>
+      </div>
+      <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="다음">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+    <div class="lightbox-counter" id="lightboxCounter"></div>
+    <div class="lightbox-thumbs" id="lightboxThumbs"></div>
+  </div>
 
   <!-- FAQ Section -->
   <section class="section section--alt" id="faq">
@@ -1191,6 +1662,91 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="section booking-section" id="contact">
+    <div class="container">
+      <div class="booking-grid">
+        <div class="booking-info">
+          <h2 class="booking-info__title">워케이션을<br>시작하세요</h2>
+          <p class="booking-info__desc">워케이션 패키지에 대한 상담을 원하시면 아래 양식을 작성해 주세요. 담당자가 24시간 내 연락드리겠습니다.</p>
+          <div class="booking-contact">
+            <div class="booking-contact__item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              02-0000-0000
+            </div>
+            <div class="booking-contact__item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              around@hotelaround.co.kr
+            </div>
+            <div class="booking-contact__item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              강원 평창군 봉평면 태기로 228-95
+            </div>
+          </div>
+        </div>
+        <form class="booking-form" id="contactForm">
+          <h3 class="booking-form__title">예약 문의</h3>
+          <div class="booking-form__row">
+            <div class="form-group">
+              <label class="form-label" for="name">이름 *</label>
+              <input class="form-input" type="text" id="name" name="name" required placeholder="홍길동">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="company">회사/소속</label>
+              <input class="form-input" type="text" id="company" name="company" placeholder="회사명">
+            </div>
+          </div>
+          <div class="booking-form__row">
+            <div class="form-group">
+              <label class="form-label" for="email">이메일 *</label>
+              <input class="form-input" type="email" id="email" name="email" required placeholder="email@example.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="phone">연락처 *</label>
+              <input class="form-input" type="tel" id="phone" name="phone" required placeholder="010-0000-0000">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="package">관심 패키지</label>
+            <select class="form-select" id="package" name="package">
+              <option value="">패키지를 선택하세요</option>
+              <option value="starter">Starter - 7박 패키지</option>
+              <option value="professional">Professional - 14박 패키지</option>
+              <option value="nomad">Nomad - 30박 패키지</option>
+              <option value="paradise">Paradise - 90박 패키지</option>
+              <option value="custom">기업 맞춤 패키지</option>
+            </select>
+          </div>
+          <div class="booking-form__row">
+            <div class="form-group">
+              <label class="form-label" for="checkin">희망 체크인</label>
+              <input class="form-input" type="date" id="checkin" name="checkin">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="guests">인원</label>
+              <select class="form-select" id="guests" name="guests">
+                <option value="1">1명</option>
+                <option value="2">2명</option>
+                <option value="3-5">3~5명</option>
+                <option value="6-10">6~10명</option>
+                <option value="10+">10명 이상</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="message">문의 내용</label>
+            <textarea class="form-textarea" id="message" name="message" rows="4" placeholder="문의하실 내용을 입력해 주세요"></textarea>
+          </div>
+          <div class="form-group" style="display:flex;align-items:center;gap:0.75rem;">
+            <input type="checkbox" id="privacy" name="privacy" required>
+            <label for="privacy" style="margin-bottom:0;font-weight:400;">개인정보 수집 및 이용에 동의합니다. *</label>
+          </div>
+          <button type="submit" class="btn btn--primary btn--lg" style="width:100%">문의 보내기</button>
+        </form>
       </div>
     </div>
   </section>

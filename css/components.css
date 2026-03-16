@@ -530,6 +530,19 @@
   margin-bottom: 0;
 }
 
+/* Tab-based package detail panels */
+.pkg-panel {
+  display: none;
+}
+
+.pkg-panel.active {
+  display: block;
+}
+
+.pkg-tabs {
+  margin-bottom: var(--space-lg);
+}
+
 /* Header */
 .pkg-detail-header {
   display: flex;

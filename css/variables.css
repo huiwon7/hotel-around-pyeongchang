@@ -41,10 +41,35 @@
   --season-winter-bg: #f0f5fa;
   --season-winter-gradient: linear-gradient(135deg, #e3eef7 0%, #a8cce0 50%, #5a8cb5 100%);
 
+  /* Seasonal Section Tinting */
+  --season-spring-tint: rgba(232, 160, 191, 0.04);
+  --season-spring-tint-alt: rgba(232, 160, 191, 0.07);
+  --season-spring-border: rgba(232, 160, 191, 0.2);
+  --season-spring-shadow: rgba(232, 160, 191, 0.12);
+
+  --season-summer-tint: rgba(45, 138, 110, 0.04);
+  --season-summer-tint-alt: rgba(45, 138, 110, 0.07);
+  --season-summer-border: rgba(45, 138, 110, 0.2);
+  --season-summer-shadow: rgba(45, 138, 110, 0.12);
+
+  --season-fall-tint: rgba(196, 119, 74, 0.04);
+  --season-fall-tint-alt: rgba(196, 119, 74, 0.07);
+  --season-fall-border: rgba(196, 119, 74, 0.2);
+  --season-fall-shadow: rgba(196, 119, 74, 0.12);
+
+  --season-winter-tint: rgba(90, 140, 181, 0.04);
+  --season-winter-tint-alt: rgba(90, 140, 181, 0.07);
+  --season-winter-border: rgba(90, 140, 181, 0.2);
+  --season-winter-shadow: rgba(90, 140, 181, 0.12);
+
   /* Active season (default: base accent) */
   --season-active: var(--color-accent);
   --season-active-bg: var(--color-off-white);
   --season-hero-gradient: linear-gradient(135deg, #2d3a2e 0%, #4a7c59 50%, #6b9d78 100%);
+  --season-active-tint: transparent;
+  --season-active-tint-alt: transparent;
+  --season-active-border: var(--color-gray-200);
+  --season-active-shadow: rgba(0, 0, 0, 0.08);
 
   /* Typography */
   --font-display: 'Cormorant Garamond', serif;
@@ -76,7 +101,7 @@
   --space-md: 1.5rem;
   --space-lg: 2rem;
   --space-xl: 3rem;
-  --space-2xl: 5rem;
+  --space-2xl: 3.5rem;
   --space-3xl: 8rem;
 
   /* Layout */

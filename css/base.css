@@ -93,17 +93,28 @@ h6 { font-size: var(--text-lg); }
 }
 
 .section {
-  padding: var(--space-3xl) 0;
+  padding: var(--space-2xl) 0;
+  position: relative;
 }
 
 .section--alt {
   background-color: var(--color-off-white);
 }
 
+/* Subtle warm-tinted background for alternating sections */
+.section--warm {
+  background-color: #faf8f5;
+}
+
+/* Gentle top divider for section separation */
+.section--divider {
+  border-top: 1px solid var(--color-gray-200);
+}
+
 /* Section Header */
 .section-header {
   text-align: center;
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-xl);
 }
 
 .section-header.light {
