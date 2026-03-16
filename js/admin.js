@@ -4,6 +4,7 @@
 
 const ADMIN_PASSWORD = '***REMOVED***';
 const STORAGE_KEY_URL = 'adminScriptUrl';
+const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyAFBefe-RXjNuVzV3leNnaaZ-xtt69h9cpipJ2WhXHbdlLv7cF9Pu__c3BLG2XGQOU_g/exec';
 const STORAGE_KEY_AUTH = 'adminAuth';
 const AUTO_REFRESH_INTERVAL = 30000; // 30초
 
@@ -119,6 +120,43 @@ function initDashboard() {
 
   // Test Telegram notification
   document.getElementById('btnTestTelegram')?.addEventListener('click', testTelegramNotification);
+
+  // Test data buttons
+  document.getElementById('btnTestData')?.addEventListener('click', addTestData);
+  document.getElementById('btnClearData')?.addEventListener('click', clearAllData);
+
+  // Add inquiry modal
+  document.getElementById('btnAddInquiry')?.addEventListener('click', () => {
+    document.getElementById('addModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+  document.getElementById('addModalClose')?.addEventListener('click', closeAddModal);
+  document.getElementById('addModal')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeAddModal();
+  });
+
+  // Add inquiry form submit
+  document.getElementById('addInquiryForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    data.timestamp = new Date().toISOString();
+    data.id = Date.now();
+    data.status = 'pending';
+
+    const inquiries = JSON.parse(localStorage.getItem('workationInquiries') || '[]');
+    inquiries.push(data);
+    localStorage.setItem('workationInquiries', JSON.stringify(inquiries));
+
+    e.target.reset();
+    closeAddModal();
+    loadLocalData();
+  });
+}
+
+function closeAddModal() {
+  document.getElementById('addModal').classList.remove('active');
+  document.body.style.overflow = '';
 }
 
 /**
@@ -212,16 +250,15 @@ async function testTelegramNotification() {
  * Load data from Google Sheets
  */
 async function loadData() {
-  const scriptUrl = localStorage.getItem(STORAGE_KEY_URL);
+  const scriptUrl = localStorage.getItem(STORAGE_KEY_URL) || DEFAULT_SCRIPT_URL;
 
   if (!scriptUrl) {
-    // No URL set - show local data or empty
     loadLocalData();
     return;
   }
 
   try {
-    const response = await fetch(scriptUrl);
+    const response = await fetch(scriptUrl, { redirect: 'follow' });
     if (!response.ok) throw new Error('Network error');
 
     const data = await response.json();
@@ -238,6 +275,20 @@ async function loadData() {
       message: row.message || '',
       status: row.status || 'pending'
     }));
+
+    // Merge with localStorage data (avoid duplicates by timestamp+name)
+    const localStored = localStorage.getItem('workationInquiries');
+    if (localStored) {
+      const localData = JSON.parse(localStored);
+      localData.forEach(local => {
+        const exists = allInquiries.some(item =>
+          item.timestamp === local.timestamp && item.name === local.name
+        );
+        if (!exists) {
+          allInquiries.push(local);
+        }
+      });
+    }
 
     // Sort newest first
     allInquiries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -363,11 +414,19 @@ function renderTable(inquiries) {
   if (!tbody) return;
 
   if (inquiries.length === 0) {
+    const scriptUrl = localStorage.getItem(STORAGE_KEY_URL);
+    const hasLocalData = localStorage.getItem('workationInquiries');
+    let emptyMsg = '문의 내역이 없습니다';
+
+    if (!scriptUrl && !hasLocalData) {
+      emptyMsg = '데이터 소스가 연결되지 않았습니다.<br><small style="color:#999;">하단의 <strong>Google Sheets 설정</strong> 버튼을 눌러 연동하거나,<br>메인 사이트에서 테스트 문의를 제출해 보세요.</small>';
+    }
+
     tbody.innerHTML = `
       <tr>
         <td colspan="9" class="empty-state">
           <div class="empty-icon">&#128203;</div>
-          <p>문의 내역이 없습니다</p>
+          <p>${emptyMsg}</p>
         </td>
       </tr>
     `;
@@ -381,6 +440,9 @@ function renderTable(inquiries) {
     paradise: 'Paradise',
     custom: '기업 맞춤'
   };
+
+  // Store filtered results for detail view
+  window._filteredInquiries = inquiries;
 
   tbody.innerHTML = inquiries.map((item, idx) => {
     const date = item.timestamp ? formatDate(item.timestamp) : '-';
@@ -407,7 +469,7 @@ function renderTable(inquiries) {
  * Show detail modal
  */
 function showDetail(index) {
-  const item = allInquiries[index];
+  const item = (window._filteredInquiries || allInquiries)[index];
   if (!item) return;
 
   const packageNames = {
@@ -518,4 +580,59 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
+}
+
+/**
+ * Test data management
+ */
+function addTestData() {
+  const sampleNames = ['김민수', '이수진', '박지훈', '정하늘', '최서연'];
+  const sampleCompanies = ['테크스타트업', '크리에이티브랩', '노마드코퍼레이션', '프리워크', '디지털브릿지'];
+  const packages = ['starter', 'professional', 'nomad', 'paradise', 'custom'];
+  const guestOptions = ['1', '2', '3-5', '6-10', '10+'];
+  const messages = [
+    '워케이션 패키지 관련 상세 정보 부탁드립니다.',
+    '팀 단위로 이용 가능한지 문의드립니다.',
+    '장기 투숙 시 추가 할인이 가능한가요?',
+    '체크인 시간 조정이 가능할까요?',
+    '기업 맞춤 패키지 상담 요청합니다.'
+  ];
+
+  const existing = JSON.parse(localStorage.getItem('workationInquiries') || '[]');
+
+  const newInquiries = sampleNames.map((name, i) => {
+    const daysAgo = Math.floor(Math.random() * 14);
+    const date = new Date();
+    date.setDate(date.getDate() - daysAgo);
+    date.setHours(9 + Math.floor(Math.random() * 10), Math.floor(Math.random() * 60));
+
+    const checkinDate = new Date();
+    checkinDate.setDate(checkinDate.getDate() + 7 + Math.floor(Math.random() * 30));
+
+    return {
+      id: Date.now() + i,
+      timestamp: date.toISOString(),
+      name: name,
+      company: sampleCompanies[i],
+      email: `${name.replace(/[가-힣]/g, () => String.fromCharCode(97 + Math.floor(Math.random() * 26)))}@example.com`,
+      phone: `010-${String(Math.floor(Math.random() * 9000) + 1000)}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+      package: packages[i],
+      checkin: checkinDate.toISOString().split('T')[0],
+      guests: guestOptions[i],
+      message: messages[i],
+      status: 'pending'
+    };
+  });
+
+  const merged = [...existing, ...newInquiries];
+  localStorage.setItem('workationInquiries', JSON.stringify(merged));
+  loadLocalData();
+}
+
+function clearAllData() {
+  if (!confirm('모든 테스트 데이터를 삭제하시겠습니까?')) return;
+  localStorage.removeItem('workationInquiries');
+  allInquiries = [];
+  updateStats();
+  applyFilters();
 }

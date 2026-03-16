@@ -38,6 +38,7 @@
         <h1 class="logo">HOTEL AROUND <span>Admin</span></h1>
       </div>
       <div class="top-bar-right">
+        <button class="btn-add-inquiry" id="btnAddInquiry">+ 문의 등록</button>
         <button class="btn-refresh" id="btnRefresh" title="새로고침">&#x21bb; 새로고침</button>
         <span class="last-updated" id="lastUpdated"></span>
         <button class="btn-logout" id="btnLogout">로그아웃</button>
@@ -116,6 +117,72 @@
       </div>
     </section>
 
+    <!-- Add Inquiry Modal -->
+    <div class="modal-overlay" id="addModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2>문의 수동 등록</h2>
+          <button class="modal-close" id="addModalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="addInquiryForm">
+            <div class="add-form-row">
+              <div class="add-form-group">
+                <label>이름 *</label>
+                <input type="text" name="name" required placeholder="홍길동">
+              </div>
+              <div class="add-form-group">
+                <label>회사/소속</label>
+                <input type="text" name="company" placeholder="회사명">
+              </div>
+            </div>
+            <div class="add-form-row">
+              <div class="add-form-group">
+                <label>이메일 *</label>
+                <input type="email" name="email" required placeholder="email@example.com">
+              </div>
+              <div class="add-form-group">
+                <label>연락처 *</label>
+                <input type="tel" name="phone" required placeholder="010-0000-0000">
+              </div>
+            </div>
+            <div class="add-form-row">
+              <div class="add-form-group">
+                <label>패키지</label>
+                <select name="package">
+                  <option value="">선택</option>
+                  <option value="starter">Starter - 7박</option>
+                  <option value="professional">Professional - 14박</option>
+                  <option value="nomad">Nomad - 30박</option>
+                  <option value="paradise">Paradise - 90박</option>
+                  <option value="custom">기업 맞춤</option>
+                </select>
+              </div>
+              <div class="add-form-group">
+                <label>인원</label>
+                <select name="guests">
+                  <option value="1">1명</option>
+                  <option value="2">2명</option>
+                  <option value="3-5">3~5명</option>
+                  <option value="6-10">6~10명</option>
+                  <option value="10+">10명 이상</option>
+                </select>
+              </div>
+            </div>
+            <div class="add-form-group" style="width:100%;">
+              <label>희망 체크인</label>
+              <input type="date" name="checkin">
+            </div>
+            <div class="add-form-group" style="width:100%;">
+              <label>메시지</label>
+              <textarea name="message" rows="3" placeholder="문의 내용"></textarea>
+            </div>
+            <button type="submit" class="btn-add-submit">등록</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <!-- Detail Modal -->
     <div class="modal-overlay" id="detailModal">
       <div class="modal-card">
@@ -147,10 +214,17 @@
           <div class="step-num">2</div>
           <div class="step-content">
             <h3>Apps Script 설정</h3>
-            <p>스프레드시트 메뉴에서 <strong>확장 프로그램 > Apps Script</strong>를 클릭하고, 아래 코드를 붙여넣으세요:</p>
+            <p>스프레드시트 메뉴에서 <strong>확장 프로그램 > Apps Script</strong>를 클릭하고, 기존 코드를 모두 지운 뒤 아래 코드를 붙여넣으세요:</p>
             <pre><code>function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = JSON.parse(e.postData.contents);
+  var data;
+  try {
+    data = JSON.parse(e.postData.contents);
+  } catch(err) {
+    return ContentService.createTextOutput(
+      JSON.stringify({result: 'error', message: 'Invalid JSON'})
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
   sheet.appendRow([
     data.timestamp || new Date().toISOString(),
     data.name || '',
@@ -171,6 +245,11 @@
 function doGet(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   var data = sheet.getDataRange().getValues();
+  if (data.length &lt;= 1) {
+    return ContentService.createTextOutput(
+      JSON.stringify([])
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
   var headers = data[0];
   var rows = [];
   for (var i = 1; i &lt; data.length; i++) {
@@ -264,6 +343,8 @@ function doGet(e) {
       <div class="footer-buttons">
         <button class="btn-setup" id="btnSetup">Google Sheets 설정</button>
         <button class="btn-setup" id="btnTelegramSetup">Telegram 알림 설정</button>
+        <button class="btn-setup btn-test-data" id="btnTestData">테스트 데이터 추가</button>
+        <button class="btn-setup btn-clear-data" id="btnClearData">데이터 초기화</button>
       </div>
       <span>&copy; 2025 Hotel Around Pyeongchang - Admin</span>
     </footer>

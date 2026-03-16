@@ -4,7 +4,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  window.GOOGLE_SCRIPT_URL = localStorage.getItem('adminScriptUrl') || '';
+  window.GOOGLE_SCRIPT_URL = localStorage.getItem('adminScriptUrl') || 'https://script.google.com/macros/s/AKfycbyAFBefe-RXjNuVzV3leNnaaZ-xtt69h9cpipJ2WhXHbdlLv7cF9Pu__c3BLG2XGQOU_g/exec';
 
   initNavigation();
   initScrollEffects();
@@ -312,7 +312,7 @@ function storeInquiry(data) {
     fetch(SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(data)
     }).catch(err => console.error('Google Sheets 전송 실패:', err));
   }
