@@ -3,8 +3,6 @@
  */
 
 const ADMIN_PASSWORD = '***REMOVED***';
-const STORAGE_KEY_URL = 'adminScriptUrl';
-const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyAFBefe-RXjNuVzV3leNnaaZ-xtt69h9cpipJ2WhXHbdlLv7cF9Pu__c3BLG2XGQOU_g/exec';
 const STORAGE_KEY_AUTH = 'adminAuth';
 const AUTO_REFRESH_INTERVAL = 30000; // 30초
 
@@ -87,45 +85,6 @@ function initDashboard() {
     if (e.key === 'Escape') closeDetailModal();
   });
 
-  // Setup toggle
-  document.getElementById('btnSetup')?.addEventListener('click', () => {
-    const section = document.getElementById('setupSection');
-    section.style.display = section.style.display === 'none' ? 'block' : 'none';
-    document.getElementById('telegramSection').style.display = 'none';
-
-    // Pre-fill saved URL
-    const savedUrl = localStorage.getItem(STORAGE_KEY_URL);
-    if (savedUrl) {
-      document.getElementById('scriptUrlInput').value = savedUrl;
-    }
-  });
-
-  // Save URL
-  document.getElementById('btnSaveUrl')?.addEventListener('click', saveScriptUrl);
-
-  // Telegram setup toggle
-  document.getElementById('btnTelegramSetup')?.addEventListener('click', () => {
-    const section = document.getElementById('telegramSection');
-    section.style.display = section.style.display === 'none' ? 'block' : 'none';
-    document.getElementById('setupSection').style.display = 'none';
-
-    // Pre-fill saved values
-    const savedToken = localStorage.getItem('telegramBotToken');
-    const savedChatId = localStorage.getItem('telegramChatId');
-    if (savedToken) document.getElementById('telegramTokenInput').value = savedToken;
-    if (savedChatId) document.getElementById('telegramChatIdInput').value = savedChatId;
-  });
-
-  // Save Telegram settings
-  document.getElementById('btnSaveTelegram')?.addEventListener('click', saveTelegramSettings);
-
-  // Test Telegram notification
-  document.getElementById('btnTestTelegram')?.addEventListener('click', testTelegramNotification);
-
-  // Test data buttons
-  document.getElementById('btnTestData')?.addEventListener('click', addTestData);
-  document.getElementById('btnClearData')?.addEventListener('click', clearAllData);
-
   // Add inquiry modal
   document.getElementById('btnAddInquiry')?.addEventListener('click', () => {
     document.getElementById('addModal').classList.add('active');
@@ -159,93 +118,6 @@ function initDashboard() {
 function closeAddModal() {
   document.getElementById('addModal').classList.remove('active');
   document.body.style.overflow = '';
-}
-
-/**
- * Save Google Apps Script URL
- */
-function saveScriptUrl() {
-  const input = document.getElementById('scriptUrlInput');
-  const status = document.getElementById('urlStatus');
-  const url = input.value.trim();
-
-  if (!url) {
-    status.textContent = 'URL을 입력해주세요.';
-    status.style.color = '#e74c3c';
-    return;
-  }
-
-  localStorage.setItem(STORAGE_KEY_URL, url);
-
-  // Also set for main site form
-  window.GOOGLE_SCRIPT_URL = url;
-
-  status.textContent = 'URL이 저장되었습니다. 데이터를 불러옵니다...';
-  status.style.color = '#27ae60';
-
-  loadData();
-}
-
-/**
- * Save Telegram settings
- */
-function saveTelegramSettings() {
-  const token = document.getElementById('telegramTokenInput').value.trim();
-  const chatId = document.getElementById('telegramChatIdInput').value.trim();
-  const status = document.getElementById('telegramStatus');
-
-  if (!token || !chatId) {
-    status.textContent = 'Bot Token과 Chat ID를 모두 입력해주세요.';
-    status.style.color = '#e74c3c';
-    return;
-  }
-
-  localStorage.setItem('telegramBotToken', token);
-  localStorage.setItem('telegramChatId', chatId);
-
-  status.textContent = '텔레그램 설정이 저장되었습니다.';
-  status.style.color = '#27ae60';
-}
-
-/**
- * Test Telegram notification
- */
-async function testTelegramNotification() {
-  const token = localStorage.getItem('telegramBotToken');
-  const chatId = localStorage.getItem('telegramChatId');
-  const status = document.getElementById('telegramStatus');
-
-  if (!token || !chatId) {
-    status.textContent = '먼저 설정을 저장해주세요.';
-    status.style.color = '#e74c3c';
-    return;
-  }
-
-  status.textContent = '테스트 알림 전송 중...';
-  status.style.color = '#2980b9';
-
-  try {
-    const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: '✅ 호텔어라운드 평창 알림 테스트\n\n텔레그램 알림이 정상적으로 연동되었습니다.'
-      })
-    });
-
-    const result = await response.json();
-    if (result.ok) {
-      status.textContent = '테스트 알림이 전송되었습니다. 텔레그램을 확인하세요!';
-      status.style.color = '#27ae60';
-    } else {
-      status.textContent = `전송 실패: ${result.description || '설정을 다시 확인해주세요.'}`;
-      status.style.color = '#e74c3c';
-    }
-  } catch (err) {
-    status.textContent = '전송 실패: 네트워크 오류가 발생했습니다.';
-    status.style.color = '#e74c3c';
-  }
 }
 
 /**
@@ -618,68 +490,3 @@ function escapeHtml(str) {
 /**
  * Test data management
  */
-async function addTestData() {
-  const sampleNames = ['김민수', '이수진', '박지훈', '정하늘', '최서연'];
-  const sampleCompanies = ['테크스타트업', '크리에이티브랩', '노마드코퍼레이션', '프리워크', '디지털브릿지'];
-  const packages = ['starter', 'professional', 'nomad', 'paradise', 'custom'];
-  const guestOptions = ['1', '2', '3-5', '6-10', '10+'];
-  const messages = [
-    '워케이션 패키지 관련 상세 정보 부탁드립니다.',
-    '팀 단위로 이용 가능한지 문의드립니다.',
-    '장기 투숙 시 추가 할인이 가능한가요?',
-    '체크인 시간 조정이 가능할까요?',
-    '기업 맞춤 패키지 상담 요청합니다.'
-  ];
-
-  const batch = db.batch();
-
-  sampleNames.forEach((name, i) => {
-    const daysAgo = Math.floor(Math.random() * 14);
-    const date = new Date();
-    date.setDate(date.getDate() - daysAgo);
-    date.setHours(9 + Math.floor(Math.random() * 10), Math.floor(Math.random() * 60));
-
-    const checkinDate = new Date();
-    checkinDate.setDate(checkinDate.getDate() + 7 + Math.floor(Math.random() * 30));
-
-    const ref = db.collection('inquiries').doc();
-    batch.set(ref, {
-      timestamp: date.toISOString(),
-      name: name,
-      company: sampleCompanies[i],
-      email: `${name.replace(/[가-힣]/g, () => String.fromCharCode(97 + Math.floor(Math.random() * 26)))}@example.com`,
-      phone: `010-${String(Math.floor(Math.random() * 9000) + 1000)}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
-      package: packages[i],
-      checkin: checkinDate.toISOString().split('T')[0],
-      guests: guestOptions[i],
-      message: messages[i],
-      status: 'pending'
-    });
-  });
-
-  try {
-    await batch.commit();
-    loadData();
-  } catch (err) {
-    console.error('테스트 데이터 추가 실패:', err);
-    alert('테스트 데이터 추가에 실패했습니다.');
-  }
-}
-
-async function clearAllData() {
-  if (!confirm('모든 데이터를 삭제하시겠습니까?')) return;
-
-  try {
-    const snapshot = await db.collection('inquiries').get();
-    const batch = db.batch();
-    snapshot.docs.forEach(doc => batch.delete(doc.ref));
-    await batch.commit();
-
-    allInquiries = [];
-    updateStats();
-    applyFilters();
-  } catch (err) {
-    console.error('데이터 초기화 실패:', err);
-    alert('데이터 초기화에 실패했습니다.');
-  }
-}
