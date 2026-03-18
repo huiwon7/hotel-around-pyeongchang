@@ -201,14 +201,14 @@ body {
 .stats-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
-  padding: 1.5rem 2rem;
+  gap: 1rem;
+  padding: 1rem 2rem;
 }
 
 .stat-card {
   background: var(--color-white);
   border-radius: 10px;
-  padding: 1.5rem;
+  padding: 1rem;
   text-align: center;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-gray-200);
@@ -216,9 +216,9 @@ body {
 
 .stat-number {
   font-family: var(--font-display);
-  font-size: 2.2rem;
+  font-size: 1.8rem;
   font-weight: 600;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.2rem;
 }
 
 .stat-card.today .stat-number {
@@ -249,8 +249,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2rem 1rem;
-  gap: 1rem;
+  padding: 0 2rem 0.75rem;
+  gap: 0.75rem;
 }
 
 .search-box {
@@ -320,10 +320,10 @@ body {
 }
 
 .inquiry-table th {
-  padding: 0.85rem 1rem;
+  padding: 0.55rem 0.75rem;
   text-align: left;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--color-gray-500);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -332,17 +332,52 @@ body {
 }
 
 .inquiry-table td {
-  padding: 0.85rem 1rem;
+  padding: 0.5rem 0.75rem;
   border-bottom: 1px solid var(--color-gray-100);
   white-space: nowrap;
+  font-size: 0.83rem;
 }
 
 .inquiry-table tbody tr:hover {
-  background: var(--color-gray-100);
+  filter: brightness(0.97);
 }
 
 .inquiry-table tbody tr:last-child td {
   border-bottom: none;
+}
+
+/* Row status background colors */
+.inquiry-table tbody tr.row-pending {
+  background: #f0f9ff;
+}
+
+.inquiry-table tbody tr.row-consulting {
+  background: #fffbeb;
+}
+
+.inquiry-table tbody tr.row-hold {
+  background: #fdf2f8;
+}
+
+.inquiry-table tbody tr.row-confirmed {
+  background: #ecfdf5;
+}
+
+/* Memo cell in table */
+.memo-cell {
+  max-width: 180px;
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.memo-preview {
+  color: var(--color-gray-600);
+  font-size: 0.8rem;
+}
+
+.memo-empty {
+  color: var(--color-gray-300);
 }
 
 .pkg-badge {

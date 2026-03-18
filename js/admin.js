@@ -409,18 +409,19 @@ function renderTable(inquiries) {
     const pkgClass = item.package || 'custom';
     const statusClass = item.status || 'pending';
     const statusName = statusNames[statusClass] || '신규';
+    const memoPreview = item.memo ? escapeHtml(item.memo) : '';
 
     return `
-      <tr>
+      <tr class="row-${statusClass}">
         <td>${date}</td>
         <td><strong>${escapeHtml(item.name || '-')}</strong></td>
         <td>${escapeHtml(item.company || '-')}</td>
         <td><span class="pkg-badge ${pkgClass}">${pkgName}</span></td>
         <td><span class="status-badge status-${statusClass}">${statusName}</span></td>
         <td>${escapeHtml(item.phone || '-')}</td>
-        <td>${escapeHtml(item.email || '-')}</td>
         <td>${item.checkin || '-'}</td>
         <td>${escapeHtml(item.guests || '-')}</td>
+        <td class="memo-cell">${memoPreview ? '<span class="memo-preview">' + memoPreview + '</span>' : '<span class="memo-empty">-</span>'}</td>
         <td><button class="btn-detail" onclick="showDetail(${idx})">보기</button></td>
       </tr>
     `;
