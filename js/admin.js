@@ -258,10 +258,10 @@ function renderTable(inquiries) {
   }
 
   const packageNames = {
-    starter: 'Starter',
-    professional: 'Professional',
-    nomad: 'Nomad',
-    paradise: 'Paradise',
+    starter: 'Starter - 7박',
+    professional: 'Professional - 14박',
+    nomad: 'Nomad - 30박',
+    paradise: 'Paradise - 90박',
     custom: '기업 맞춤'
   };
 
@@ -420,6 +420,9 @@ async function saveMemo(docId) {
     // Update local data
     const item = allInquiries.find(i => i.id === docId);
     if (item) item.memo = memo;
+
+    // Refresh table immediately
+    applyFilters();
 
     const btn = document.querySelector('.btn-save-memo');
     btn.textContent = '저장 완료!';

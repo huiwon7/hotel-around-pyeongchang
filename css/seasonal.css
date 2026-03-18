@@ -129,7 +129,8 @@
 .video-section,
 .work-env-section,
 .facilities,
-.package-detail-section {
+.package-detail-section,
+.activities-section {
   transition: background-color 0.8s ease;
   background-color: var(--season-active-bg, var(--color-off-white));
 }
