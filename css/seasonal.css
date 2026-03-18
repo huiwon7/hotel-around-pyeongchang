@@ -69,10 +69,10 @@
   opacity: 1;
 }
 
-.hero__bg-layer--spring { background-image: url('../images/hero/hero-spring.jpg'); }
-.hero__bg-layer--summer { background-image: url('../images/hero/hero-summer.jpg'); }
-.hero__bg-layer--fall   { background-image: url('../images/hero/hero-fall.jpg'); }
-.hero__bg-layer--winter { background-image: url('../images/hero/hero-winter.jpg'); }
+.hero__bg-layer--spring { background-image: url('../images/main/KakaoTalk_20260318_114517829_01.png'); }
+.hero__bg-layer--summer { background-image: url('../images/main/KakaoTalk_20260318_114517829_02.png'); }
+.hero__bg-layer--fall   { background-image: url('../images/main/KakaoTalk_20260318_114517829_03.png'); }
+.hero__bg-layer--winter { background-image: url('../images/main/KakaoTalk_20260318_114517829_04.png'); }
 
 
 /* ============================================

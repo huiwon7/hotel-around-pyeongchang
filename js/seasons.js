@@ -92,9 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Preload hero images after initial page load
   setTimeout(() => {
-    ['spring', 'summer', 'fall', 'winter'].forEach(s => {
+    const heroImages = {
+      spring: 'images/main/KakaoTalk_20260318_114517829_01.png',
+      summer: 'images/main/KakaoTalk_20260318_114517829_02.png',
+      fall: 'images/main/KakaoTalk_20260318_114517829_03.png',
+      winter: 'images/main/KakaoTalk_20260318_114517829_04.png'
+    };
+    Object.values(heroImages).forEach(src => {
       const img = new Image();
-      img.src = 'images/hero/hero-' + s + '.jpg';
+      img.src = src;
     });
   }, 2000);
 });
