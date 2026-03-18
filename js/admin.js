@@ -412,7 +412,7 @@ function renderTable(inquiries) {
     const memoPreview = item.memo ? escapeHtml(item.memo) : '';
 
     return `
-      <tr class="row-${statusClass}">
+      <tr class="row-${statusClass}" onclick="showDetail(${idx})" style="cursor:pointer;">
         <td>${date}</td>
         <td><strong>${escapeHtml(item.name || '-')}</strong></td>
         <td>${escapeHtml(item.company || '-')}</td>
@@ -422,7 +422,6 @@ function renderTable(inquiries) {
         <td>${item.checkin || '-'}</td>
         <td>${escapeHtml(item.guests || '-')}</td>
         <td class="memo-cell">${memoPreview ? '<span class="memo-preview">' + memoPreview + '</span>' : '<span class="memo-empty">-</span>'}</td>
-        <td><button class="btn-detail" onclick="showDetail(${idx})">보기</button></td>
       </tr>
     `;
   }).join('');
