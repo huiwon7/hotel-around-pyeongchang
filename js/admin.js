@@ -136,21 +136,22 @@ function initDashboard() {
   });
 
   // Add inquiry form submit
-  document.getElementById('addInquiryForm')?.addEventListener('submit', (e) => {
+  document.getElementById('addInquiryForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
     data.timestamp = new Date().toISOString();
-    data.id = Date.now();
     data.status = 'pending';
 
-    const inquiries = JSON.parse(localStorage.getItem('workationInquiries') || '[]');
-    inquiries.push(data);
-    localStorage.setItem('workationInquiries', JSON.stringify(inquiries));
-
-    e.target.reset();
-    closeAddModal();
-    loadLocalData();
+    try {
+      await db.collection('inquiries').add(data);
+      e.target.reset();
+      closeAddModal();
+      loadData();
+    } catch (err) {
+      console.error('문의 등록 실패:', err);
+      alert('등록에 실패했습니다. 다시 시도해주세요.');
+    }
   });
 }
 
@@ -247,76 +248,28 @@ async function testTelegramNotification() {
 }
 
 /**
- * Load data from Google Sheets
+ * Load data from Firestore
  */
 async function loadData() {
-  const scriptUrl = localStorage.getItem(STORAGE_KEY_URL) || DEFAULT_SCRIPT_URL;
-
-  if (!scriptUrl) {
-    loadLocalData();
-    return;
-  }
-
   try {
-    const response = await fetch(scriptUrl, { redirect: 'follow' });
-    if (!response.ok) throw new Error('Network error');
+    const snapshot = await db.collection('inquiries')
+      .orderBy('timestamp', 'desc')
+      .get();
 
-    const data = await response.json();
-    allInquiries = data.map((row, idx) => ({
-      id: idx,
-      timestamp: row.timestamp || '',
-      name: row.name || '',
-      company: row.company || '',
-      email: row.email || '',
-      phone: row.phone || '',
-      package: row.package || '',
-      checkin: row.checkin || '',
-      guests: row.guests || '',
-      message: row.message || '',
-      status: row.status || 'pending'
+    allInquiries = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
     }));
-
-    // Merge with localStorage data (avoid duplicates by timestamp+name)
-    const localStored = localStorage.getItem('workationInquiries');
-    if (localStored) {
-      const localData = JSON.parse(localStored);
-      localData.forEach(local => {
-        const exists = allInquiries.some(item =>
-          item.timestamp === local.timestamp && item.name === local.name
-        );
-        if (!exists) {
-          allInquiries.push(local);
-        }
-      });
-    }
-
-    // Sort newest first
-    allInquiries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
     updateStats();
     applyFilters();
     updateLastUpdated();
   } catch (err) {
-    console.error('데이터 로딩 실패:', err);
-    loadLocalData();
-  }
-}
-
-/**
- * Fallback: load from localStorage
- */
-function loadLocalData() {
-  const stored = localStorage.getItem('workationInquiries');
-  if (stored) {
-    allInquiries = JSON.parse(stored);
-    allInquiries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-  } else {
+    console.error('Firestore 데이터 로딩 실패:', err);
     allInquiries = [];
+    updateStats();
+    applyFilters();
   }
-
-  updateStats();
-  applyFilters();
-  updateLastUpdated();
 }
 
 /**
@@ -585,7 +538,7 @@ function escapeHtml(str) {
 /**
  * Test data management
  */
-function addTestData() {
+async function addTestData() {
   const sampleNames = ['김민수', '이수진', '박지훈', '정하늘', '최서연'];
   const sampleCompanies = ['테크스타트업', '크리에이티브랩', '노마드코퍼레이션', '프리워크', '디지털브릿지'];
   const packages = ['starter', 'professional', 'nomad', 'paradise', 'custom'];
@@ -598,9 +551,9 @@ function addTestData() {
     '기업 맞춤 패키지 상담 요청합니다.'
   ];
 
-  const existing = JSON.parse(localStorage.getItem('workationInquiries') || '[]');
+  const batch = db.batch();
 
-  const newInquiries = sampleNames.map((name, i) => {
+  sampleNames.forEach((name, i) => {
     const daysAgo = Math.floor(Math.random() * 14);
     const date = new Date();
     date.setDate(date.getDate() - daysAgo);
@@ -609,8 +562,8 @@ function addTestData() {
     const checkinDate = new Date();
     checkinDate.setDate(checkinDate.getDate() + 7 + Math.floor(Math.random() * 30));
 
-    return {
-      id: Date.now() + i,
+    const ref = db.collection('inquiries').doc();
+    batch.set(ref, {
       timestamp: date.toISOString(),
       name: name,
       company: sampleCompanies[i],
@@ -621,18 +574,32 @@ function addTestData() {
       guests: guestOptions[i],
       message: messages[i],
       status: 'pending'
-    };
+    });
   });
 
-  const merged = [...existing, ...newInquiries];
-  localStorage.setItem('workationInquiries', JSON.stringify(merged));
-  loadLocalData();
+  try {
+    await batch.commit();
+    loadData();
+  } catch (err) {
+    console.error('테스트 데이터 추가 실패:', err);
+    alert('테스트 데이터 추가에 실패했습니다.');
+  }
 }
 
-function clearAllData() {
-  if (!confirm('모든 테스트 데이터를 삭제하시겠습니까?')) return;
-  localStorage.removeItem('workationInquiries');
-  allInquiries = [];
-  updateStats();
-  applyFilters();
+async function clearAllData() {
+  if (!confirm('모든 데이터를 삭제하시겠습니까?')) return;
+
+  try {
+    const snapshot = await db.collection('inquiries').get();
+    const batch = db.batch();
+    snapshot.docs.forEach(doc => batch.delete(doc.ref));
+    await batch.commit();
+
+    allInquiries = [];
+    updateStats();
+    applyFilters();
+  } catch (err) {
+    console.error('데이터 초기화 실패:', err);
+    alert('데이터 초기화에 실패했습니다.');
+  }
 }

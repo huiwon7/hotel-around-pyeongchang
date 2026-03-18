@@ -4,8 +4,6 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  window.GOOGLE_SCRIPT_URL = localStorage.getItem('adminScriptUrl') || '';
-
   initNavigation();
   initScrollEffects();
   initStatsCounter();
@@ -334,22 +332,12 @@ function removeError(field) {
 
 function storeInquiry(data) {
   data.timestamp = new Date().toISOString();
-  data.id = Date.now();
   data.status = 'pending';
 
-  const inquiries = JSON.parse(localStorage.getItem('workationInquiries') || '[]');
-  inquiries.push(data);
-  localStorage.setItem('workationInquiries', JSON.stringify(inquiries));
-
-  const SCRIPT_URL = window.GOOGLE_SCRIPT_URL || '';
-  if (SCRIPT_URL) {
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    }).catch(err => console.error('Google Sheets 전송 실패:', err));
-  }
+  // Firestore에 저장
+  db.collection('inquiries').add(data)
+    .then(() => console.log('Firestore 저장 완료'))
+    .catch(err => console.error('Firestore 저장 실패:', err));
 
   sendTelegramNotification(data);
 }
