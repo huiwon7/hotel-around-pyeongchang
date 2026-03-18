@@ -379,6 +379,138 @@ body {
   color: var(--color-gray-600);
 }
 
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-badge.status-pending {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-badge.status-consulting {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-badge.status-hold {
+  background: #fce7f3;
+  color: #9d174d;
+}
+
+.status-badge.status-confirmed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+/* Detail Modal - Status Buttons */
+.detail-status-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.detail-status-section .detail-label {
+  margin-bottom: 0.75rem;
+}
+
+.status-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.status-btn {
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  cursor: pointer;
+  background: var(--color-white);
+  color: var(--color-gray-600);
+  transition: all 0.2s;
+}
+
+.status-btn:hover {
+  border-color: var(--color-gray-400);
+}
+
+.status-btn.status-pending.active {
+  background: #0369a1;
+  color: #fff;
+  border-color: #0369a1;
+}
+
+.status-btn.status-consulting.active {
+  background: #d97706;
+  color: #fff;
+  border-color: #d97706;
+}
+
+.status-btn.status-hold.active {
+  background: #be185d;
+  color: #fff;
+  border-color: #be185d;
+}
+
+.status-btn.status-confirmed.active {
+  background: #059669;
+  color: #fff;
+  border-color: #059669;
+}
+
+/* Detail Modal - Memo */
+.detail-memo-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.detail-memo-section .detail-label {
+  margin-bottom: 0.75rem;
+}
+
+.memo-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  resize: vertical;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.memo-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.btn-save-memo {
+  padding: 0.5rem 1.2rem;
+  background: var(--color-accent);
+  color: var(--color-white);
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-save-memo:hover {
+  background: var(--color-accent-dark);
+}
+
 .btn-detail {
   background: none;
   border: 1px solid var(--color-gray-300);

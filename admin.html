@@ -79,6 +79,13 @@
           <option value="paradise">Paradise</option>
           <option value="custom">기업 맞춤</option>
         </select>
+        <select id="filterStatus">
+          <option value="">전체 상태</option>
+          <option value="pending">신규</option>
+          <option value="consulting">상담중</option>
+          <option value="hold">보류</option>
+          <option value="confirmed">예약완료</option>
+        </select>
         <select id="filterPeriod">
           <option value="">전체 기간</option>
           <option value="today">오늘</option>
@@ -98,6 +105,7 @@
               <th>이름</th>
               <th>회사</th>
               <th>패키지</th>
+              <th>진행상태</th>
               <th>연락처</th>
               <th>이메일</th>
               <th>체크인</th>
@@ -107,7 +115,7 @@
           </thead>
           <tbody id="inquiryBody">
             <tr>
-              <td colspan="9" class="empty-state">
+              <td colspan="10" class="empty-state">
                 <div class="empty-icon">&#128203;</div>
                 <p>데이터를 불러오는 중...</p>
               </td>

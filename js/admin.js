@@ -75,6 +75,7 @@ function initDashboard() {
 
   // Filters
   document.getElementById('filterPackage')?.addEventListener('change', applyFilters);
+  document.getElementById('filterStatus')?.addEventListener('change', applyFilters);
   document.getElementById('filterPeriod')?.addEventListener('change', applyFilters);
 
   // Modal close
@@ -336,6 +337,12 @@ function applyFilters() {
     filtered = filtered.filter(i => i.package === pkgFilter);
   }
 
+  // Status filter
+  const statusFilter = document.getElementById('filterStatus')?.value || '';
+  if (statusFilter) {
+    filtered = filtered.filter(i => (i.status || 'pending') === statusFilter);
+  }
+
   // Period filter
   if (periodFilter) {
     const now = new Date();
@@ -367,19 +374,11 @@ function renderTable(inquiries) {
   if (!tbody) return;
 
   if (inquiries.length === 0) {
-    const scriptUrl = localStorage.getItem(STORAGE_KEY_URL);
-    const hasLocalData = localStorage.getItem('workationInquiries');
-    let emptyMsg = '문의 내역이 없습니다';
-
-    if (!scriptUrl && !hasLocalData) {
-      emptyMsg = '데이터 소스가 연결되지 않았습니다.<br><small style="color:#999;">하단의 <strong>Google Sheets 설정</strong> 버튼을 눌러 연동하거나,<br>메인 사이트에서 테스트 문의를 제출해 보세요.</small>';
-    }
-
     tbody.innerHTML = `
       <tr>
-        <td colspan="9" class="empty-state">
+        <td colspan="10" class="empty-state">
           <div class="empty-icon">&#128203;</div>
-          <p>${emptyMsg}</p>
+          <p>문의 내역이 없습니다</p>
         </td>
       </tr>
     `;
@@ -397,10 +396,19 @@ function renderTable(inquiries) {
   // Store filtered results for detail view
   window._filteredInquiries = inquiries;
 
+  const statusNames = {
+    pending: '신규',
+    consulting: '상담중',
+    hold: '보류',
+    confirmed: '예약완료'
+  };
+
   tbody.innerHTML = inquiries.map((item, idx) => {
     const date = item.timestamp ? formatDate(item.timestamp) : '-';
     const pkgName = packageNames[item.package] || item.package || '-';
     const pkgClass = item.package || 'custom';
+    const statusClass = item.status || 'pending';
+    const statusName = statusNames[statusClass] || '신규';
 
     return `
       <tr>
@@ -408,6 +416,7 @@ function renderTable(inquiries) {
         <td><strong>${escapeHtml(item.name || '-')}</strong></td>
         <td>${escapeHtml(item.company || '-')}</td>
         <td><span class="pkg-badge ${pkgClass}">${pkgName}</span></td>
+        <td><span class="status-badge status-${statusClass}">${statusName}</span></td>
         <td>${escapeHtml(item.phone || '-')}</td>
         <td>${escapeHtml(item.email || '-')}</td>
         <td>${item.checkin || '-'}</td>
@@ -433,8 +442,25 @@ function showDetail(index) {
     custom: '기업 맞춤 패키지'
   };
 
+  const currentStatus = item.status || 'pending';
+  const statusNames = {
+    pending: '신규',
+    consulting: '상담중',
+    hold: '보류',
+    confirmed: '예약완료'
+  };
+
   const body = document.getElementById('modalBody');
   body.innerHTML = `
+    <div class="detail-status-section">
+      <div class="detail-label">진행상태</div>
+      <div class="status-buttons" data-doc-id="${item.id}">
+        <button class="status-btn status-pending ${currentStatus === 'pending' ? 'active' : ''}" onclick="updateStatus('${item.id}', 'pending')">신규</button>
+        <button class="status-btn status-consulting ${currentStatus === 'consulting' ? 'active' : ''}" onclick="updateStatus('${item.id}', 'consulting')">상담중</button>
+        <button class="status-btn status-hold ${currentStatus === 'hold' ? 'active' : ''}" onclick="updateStatus('${item.id}', 'hold')">보류</button>
+        <button class="status-btn status-confirmed ${currentStatus === 'confirmed' ? 'active' : ''}" onclick="updateStatus('${item.id}', 'confirmed')">예약완료</button>
+      </div>
+    </div>
     <div class="detail-row">
       <div class="detail-label">접수일시</div>
       <div class="detail-value">${item.timestamp ? formatDateTime(item.timestamp) : '-'}</div>
@@ -471,6 +497,11 @@ function showDetail(index) {
       <div class="detail-label">메시지</div>
       <div class="detail-value message">${escapeHtml(item.message || '(없음)')}</div>
     </div>
+    <div class="detail-memo-section">
+      <div class="detail-label">담당자 메모</div>
+      <textarea class="memo-input" id="memoInput" rows="3" placeholder="메모를 입력하세요...">${escapeHtml(item.memo || '')}</textarea>
+      <button class="btn-save-memo" onclick="saveMemo('${item.id}')">메모 저장</button>
+    </div>
   `;
 
   document.getElementById('detailModal').classList.add('active');
@@ -480,6 +511,55 @@ function showDetail(index) {
 function closeDetailModal() {
   document.getElementById('detailModal').classList.remove('active');
   document.body.style.overflow = '';
+}
+
+/**
+ * Update inquiry status
+ */
+async function updateStatus(docId, newStatus) {
+  try {
+    await db.collection('inquiries').doc(docId).update({ status: newStatus });
+
+    // Update local data
+    const item = allInquiries.find(i => i.id === docId);
+    if (item) item.status = newStatus;
+
+    // Update active button in modal
+    document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.querySelector(`.status-btn.status-${newStatus}`);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    // Refresh table
+    applyFilters();
+  } catch (err) {
+    console.error('상태 업데이트 실패:', err);
+    alert('상태 변경에 실패했습니다.');
+  }
+}
+
+/**
+ * Save memo
+ */
+async function saveMemo(docId) {
+  const memo = document.getElementById('memoInput').value.trim();
+  try {
+    await db.collection('inquiries').doc(docId).update({ memo: memo });
+
+    // Update local data
+    const item = allInquiries.find(i => i.id === docId);
+    if (item) item.memo = memo;
+
+    const btn = document.querySelector('.btn-save-memo');
+    btn.textContent = '저장 완료!';
+    btn.style.background = '#27ae60';
+    setTimeout(() => {
+      btn.textContent = '메모 저장';
+      btn.style.background = '';
+    }, 1500);
+  } catch (err) {
+    console.error('메모 저장 실패:', err);
+    alert('메모 저장에 실패했습니다.');
+  }
 }
 
 /**
