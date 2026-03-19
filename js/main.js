@@ -277,11 +277,35 @@ function initContactForm() {
     e.preventDefault();
     if (!validateForm(form)) return;
 
+    // Turnstile 토큰 확인
+    const turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value;
+    if (!turnstileToken) {
+      alert('보안 인증을 완료해주세요. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+
+    const btn = document.getElementById('btnSubmitInquiry');
+    btn.disabled = true;
+    btn.textContent = '전송중...';
+
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
-    storeInquiry(data);
-    showModal();
-    form.reset();
+    delete data['cf-turnstile-response'];
+    delete data.privacy;
+    data.turnstileToken = turnstileToken;
+
+    try {
+      await storeInquiry(data);
+      showModal();
+      form.reset();
+      if (typeof turnstile !== 'undefined') turnstile.reset();
+    } catch (err) {
+      alert(err.message || '문의 전송에 실패했습니다. 다시 시도해주세요.');
+      if (typeof turnstile !== 'undefined') turnstile.reset();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '문의 보내기';
+    }
   });
 
   // Phone input formatting
@@ -335,15 +359,18 @@ function removeError(field) {
   if (err) err.remove();
 }
 
-function storeInquiry(data) {
-  data.timestamp = new Date().toISOString();
-  data.status = 'pending';
+const FUNCTIONS_BASE = 'https://asia-northeast3-hotel-around-pyeongchang.cloudfunctions.net';
 
-  // Firestore에 저장
-  db.collection('inquiries').add(data)
-    .then(() => console.log('Firestore 저장 완료'))
-    .catch(err => console.error('Firestore 저장 실패:', err));
-  // 텔레그램 알림은 Cloud Function (onNewInquiry)에서 자동 발송
+async function storeInquiry(data) {
+  const res = await fetch(`${FUNCTIONS_BASE}/submitInquiry`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  const result = await res.json();
+  if (!result.success) {
+    throw new Error(result.message);
+  }
 }
 
 function showModal() {

@@ -1661,7 +1661,8 @@
             <input type="checkbox" id="privacy" name="privacy" required>
             <label for="privacy" style="margin-bottom:0;font-weight:400;">개인정보 수집 및 이용에 동의합니다. *</label>
           </div>
-          <button type="submit" class="btn btn--primary btn--lg" style="width:100%">문의 보내기</button>
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAACtRDcLh-uUop9B-" data-callback="onTurnstileSuccess" data-theme="light"></div>
+          <button type="submit" class="btn btn--primary btn--lg" style="width:100%" id="btnSubmitInquiry">문의 보내기</button>
         </form>
       </div>
     </div>
@@ -1724,6 +1725,7 @@
     </div>
   </div>
 
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="js/firebase-config.js"></script>

@@ -1,9 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 문의: 누구나 생성 가능, 읽기/수정/삭제는 인증된 관리자만
+    // 문의: Cloud Function(admin SDK)에서만 생성, 읽기/수정/삭제는 인증된 관리자만
     match /inquiries/{doc} {
-      allow create: if true;
+      allow create: if false;
       allow read, update, delete: if request.auth != null;
     }
 

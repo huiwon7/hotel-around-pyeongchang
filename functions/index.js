@@ -191,6 +191,67 @@ async function sendAligoSms(phone, message) {
 }
 
 /**
+ * Submit inquiry with Turnstile verification
+ * POST /submitInquiry { ...formData, turnstileToken: "xxx" }
+ */
+exports.submitInquiry = onRequest(
+  { region: "asia-northeast3", secrets: ["TURNSTILE_SECRET_KEY"] },
+  async (req, res) => {
+    if (req.method === "OPTIONS") {
+      res.set(getCorsHeaders(req)).status(204).send("");
+      return;
+    }
+    res.set(getCorsHeaders(req));
+
+    if (req.method !== "POST") {
+      res.status(405).json({ success: false, message: "Method not allowed" });
+      return;
+    }
+
+    const { turnstileToken, ...formData } = req.body;
+
+    // Verify Turnstile token
+    if (!turnstileToken) {
+      res.status(400).json({ success: false, message: "보안 인증이 필요합니다." });
+      return;
+    }
+
+    try {
+      const verifyRes = await axios.post(
+        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+        new URLSearchParams({
+          secret: process.env.TURNSTILE_SECRET_KEY,
+          response: turnstileToken,
+          remoteip: req.ip,
+        }),
+        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+      );
+
+      if (!verifyRes.data.success) {
+        res.status(403).json({ success: false, message: "보안 인증에 실패했습니다. 다시 시도해주세요." });
+        return;
+      }
+    } catch (err) {
+      console.error("Turnstile 검증 에러:", err.message);
+      res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
+      return;
+    }
+
+    // Store inquiry
+    formData.timestamp = new Date().toISOString();
+    formData.status = "pending";
+
+    try {
+      await db.collection("inquiries").add(formData);
+      res.json({ success: true, message: "문의가 접수되었습니다." });
+    } catch (err) {
+      console.error("문의 저장 실패:", err.message);
+      res.status(500).json({ success: false, message: "문의 저장에 실패했습니다." });
+    }
+  }
+);
+
+/**
  * Send Telegram notification when new inquiry is created
  * Triggered by Firestore onCreate
  */
