@@ -1622,18 +1622,8 @@
               <input class="form-input" type="email" id="email" name="email" required placeholder="email@example.com">
             </div>
             <div class="form-group">
-              <label class="form-label" for="phone">연락처 * <span class="phone-verified-badge" id="phoneVerifiedBadge" style="display:none;">✓ 인증완료</span></label>
-              <div class="phone-verify-row">
-                <input class="form-input" type="tel" id="phone" name="phone" required placeholder="010-0000-0000">
-                <button type="button" class="btn-verify-send" id="btnSendOtp">인증요청</button>
-              </div>
-              <div class="otp-verify-row" id="otpRow" style="display:none;">
-                <input class="form-input otp-input" type="text" id="otpCode" placeholder="인증번호 6자리" maxlength="6" inputmode="numeric">
-                <button type="button" class="btn-verify-confirm" id="btnVerifyOtp">확인</button>
-                <span class="otp-timer" id="otpTimer"></span>
-              </div>
-              <div class="otp-message" id="otpMessage"></div>
-              <input type="hidden" id="phoneVerifyToken" name="phoneVerifyToken" value="">
+              <label class="form-label" for="phone">연락처 *</label>
+              <input class="form-input" type="tel" id="phone" name="phone" required placeholder="010-0000-0000">
             </div>
           </div>
           <div class="form-group">
