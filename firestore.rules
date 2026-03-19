@@ -6,5 +6,13 @@ service cloud.firestore {
       allow create: if true;
       allow update, delete: if true;
     }
+
+    // OTP collections - only accessible from Cloud Functions (admin SDK)
+    match /otps/{doc} {
+      allow read, write: if false;
+    }
+    match /verified_phones/{doc} {
+      allow read, write: if false;
+    }
   }
 }

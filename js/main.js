@@ -259,6 +259,17 @@ function initTabs() {
 }
 
 /**
+ * Cloud Functions base URL
+ */
+const FUNCTIONS_BASE = 'https://asia-northeast3-hotel-around-pyeongchang.cloudfunctions.net';
+
+/**
+ * Phone verification state
+ */
+let phoneVerified = false;
+let otpTimerInterval = null;
+
+/**
  * Contact form
  */
 function initContactForm() {
@@ -276,13 +287,23 @@ function initContactForm() {
     e.preventDefault();
     if (!validateForm(form)) return;
 
+    // Check phone verification
+    if (!phoneVerified) {
+      const phoneInput = document.getElementById('phone');
+      showError(phoneInput, '연락처 인증이 필요합니다.');
+      return;
+    }
+
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+    delete data.phoneVerifyToken; // Don't store token in inquiry
     storeInquiry(data);
     showModal();
     form.reset();
+    resetPhoneVerification();
   });
 
+  // Phone input formatting
   const phoneInput = document.getElementById('phone');
   if (phoneInput) {
     phoneInput.addEventListener('input', (e) => {
@@ -291,8 +312,229 @@ function initContactForm() {
       if (value.length > 7) value = value.replace(/(\d{3})(\d{4})(\d{0,4})/, '$1-$2-$3');
       else if (value.length > 3) value = value.replace(/(\d{3})(\d{0,4})/, '$1-$2');
       e.target.value = value;
+
+      // Reset verification if phone number changes
+      if (phoneVerified) {
+        resetPhoneVerification();
+      }
     });
   }
+
+  // Send OTP button
+  const btnSendOtp = document.getElementById('btnSendOtp');
+  if (btnSendOtp) {
+    btnSendOtp.addEventListener('click', handleSendOtp);
+  }
+
+  // Verify OTP button
+  const btnVerifyOtp = document.getElementById('btnVerifyOtp');
+  if (btnVerifyOtp) {
+    btnVerifyOtp.addEventListener('click', handleVerifyOtp);
+  }
+
+  // Allow Enter key in OTP input to verify
+  const otpInput = document.getElementById('otpCode');
+  if (otpInput) {
+    otpInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleVerifyOtp();
+      }
+    });
+  }
+}
+
+/**
+ * Send OTP
+ */
+async function handleSendOtp() {
+  const phoneInput = document.getElementById('phone');
+  const phone = phoneInput.value.trim();
+  const msgEl = document.getElementById('otpMessage');
+  const btn = document.getElementById('btnSendOtp');
+
+  // Validate phone
+  const cleanPhone = phone.replace(/-/g, '');
+  if (!/^01[016789]\d{7,8}$/.test(cleanPhone)) {
+    msgEl.textContent = '올바른 휴대폰 번호를 입력해주세요.';
+    msgEl.className = 'otp-message error';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '발송중...';
+  msgEl.textContent = '';
+
+  try {
+    const res = await fetch(`${FUNCTIONS_BASE}/sendOtp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: cleanPhone }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      msgEl.textContent = '인증번호가 발송되었습니다.';
+      msgEl.className = 'otp-message success';
+
+      // Show OTP input row
+      document.getElementById('otpRow').style.display = 'flex';
+      document.getElementById('otpCode').focus();
+
+      // Start 3-minute countdown
+      startOtpTimer(180);
+
+      // Disable resend for 60 seconds
+      let resendCountdown = 60;
+      btn.textContent = `재발송 (${resendCountdown}s)`;
+      const resendInterval = setInterval(() => {
+        resendCountdown--;
+        if (resendCountdown <= 0) {
+          clearInterval(resendInterval);
+          btn.disabled = false;
+          btn.textContent = '재발송';
+        } else {
+          btn.textContent = `재발송 (${resendCountdown}s)`;
+        }
+      }, 1000);
+    } else {
+      msgEl.textContent = data.message || '발송에 실패했습니다.';
+      msgEl.className = 'otp-message error';
+      btn.disabled = false;
+      btn.textContent = '인증요청';
+    }
+  } catch (err) {
+    console.error('OTP 발송 에러:', err);
+    msgEl.textContent = '서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.';
+    msgEl.className = 'otp-message error';
+    btn.disabled = false;
+    btn.textContent = '인증요청';
+  }
+}
+
+/**
+ * Verify OTP
+ */
+async function handleVerifyOtp() {
+  const phoneInput = document.getElementById('phone');
+  const codeInput = document.getElementById('otpCode');
+  const phone = phoneInput.value.replace(/-/g, '');
+  const code = codeInput.value.trim();
+  const msgEl = document.getElementById('otpMessage');
+
+  if (!code || code.length !== 6) {
+    msgEl.textContent = '6자리 인증번호를 입력해주세요.';
+    msgEl.className = 'otp-message error';
+    return;
+  }
+
+  const btn = document.getElementById('btnVerifyOtp');
+  btn.disabled = true;
+  btn.textContent = '확인중...';
+
+  try {
+    const res = await fetch(`${FUNCTIONS_BASE}/verifyOtp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, code }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      phoneVerified = true;
+
+      // Store token
+      document.getElementById('phoneVerifyToken').value = data.token || '';
+
+      // UI updates
+      msgEl.textContent = '인증이 완료되었습니다.';
+      msgEl.className = 'otp-message success';
+      document.getElementById('otpRow').style.display = 'none';
+      document.getElementById('btnSendOtp').style.display = 'none';
+      document.getElementById('phoneVerifiedBadge').style.display = 'inline';
+      phoneInput.classList.add('phone-input-verified');
+      phoneInput.readOnly = true;
+
+      // Stop timer
+      stopOtpTimer();
+    } else {
+      msgEl.textContent = data.message || '인증에 실패했습니다.';
+      msgEl.className = 'otp-message error';
+      btn.disabled = false;
+      btn.textContent = '확인';
+    }
+  } catch (err) {
+    console.error('OTP 검증 에러:', err);
+    msgEl.textContent = '서버 연결에 실패했습니다.';
+    msgEl.className = 'otp-message error';
+    btn.disabled = false;
+    btn.textContent = '확인';
+  }
+}
+
+/**
+ * OTP Timer
+ */
+function startOtpTimer(seconds) {
+  stopOtpTimer();
+  const timerEl = document.getElementById('otpTimer');
+  let remaining = seconds;
+
+  const update = () => {
+    const min = Math.floor(remaining / 60);
+    const sec = remaining % 60;
+    timerEl.textContent = `${min}:${String(sec).padStart(2, '0')}`;
+
+    if (remaining <= 0) {
+      stopOtpTimer();
+      timerEl.textContent = '만료';
+      document.getElementById('otpMessage').textContent = '인증시간이 만료되었습니다. 다시 요청해주세요.';
+      document.getElementById('otpMessage').className = 'otp-message error';
+      document.getElementById('btnVerifyOtp').disabled = true;
+    }
+    remaining--;
+  };
+
+  update();
+  otpTimerInterval = setInterval(update, 1000);
+}
+
+function stopOtpTimer() {
+  if (otpTimerInterval) {
+    clearInterval(otpTimerInterval);
+    otpTimerInterval = null;
+  }
+}
+
+/**
+ * Reset phone verification state
+ */
+function resetPhoneVerification() {
+  phoneVerified = false;
+  stopOtpTimer();
+
+  const phoneInput = document.getElementById('phone');
+  const btnSend = document.getElementById('btnSendOtp');
+  const badge = document.getElementById('phoneVerifiedBadge');
+  const otpRow = document.getElementById('otpRow');
+  const msgEl = document.getElementById('otpMessage');
+  const tokenInput = document.getElementById('phoneVerifyToken');
+
+  if (phoneInput) {
+    phoneInput.classList.remove('phone-input-verified');
+    phoneInput.readOnly = false;
+  }
+  if (btnSend) {
+    btnSend.style.display = '';
+    btnSend.disabled = false;
+    btnSend.textContent = '인증요청';
+  }
+  if (badge) badge.style.display = 'none';
+  if (otpRow) otpRow.style.display = 'none';
+  if (msgEl) { msgEl.textContent = ''; msgEl.className = 'otp-message'; }
+  if (tokenInput) tokenInput.value = '';
 }
 
 function validateForm(form) {

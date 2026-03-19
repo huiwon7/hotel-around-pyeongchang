@@ -20,7 +20,11 @@
       </div>
       <form id="loginForm">
         <div class="login-field">
-          <label for="adminPassword">관리자 비밀번호</label>
+          <label for="adminEmail">관리자 이메일</label>
+          <input type="email" id="adminEmail" placeholder="이메일을 입력하세요" required>
+        </div>
+        <div class="login-field">
+          <label for="adminPassword">비밀번호</label>
           <input type="password" id="adminPassword" placeholder="비밀번호를 입력하세요" required>
         </div>
         <button type="submit" class="login-btn">로그인</button>
@@ -209,6 +213,7 @@
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/admin.js"></script>

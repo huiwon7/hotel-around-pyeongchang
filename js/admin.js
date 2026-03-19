@@ -2,8 +2,6 @@
  * Admin Dashboard - Hotel Around Pyeongchang
  */
 
-const ADMIN_PASSWORD = '***REMOVED***';
-const STORAGE_KEY_AUTH = 'adminAuth';
 const AUTO_REFRESH_INTERVAL = 30000; // 30초
 
 let allInquiries = [];
@@ -13,13 +11,18 @@ let refreshTimer = null;
  * Initialize
  */
 document.addEventListener('DOMContentLoaded', () => {
-  // Check if already logged in
-  if (sessionStorage.getItem(STORAGE_KEY_AUTH) === 'true') {
-    showDashboard();
-  }
-
   initLogin();
   initDashboard();
+
+  // Firebase Auth 상태 감지
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      showDashboard();
+    } else {
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+    }
+  });
 });
 
 /**
@@ -29,17 +32,25 @@ function initLogin() {
   const form = document.getElementById('loginForm');
   if (!form) return;
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const email = document.getElementById('adminEmail').value;
     const pw = document.getElementById('adminPassword').value;
     const errorEl = document.getElementById('loginError');
+    const btn = form.querySelector('.login-btn');
 
-    if (pw === ADMIN_PASSWORD) {
-      sessionStorage.setItem(STORAGE_KEY_AUTH, 'true');
-      showDashboard();
-    } else {
-      errorEl.textContent = '비밀번호가 올바르지 않습니다.';
+    btn.textContent = '로그인 중...';
+    btn.disabled = true;
+    errorEl.textContent = '';
+
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, pw);
+    } catch (err) {
+      errorEl.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
       document.getElementById('adminPassword').value = '';
+    } finally {
+      btn.textContent = '로그인';
+      btn.disabled = false;
     }
   });
 }
@@ -60,12 +71,8 @@ function initDashboard() {
 
   // Logout
   document.getElementById('btnLogout')?.addEventListener('click', () => {
-    sessionStorage.removeItem(STORAGE_KEY_AUTH);
+    firebase.auth().signOut();
     stopAutoRefresh();
-    document.getElementById('dashboard').style.display = 'none';
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('adminPassword').value = '';
-    document.getElementById('loginError').textContent = '';
   });
 
   // Search
