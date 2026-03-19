@@ -380,6 +380,20 @@ body {
   color: var(--color-gray-300);
 }
 
+.memo-author {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--color-primary);
+  margin-top: 2px;
+}
+
+.memo-author-info {
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
 .pkg-badge {
   display: inline-block;
   padding: 0.2rem 0.6rem;

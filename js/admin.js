@@ -289,6 +289,7 @@ function renderTable(inquiries) {
     const statusClass = item.status || 'pending';
     const statusName = statusNames[statusClass] || '신규';
     const memoPreview = item.memo ? escapeHtml(item.memo) : '';
+    const memoAuthorShort = item.memoAuthor ? item.memoAuthor.split('@')[0] : '';
 
     return `
       <tr class="row-${statusClass}" onclick="showDetail(${idx})" style="cursor:pointer;">
@@ -300,7 +301,7 @@ function renderTable(inquiries) {
         <td>${escapeHtml(item.phone || '-')}</td>
         <td>${item.checkin || '-'}</td>
         <td>${escapeHtml(item.guests || '-')}</td>
-        <td class="memo-cell">${memoPreview ? '<span class="memo-preview">' + memoPreview + '</span>' : '<span class="memo-empty">-</span>'}</td>
+        <td class="memo-cell">${memoPreview ? '<span class="memo-preview">' + memoPreview + '</span>' + (memoAuthorShort ? '<span class="memo-author">' + escapeHtml(memoAuthorShort) + '</span>' : '') : '<span class="memo-empty">-</span>'}</td>
       </tr>
     `;
   }).join('');
@@ -379,6 +380,7 @@ function showDetail(index) {
     <div class="detail-memo-section">
       <div class="detail-label">담당자 메모</div>
       <textarea class="memo-input" id="memoInput" rows="3" placeholder="메모를 입력하세요...">${escapeHtml(item.memo || '')}</textarea>
+      ${item.memoAuthor ? `<div class="memo-author-info">최종 작성: ${escapeHtml(item.memoAuthor)} (${item.memoUpdatedAt ? formatDateTime(item.memoUpdatedAt) : '-'})</div>` : ''}
       <button class="btn-save-memo" onclick="saveMemo('${item.id}')">메모 저장</button>
     </div>
   `;
@@ -421,12 +423,23 @@ async function updateStatus(docId, newStatus) {
  */
 async function saveMemo(docId) {
   const memo = document.getElementById('memoInput').value.trim();
+  const user = firebase.auth().currentUser;
+  const memoAuthor = user ? user.email : '알 수 없음';
+  const memoUpdatedAt = new Date().toISOString();
   try {
-    await db.collection('inquiries').doc(docId).update({ memo: memo });
+    await db.collection('inquiries').doc(docId).update({
+      memo: memo,
+      memoAuthor: memoAuthor,
+      memoUpdatedAt: memoUpdatedAt
+    });
 
     // Update local data
     const item = allInquiries.find(i => i.id === docId);
-    if (item) item.memo = memo;
+    if (item) {
+      item.memo = memo;
+      item.memoAuthor = memoAuthor;
+      item.memoUpdatedAt = memoUpdatedAt;
+    }
 
     // Refresh table immediately
     applyFilters();
