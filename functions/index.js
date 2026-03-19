@@ -197,7 +197,7 @@ async function sendAligoSms(phone, message) {
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 
 exports.onNewInquiry = onDocumentCreated(
-  { document: "inquiries/{docId}", region: "asia-northeast3" },
+  { document: "inquiries/{docId}", region: "asia-northeast3", secrets: ["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_IDS"] },
   async (event) => {
     const data = event.data.data();
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
