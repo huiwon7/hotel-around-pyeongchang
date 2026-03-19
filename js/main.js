@@ -580,41 +580,7 @@ function storeInquiry(data) {
   db.collection('inquiries').add(data)
     .then(() => console.log('Firestore 저장 완료'))
     .catch(err => console.error('Firestore 저장 실패:', err));
-
-  sendTelegramNotification(data);
-}
-
-function sendTelegramNotification(data) {
-  const botToken = '8680394108:AAG63i0ZdjqiSOnfKc8xbCZMlpooto8VE7w';
-  const chatIds = ['338769898', '-5295717736'];
-
-  const packageNames = {
-    starter: 'Starter (7박)',
-    professional: 'Professional (14박)',
-    nomad: 'Nomad (30박)',
-    paradise: 'Paradise (90박)',
-    custom: '기업 맞춤'
-  };
-
-  const pkgName = packageNames[data.package] || data.package || '-';
-  const text = `🔔 새 예약문의\n\n` +
-    `이름: ${data.name || '-'}\n` +
-    `회사: ${data.company || '-'}\n` +
-    `패키지: ${pkgName}\n` +
-    `체크인: ${data.checkin || '-'}\n` +
-    `인원: ${data.guests || '-'}명\n` +
-    `연락처: ${data.phone || '-'}\n` +
-    `이메일: ${data.email || '-'}\n` +
-    (data.message ? `메시지: ${data.message}\n` : '') +
-    `\n📋 관리자 페이지에서 확인하세요.`;
-
-  chatIds.forEach(chatId => {
-    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: chatId, text: text })
-    }).catch(err => console.error('텔레그램 알림 전송 실패:', err));
-  });
+  // 텔레그램 알림은 Cloud Function (onNewInquiry)에서 자동 발송
 }
 
 function showModal() {

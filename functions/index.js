@@ -6,11 +6,22 @@ admin.initializeApp();
 const db = admin.firestore();
 
 // CORS headers
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
+const ALLOWED_ORIGINS = [
+  "https://hotel-around-pyeongchang.web.app",
+  "https://hotel-around-pyeongchang.firebaseapp.com",
+  "https://aroundpartners.co.kr",
+  "https://www.aroundpartners.co.kr",
+];
+
+function getCorsHeaders(req) {
+  const origin = req.headers.origin || "";
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
 
 /**
  * Send OTP via Aligo SMS
@@ -19,11 +30,11 @@ const CORS_HEADERS = {
 exports.sendOtp = onRequest({ region: "asia-northeast3" }, async (req, res) => {
   // CORS preflight
   if (req.method === "OPTIONS") {
-    res.set(CORS_HEADERS).status(204).send("");
+    res.set(getCorsHeaders(req)).status(204).send("");
     return;
   }
 
-  res.set(CORS_HEADERS);
+  res.set(getCorsHeaders(req));
 
   if (req.method !== "POST") {
     res.status(405).json({ success: false, message: "Method not allowed" });
@@ -93,11 +104,11 @@ exports.sendOtp = onRequest({ region: "asia-northeast3" }, async (req, res) => {
 exports.verifyOtp = onRequest({ region: "asia-northeast3" }, async (req, res) => {
   // CORS preflight
   if (req.method === "OPTIONS") {
-    res.set(CORS_HEADERS).status(204).send("");
+    res.set(getCorsHeaders(req)).status(204).send("");
     return;
   }
 
-  res.set(CORS_HEADERS);
+  res.set(getCorsHeaders(req));
 
   if (req.method !== "POST") {
     res.status(405).json({ success: false, message: "Method not allowed" });
@@ -180,13 +191,62 @@ async function sendAligoSms(phone, message) {
 }
 
 /**
+ * Send Telegram notification when new inquiry is created
+ * Triggered by Firestore onCreate
+ */
+const { onDocumentCreated } = require("firebase-functions/v2/firestore");
+
+exports.onNewInquiry = onDocumentCreated(
+  { document: "inquiries/{docId}", region: "asia-northeast3" },
+  async (event) => {
+    const data = event.data.data();
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    const chatIds = process.env.TELEGRAM_CHAT_IDS;
+
+    if (!botToken || !chatIds) {
+      console.warn("Telegram 환경변수 미설정");
+      return;
+    }
+
+    const packageNames = {
+      starter: "Starter (7박)",
+      professional: "Professional (14박)",
+      nomad: "Nomad (30박)",
+      paradise: "Paradise (90박)",
+      custom: "기업 맞춤",
+    };
+
+    const pkgName = packageNames[data.package] || data.package || "-";
+    const text =
+      `🔔 새 예약문의\n\n` +
+      `이름: ${data.name || "-"}\n` +
+      `회사: ${data.company || "-"}\n` +
+      `패키지: ${pkgName}\n` +
+      `체크인: ${data.checkin || "-"}\n` +
+      `인원: ${data.guests || "-"}명\n` +
+      `연락처: ${data.phone || "-"}\n` +
+      `이메일: ${data.email || "-"}\n` +
+      (data.message ? `메시지: ${data.message}\n` : "") +
+      `\n📋 관리자 페이지에서 확인하세요.`;
+
+    const ids = chatIds.split(",");
+    for (const chatId of ids) {
+      try {
+        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          chat_id: chatId.trim(),
+          text: text,
+        });
+      } catch (err) {
+        console.error(`Telegram 발송 실패 (${chatId}):`, err.message);
+      }
+    }
+  }
+);
+
+/**
  * Generate random token
  */
 function generateToken() {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let token = "";
-  for (let i = 0; i < 32; i++) {
-    token += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return token;
+  const crypto = require("crypto");
+  return crypto.randomBytes(24).toString("hex");
 }
