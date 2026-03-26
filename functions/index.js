@@ -15,12 +15,14 @@ const ALLOWED_ORIGINS = [
 
 function getCorsHeaders(req) {
   const origin = req.headers.origin || "";
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    "Access-Control-Allow-Origin": allowedOrigin,
+  const headers = {
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    headers["Access-Control-Allow-Origin"] = origin;
+  }
+  return headers;
 }
 
 /**
@@ -114,7 +116,7 @@ exports.sendOtp = onRequest({ region: "asia-northeast3", secrets: ["ALIGO_API_KE
  * Verify OTP
  * POST /verifyOtp { phone: "01012345678", code: "123456" }
  */
-exports.verifyOtp = onRequest({ region: "asia-northeast3", secrets: ["ALIGO_API_KEY", "ALIGO_USER_ID", "ALIGO_SENDER"] }, async (req, res) => {
+exports.verifyOtp = onRequest({ region: "asia-northeast3" }, async (req, res) => {
   // CORS preflight
   if (req.method === "OPTIONS") {
     res.set(getCorsHeaders(req)).status(204).send("");
@@ -138,26 +140,45 @@ exports.verifyOtp = onRequest({ region: "asia-northeast3", secrets: ["ALIGO_API_
 
   try {
     const now = new Date();
-    const snapshot = await db.collection("otps")
+
+    // Find the latest unverified OTP for this phone
+    const otpSnapshot = await db.collection("otps")
       .where("phone", "==", cleanPhone)
-      .where("code", "==", code)
       .where("verified", "==", false)
       .orderBy("createdAt", "desc")
       .limit(1)
       .get();
 
-    if (snapshot.empty) {
+    if (otpSnapshot.empty) {
       res.status(400).json({ success: false, message: "인증번호가 올바르지 않습니다." });
       return;
     }
 
-    const otpDoc = snapshot.docs[0];
+    const otpDoc = otpSnapshot.docs[0];
     const otpData = otpDoc.data();
+
+    // Check if max attempts exceeded
+    const attempts = otpData.attempts || 0;
+    if (attempts >= 5) {
+      // Invalidate the OTP
+      await otpDoc.ref.update({ verified: true, invalidated: true });
+      res.status(429).json({ success: false, message: "인증 시도 횟수를 초과했습니다. 새 인증번호를 요청해주세요." });
+      return;
+    }
 
     // Check expiry
     const expiresAt = otpData.expiresAt.toDate ? otpData.expiresAt.toDate() : new Date(otpData.expiresAt);
     if (now > expiresAt) {
       res.status(400).json({ success: false, message: "인증번호가 만료되었습니다. 다시 요청해주세요." });
+      return;
+    }
+
+    // Check if code matches
+    if (otpData.code !== code) {
+      // Increment attempt count
+      await otpDoc.ref.update({ attempts: attempts + 1 });
+      const remaining = 4 - attempts;
+      res.status(400).json({ success: false, message: `인증번호가 올바르지 않습니다. (남은 시도: ${remaining}회)` });
       return;
     }
 
@@ -221,7 +242,33 @@ exports.submitInquiry = onRequest(
       return;
     }
 
-    const { turnstileToken, verificationToken, ...formData } = req.body;
+    const { turnstileToken, verificationToken, ...rawData } = req.body;
+
+    // Input validation: whitelist allowed fields with max lengths
+    const ALLOWED_FIELDS = {
+      name: 50,
+      company: 100,
+      email: 254,
+      phone: 20,
+      package: 30,
+      checkin: 20,
+      guests: 10,
+      message: 2000,
+    };
+
+    const formData = {};
+    for (const [key, maxLen] of Object.entries(ALLOWED_FIELDS)) {
+      if (rawData[key] !== undefined && rawData[key] !== null) {
+        const value = String(rawData[key]).trim();
+        if (value.length > maxLen) {
+          res.status(400).json({ success: false, message: `${key} 필드가 너무 깁니다. (최대 ${maxLen}자)` });
+          return;
+        }
+        if (value.length > 0) {
+          formData[key] = value;
+        }
+      }
+    }
 
     // Verify phone verification token
     if (!verificationToken) {

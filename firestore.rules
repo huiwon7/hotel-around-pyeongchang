@@ -4,7 +4,8 @@ service cloud.firestore {
     // 문의: Cloud Function(admin SDK)에서만 생성, 읽기/수정/삭제는 인증된 관리자만
     match /inquiries/{doc} {
       allow create: if false;
-      allow read, update, delete: if request.auth != null;
+      allow read, update, delete: if request.auth != null
+        && request.auth.token.email in ['around@hotelaround.co.kr'];
     }
 
     // OTP collections - Cloud Functions (admin SDK)만 접근
@@ -12,6 +13,16 @@ service cloud.firestore {
       allow read, write: if false;
     }
     match /verified_phones/{doc} {
+      allow read, write: if false;
+    }
+
+    // Settings - Cloud Functions (admin SDK)만 접근
+    match /settings/{doc} {
+      allow read, write: if false;
+    }
+
+    // Catch-all: deny everything else
+    match /{document=**} {
       allow read, write: if false;
     }
   }
