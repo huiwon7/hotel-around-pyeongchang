@@ -5,7 +5,7 @@ service cloud.firestore {
     match /inquiries/{doc} {
       allow create: if false;
       allow read, update, delete: if request.auth != null
-        && request.auth.token.email in ['around@hotelaround.co.kr'];
+        && request.auth.token.email in ['sunfall80@gmail.com', 'songman3374@gmail.com'];
     }
 
     // OTP collections - Cloud Functions (admin SDK)만 접근
