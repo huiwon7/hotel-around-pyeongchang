@@ -273,9 +273,149 @@ function initContactForm() {
     checkinInput.min = tomorrow.toISOString().split('T')[0];
   }
 
+  // === OTP 인증 ===
+  let phoneVerificationToken = null;
+  let otpTimerInterval = null;
+
+  const btnSendOtp = document.getElementById('btnSendOtp');
+  const btnVerifyOtp = document.getElementById('btnVerifyOtp');
+  const otpRow = document.getElementById('otpRow');
+  const otpCodeInput = document.getElementById('otpCode');
+  const otpTimerEl = document.getElementById('otpTimer');
+  const otpMessage = document.getElementById('otpMessage');
+  const phoneVerifiedEl = document.getElementById('phoneVerified');
+  const phoneInput = document.getElementById('phone');
+
+  function setOtpMessage(text, color) {
+    otpMessage.textContent = text;
+    otpMessage.style.color = color;
+  }
+
+  function startOtpTimer(seconds) {
+    clearInterval(otpTimerInterval);
+    let remaining = seconds;
+    otpTimerEl.textContent = formatTime(remaining);
+    otpTimerInterval = setInterval(() => {
+      remaining--;
+      otpTimerEl.textContent = formatTime(remaining);
+      if (remaining <= 0) {
+        clearInterval(otpTimerInterval);
+        setOtpMessage('인증번호가 만료되었습니다. 다시 요청해주세요.', '#ef4444');
+        btnVerifyOtp.disabled = true;
+      }
+    }, 1000);
+  }
+
+  function formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+
+  function resetPhoneVerification() {
+    phoneVerificationToken = null;
+    clearInterval(otpTimerInterval);
+    otpRow.style.display = 'none';
+    phoneVerifiedEl.style.display = 'none';
+    otpCodeInput.value = '';
+    otpMessage.textContent = '';
+    btnSendOtp.disabled = false;
+    btnSendOtp.textContent = '인증요청';
+    phoneInput.readOnly = false;
+  }
+
+  // 전화번호 변경 시 인증 초기화
+  phoneInput.addEventListener('input', () => {
+    if (phoneVerificationToken) {
+      resetPhoneVerification();
+    }
+  });
+
+  btnSendOtp.addEventListener('click', async () => {
+    const phone = phoneInput.value.replace(/\D/g, '');
+    if (!/^01[016789]\d{7,8}$/.test(phone)) {
+      alert('올바른 휴대폰 번호를 입력해주세요.');
+      return;
+    }
+
+    btnSendOtp.disabled = true;
+    btnSendOtp.textContent = '발송중...';
+
+    try {
+      const res = await fetch(`${FUNCTIONS_BASE}/sendOtp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone }),
+      });
+      const result = await res.json();
+
+      if (result.success) {
+        otpRow.style.display = 'block';
+        otpCodeInput.value = '';
+        otpCodeInput.focus();
+        btnVerifyOtp.disabled = false;
+        setOtpMessage('인증번호가 발송되었습니다.', '#22c55e');
+        startOtpTimer(180);
+        btnSendOtp.textContent = '재전송';
+        btnSendOtp.disabled = false;
+      } else {
+        alert(result.message || '인증번호 발송에 실패했습니다.');
+        btnSendOtp.disabled = false;
+        btnSendOtp.textContent = '인증요청';
+      }
+    } catch (err) {
+      alert('인증번호 발송에 실패했습니다. 다시 시도해주세요.');
+      btnSendOtp.disabled = false;
+      btnSendOtp.textContent = '인증요청';
+    }
+  });
+
+  btnVerifyOtp.addEventListener('click', async () => {
+    const phone = phoneInput.value.replace(/\D/g, '');
+    const code = otpCodeInput.value.trim();
+
+    if (!code || code.length !== 6) {
+      setOtpMessage('인증번호 6자리를 입력해주세요.', '#ef4444');
+      return;
+    }
+
+    btnVerifyOtp.disabled = true;
+
+    try {
+      const res = await fetch(`${FUNCTIONS_BASE}/verifyOtp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, code }),
+      });
+      const result = await res.json();
+
+      if (result.success) {
+        phoneVerificationToken = result.token;
+        clearInterval(otpTimerInterval);
+        otpRow.style.display = 'none';
+        phoneVerifiedEl.style.display = 'block';
+        phoneInput.readOnly = true;
+        btnSendOtp.style.display = 'none';
+      } else {
+        setOtpMessage(result.message || '인증번호가 올바르지 않습니다.', '#ef4444');
+        btnVerifyOtp.disabled = false;
+      }
+    } catch (err) {
+      setOtpMessage('인증에 실패했습니다. 다시 시도해주세요.', '#ef4444');
+      btnVerifyOtp.disabled = false;
+    }
+  });
+
+  // === 폼 제출 ===
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!validateForm(form)) return;
+
+    // 휴대폰 인증 확인
+    if (!phoneVerificationToken) {
+      alert('휴대폰 인증을 완료해주세요.');
+      return;
+    }
 
     // Turnstile 토큰 확인
     const turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value;
@@ -293,11 +433,14 @@ function initContactForm() {
     delete data['cf-turnstile-response'];
     delete data.privacy;
     data.turnstileToken = turnstileToken;
+    data.verificationToken = phoneVerificationToken;
 
     try {
       await storeInquiry(data);
       showModal();
       form.reset();
+      resetPhoneVerification();
+      btnSendOtp.style.display = '';
       if (typeof turnstile !== 'undefined') turnstile.reset();
     } catch (err) {
       alert(err.message || '문의 전송에 실패했습니다. 다시 시도해주세요.');
@@ -309,7 +452,6 @@ function initContactForm() {
   });
 
   // Phone input formatting
-  const phoneInput = document.getElementById('phone');
   if (phoneInput) {
     phoneInput.addEventListener('input', (e) => {
       let value = e.target.value.replace(/\D/g, '');
@@ -317,7 +459,6 @@ function initContactForm() {
       if (value.length > 7) value = value.replace(/(\d{3})(\d{4})(\d{0,4})/, '$1-$2-$3');
       else if (value.length > 3) value = value.replace(/(\d{3})(\d{0,4})/, '$1-$2');
       e.target.value = value;
-
     });
   }
 

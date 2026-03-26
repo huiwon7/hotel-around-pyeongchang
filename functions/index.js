@@ -27,7 +27,7 @@ function getCorsHeaders(req) {
  * Send OTP via Aligo SMS
  * POST /sendOtp { phone: "01012345678" }
  */
-exports.sendOtp = onRequest({ region: "asia-northeast3" }, async (req, res) => {
+exports.sendOtp = onRequest({ region: "asia-northeast3", secrets: ["ALIGO_API_KEY", "ALIGO_USER_ID", "ALIGO_SENDER"] }, async (req, res) => {
   // CORS preflight
   if (req.method === "OPTIONS") {
     res.set(getCorsHeaders(req)).status(204).send("");
@@ -68,8 +68,9 @@ exports.sendOtp = onRequest({ region: "asia-northeast3" }, async (req, res) => {
     return;
   }
 
-  // Generate 6-digit OTP
-  const otpCode = String(Math.floor(100000 + Math.random() * 900000));
+  // Generate 6-digit OTP (cryptographically secure)
+  const crypto = require("crypto");
+  const otpCode = String(100000 + (crypto.randomInt(900000)));
   const expiresAt = new Date(Date.now() + 3 * 60 * 1000); // 3 minutes
 
   try {
@@ -101,7 +102,7 @@ exports.sendOtp = onRequest({ region: "asia-northeast3" }, async (req, res) => {
  * Verify OTP
  * POST /verifyOtp { phone: "01012345678", code: "123456" }
  */
-exports.verifyOtp = onRequest({ region: "asia-northeast3" }, async (req, res) => {
+exports.verifyOtp = onRequest({ region: "asia-northeast3", secrets: ["ALIGO_API_KEY", "ALIGO_USER_ID", "ALIGO_SENDER"] }, async (req, res) => {
   // CORS preflight
   if (req.method === "OPTIONS") {
     res.set(getCorsHeaders(req)).status(204).send("");
@@ -208,7 +209,33 @@ exports.submitInquiry = onRequest(
       return;
     }
 
-    const { turnstileToken, ...formData } = req.body;
+    const { turnstileToken, verificationToken, ...formData } = req.body;
+
+    // Verify phone verification token
+    if (!verificationToken) {
+      res.status(400).json({ success: false, message: "휴대폰 인증이 필요합니다." });
+      return;
+    }
+
+    try {
+      const tokenDoc = await db.collection("verified_phones").doc(verificationToken).get();
+      if (!tokenDoc.exists) {
+        res.status(403).json({ success: false, message: "유효하지 않은 인증입니다. 다시 인증해주세요." });
+        return;
+      }
+      const tokenData = tokenDoc.data();
+      const expiresAt = tokenData.expiresAt.toDate ? tokenData.expiresAt.toDate() : new Date(tokenData.expiresAt);
+      if (new Date() > expiresAt) {
+        res.status(403).json({ success: false, message: "인증이 만료되었습니다. 다시 인증해주세요." });
+        return;
+      }
+      // Clean up used token
+      await db.collection("verified_phones").doc(verificationToken).delete();
+    } catch (err) {
+      console.error("인증 토큰 검증 에러:", err.message);
+      res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
+      return;
+    }
 
     // Verify Turnstile token
     if (!turnstileToken) {
