@@ -366,6 +366,49 @@ async function sendTelegramAlert(text) {
 }
 
 /**
+ * Daily IP check - runs every day at 9:00 AM KST
+ * Compares current outbound IP with stored IP, alerts via Telegram if changed
+ */
+const { onSchedule } = require("firebase-functions/v2/scheduler");
+
+exports.checkIpChange = onSchedule(
+  {
+    schedule: "0 0 * * *",
+    timeZone: "Asia/Seoul",
+    region: "asia-northeast3",
+    secrets: ["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_IDS"],
+  },
+  async () => {
+    try {
+      const ipRes = await axios.get("https://api.ipify.org?format=json");
+      const currentIp = ipRes.data.ip;
+
+      const ipDoc = await db.collection("settings").doc("server_ip").get();
+      const storedIp = ipDoc.exists ? ipDoc.data().ip : null;
+
+      if (storedIp && storedIp !== currentIp) {
+        await sendTelegramAlert(
+          `⚠️ 서버 IP 변경 감지\n\n` +
+          `이전 IP: ${storedIp}\n` +
+          `현재 IP: ${currentIp}\n\n` +
+          `알리고 발송 서버 IP를 업데이트해주세요.\n` +
+          `알리고 > 문자API > 신청/인증 > 발송 서버 IP`
+        );
+      }
+
+      await db.collection("settings").doc("server_ip").set({
+        ip: currentIp,
+        checkedAt: new Date().toISOString(),
+      });
+
+      console.log(`IP 체크 완료: ${currentIp} (이전: ${storedIp || "없음"})`);
+    } catch (err) {
+      console.error("IP 체크 실패:", err.message);
+    }
+  }
+);
+
+/**
  * Generate random token
  */
 function generateToken() {
