@@ -27,7 +27,7 @@ function getCorsHeaders(req) {
  * Send OTP via Aligo SMS
  * POST /sendOtp { phone: "01012345678" }
  */
-exports.sendOtp = onRequest({ region: "asia-northeast3", secrets: ["ALIGO_API_KEY", "ALIGO_USER_ID", "ALIGO_SENDER"] }, async (req, res) => {
+exports.sendOtp = onRequest({ region: "asia-northeast3", secrets: ["ALIGO_API_KEY", "ALIGO_USER_ID", "ALIGO_SENDER", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_IDS"] }, async (req, res) => {
   // CORS preflight
   if (req.method === "OPTIONS") {
     res.set(getCorsHeaders(req)).status(204).send("");
@@ -86,10 +86,22 @@ exports.sendOtp = onRequest({ region: "asia-northeast3", secrets: ["ALIGO_API_KE
     // Send SMS via Aligo
     const aligoResult = await sendAligoSms(cleanPhone, `[호텔어라운드 평창] 인증번호: ${otpCode}\n3분 이내에 입력해주세요.`);
 
-    if (aligoResult.result_code === "1") {
+    if (String(aligoResult.result_code) === "1") {
       res.json({ success: true, message: "인증번호가 발송되었습니다." });
     } else {
       console.error("Aligo SMS 발송 실패:", aligoResult);
+      // IP 인증 오류 시 텔레그램으로 관리자에게 알림
+      if (aligoResult.result_code === -101) {
+        try {
+          const ipRes = await axios.get("https://api.ipify.org?format=json");
+          await sendTelegramAlert(
+            `⚠️ 알리고 SMS 발송 실패 (IP 인증오류)\n\n` +
+            `현재 서버 IP: ${ipRes.data.ip}\n` +
+            `알리고 발송 서버 IP를 업데이트해주세요.\n` +
+            `알리고 > 문자API > 신청/인증 > 발송 서버 IP`
+          );
+        } catch (e) { console.error("IP 알림 전송 실패:", e.message); }
+      }
       res.status(500).json({ success: false, message: "문자 발송에 실패했습니다. 잠시 후 다시 시도해주세요." });
     }
   } catch (err) {
@@ -330,6 +342,28 @@ exports.onNewInquiry = onDocumentCreated(
     }
   }
 );
+
+
+/**
+ * Send Telegram alert to admins
+ */
+async function sendTelegramAlert(text) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const chatIds = process.env.TELEGRAM_CHAT_IDS;
+  if (!botToken || !chatIds) return;
+
+  const ids = chatIds.split(",");
+  for (const chatId of ids) {
+    try {
+      await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        chat_id: chatId.trim(),
+        text: text,
+      });
+    } catch (err) {
+      console.error(`Telegram 알림 실패 (${chatId}):`, err.message);
+    }
+  }
+}
 
 /**
  * Generate random token
