@@ -254,6 +254,36 @@
       </div>
 
       <div class="packages-grid">
+        <!-- Trial -->
+        <div class="pricing-card">
+          <h3 class="pricing-card__name">TRIAL</h3>
+          <p class="pricing-card__desc">워케이션 입문 · 3 Nights</p>
+          <div class="pricing-card__price">
+            <span class="pricing-card__amount">150,000원</span>
+            <span class="pricing-card__period">/3박</span>
+          </div>
+          <div class="pricing-card__per-night">1박당 <strong>50,000원</strong></div>
+          <div class="pricing-card__features">
+            <div class="pricing-card__feature">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              50% 할인 적용
+            </div>
+            <div class="pricing-card__feature">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              코워킹 스페이스 이용
+            </div>
+            <div class="pricing-card__feature">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              피트니스센터 무제한
+            </div>
+            <div class="pricing-card__feature">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              워케이션 체험 추천
+            </div>
+          </div>
+          <a href="#contact" class="btn btn--outline-dark" style="width:100%">문의하기</a>
+        </div>
+
         <!-- Starter -->
         <div class="pricing-card">
           <h3 class="pricing-card__name">STARTER</h3>
@@ -352,40 +382,6 @@
           </div>
           <a href="#contact" class="btn btn--outline-dark" style="width:100%">문의하기</a>
         </div>
-
-        <!-- Paradise -->
-        <div class="pricing-card">
-          <h3 class="pricing-card__name">PARADISE</h3>
-          <p class="pricing-card__desc">프리랜서 파라다이스 · 90 Nights</p>
-          <div class="pricing-card__price">
-            <span class="pricing-card__amount">2,700,000원</span>
-            <span class="pricing-card__period">/90박</span>
-          </div>
-          <div class="pricing-card__per-night">1박당 <strong>30,000원</strong></div>
-          <div class="pricing-card__features">
-            <div class="pricing-card__feature">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              70% 할인 적용
-            </div>
-            <div class="pricing-card__feature">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              VIP 전용 라운지
-            </div>
-            <div class="pricing-card__feature">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              계절 액티비티 무제한
-            </div>
-            <div class="pricing-card__feature">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              동반 1인 시설 무료
-            </div>
-            <div class="pricing-card__feature">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              계절형 체류 추천
-            </div>
-          </div>
-          <a href="#contact" class="btn btn--outline-dark" style="width:100%">문의하기</a>
-        </div>
       </div>
 
       <div class="packages-note">
@@ -407,14 +403,75 @@
       </div>
 
       <div class="tabs pkg-tabs fade-in">
-        <button class="tab-btn active" data-pkg="starter">STARTER · 7박</button>
+        <button class="tab-btn active" data-pkg="trial">TRIAL · 3박</button>
+        <button class="tab-btn" data-pkg="starter">STARTER · 7박</button>
         <button class="tab-btn" data-pkg="professional">PROFESSIONAL · 14박</button>
         <button class="tab-btn" data-pkg="nomad">NOMAD · 30박</button>
-        <button class="tab-btn" data-pkg="paradise">PARADISE · 90박</button>
+      </div>
+
+      <!-- TRIAL Detail -->
+      <div class="pkg-detail pkg-panel active" id="pkg-trial">
+        <div class="pkg-detail-header">
+          <div class="pkg-detail-title">
+            <span class="pkg-detail-badge">TRIAL</span>
+            <h3>워케이션 입문 <span class="pkg-detail-nights">3박권</span></h3>
+          </div>
+          <span class="pkg-detail-target">첫 체험 / 주말 이용</span>
+        </div>
+
+        <div class="pkg-core-value">
+          <p class="pkg-core-quote">"부담 없이 워케이션을 체험해보세요"</p>
+          <span class="pkg-core-save">50% 절감</span>
+        </div>
+
+        <div class="pkg-price-compare">
+          <div class="pkg-compare-item competitor">
+            <div class="pkg-compare-label">일반 호텔 3박 (숙소+오피스+식비)</div>
+            <div class="pkg-compare-bar">
+              <div class="pkg-bar-fill" style="width: 100%"></div>
+              <span class="pkg-bar-amount">300,000원</span>
+            </div>
+          </div>
+          <div class="pkg-compare-item ours">
+            <div class="pkg-compare-label">호텔어라운드 패키지</div>
+            <div class="pkg-compare-bar">
+              <div class="pkg-bar-fill" style="width: 50%"></div>
+              <span class="pkg-bar-amount">150,000원</span>
+            </div>
+          </div>
+          <div class="pkg-compare-saving">↓ 15만원 SAVE</div>
+        </div>
+
+        <div class="pkg-features-grid">
+          <div class="pkg-feature-card">
+            <div class="pkg-feature-title">
+              <h4>업무 환경</h4>
+              <span>Professional Work</span>
+            </div>
+            <ul class="pkg-feature-list">
+              <li>100Mbps 초고속 WiFi</li>
+              <li>코워킹 스페이스 이용</li>
+              <li>1인 전용 데스크 제공</li>
+            </ul>
+            <div class="pkg-feature-highlight">짧은 기간도 업무 효율 극대화</div>
+          </div>
+          <div class="pkg-feature-card">
+            <div class="pkg-feature-title">
+              <h4>생활 편의</h4>
+              <span>Daily Life</span>
+            </div>
+            <ul class="pkg-feature-list">
+              <li>피트니스센터 무제한</li>
+              <li>객실 내 미니 키친</li>
+              <li>무료 주차</li>
+            </ul>
+            <div class="pkg-feature-highlight">워케이션 첫 경험에 최적</div>
+          </div>
+        </div>
       </div>
 
       <!-- STARTER Detail -->
-      <div class="pkg-detail pkg-panel active" id="pkg-starter">
+      <div class="pkg-detail pkg-panel" id="pkg-starter">
         <div class="pkg-detail-header">
           <div class="pkg-detail-title">
             <span class="pkg-detail-badge">STARTER</span>
@@ -637,82 +694,6 @@
               <li>F&amp;B 10만원 + 조식 30회</li>
             </ul>
             <div class="pkg-feature-highlight">식비 및 액티비티 비용 포함</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PARADISE Detail -->
-      <div class="pkg-detail pkg-panel" id="pkg-paradise">
-        <div class="pkg-detail-header">
-          <div class="pkg-detail-title">
-            <span class="pkg-detail-badge premium">PARADISE</span>
-            <h3>프리랜서 파라다이스 <span class="pkg-detail-nights">90박권</span></h3>
-          </div>
-          <span class="pkg-detail-target">계절형 체류 / VIP</span>
-        </div>
-
-        <div class="pkg-core-value premium">
-          <p class="pkg-core-quote">"서울 공유오피스 3개월 비용으로 평창에서 먹고, 자고, 일하세요"</p>
-          <span class="pkg-core-save">70% 할인 효과</span>
-        </div>
-
-        <div class="pkg-price-compare">
-          <div class="pkg-compare-item competitor">
-            <div class="pkg-compare-label">일반 장기 체류 (숙소+오피스)</div>
-            <div class="pkg-compare-bar">
-              <div class="pkg-bar-fill" style="width: 100%"></div>
-              <span class="pkg-bar-amount">9,000,000원</span>
-            </div>
-          </div>
-          <div class="pkg-compare-item ours">
-            <div class="pkg-compare-label">호텔어라운드 90박</div>
-            <div class="pkg-compare-bar">
-              <div class="pkg-bar-fill" style="width: 30%"></div>
-              <span class="pkg-bar-amount">2,700,000원</span>
-            </div>
-          </div>
-          <div class="pkg-compare-saving">↓ 630만원 SAVE</div>
-        </div>
-
-        <div class="pkg-features-grid">
-          <div class="pkg-feature-card">
-            <div class="pkg-feature-title">
-              <h4>VIP 업무 환경</h4>
-              <span>Exclusive Workspace</span>
-            </div>
-            <ul class="pkg-feature-list">
-              <li>30박권 모든 혜택 &times; 3배</li>
-              <li>VIP 전용 라운지 이용</li>
-              <li>전담 컨시어지 서비스</li>
-              <li>분기별 특별 네트워킹 초대</li>
-            </ul>
-            <div class="pkg-feature-highlight">공유오피스 비용으로 해결</div>
-          </div>
-          <div class="pkg-feature-card">
-            <div class="pkg-feature-title">
-              <h4>프리미엄 라이프</h4>
-              <span>Premium Living</span>
-            </div>
-            <ul class="pkg-feature-list">
-              <li>빌라 스위트 우선 배정</li>
-              <li>F&amp;B 크레딧 30만원</li>
-              <li>세탁 서비스 50% 할인</li>
-              <li>장기 체류 전용 주차구역</li>
-            </ul>
-            <div class="pkg-feature-highlight">1박 3만원대 럭셔리 숙박</div>
-          </div>
-          <div class="pkg-feature-card">
-            <div class="pkg-feature-title">
-              <h4>계절의 완성</h4>
-              <span>Seasonal Wellness</span>
-            </div>
-            <ul class="pkg-feature-list">
-              <li>계절 액티비티 무제한</li>
-              <li>웰니스 프로그램 Full Access</li>
-              <li>동반 1인 시설 이용 무료</li>
-              <li>지역 병원 VIP 검진 연계</li>
-            </ul>
-            <div class="pkg-feature-highlight">휴양이 일상이 되는 삶</div>
           </div>
         </div>
       </div>
@@ -1001,7 +982,7 @@
               </div>
               <div class="target-feature">
                 <div class="target-feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-                <div class="target-feature__text"><h4>유연한 체류 기간</h4><p>7박부터 90박까지 맞춤 선택</p></div>
+                <div class="target-feature__text"><h4>유연한 체류 기간</h4><p>3박부터 30박까지 맞춤 선택</p></div>
               </div>
             </div>
           </div>
@@ -1563,7 +1544,7 @@
           </button>
           <div class="accordion-body">
             <div class="accordion-content">
-              <p>네, 체류 기간이 길수록 1박당 비용이 절감됩니다. Starter(7박) 60%, Professional(14박) 65%, Nomad(30박) 68%, Paradise(90박) 70% 할인이 적용됩니다. 1박당 최저 30,000원부터 이용 가능하며, 기업 단체의 경우 별도 맞춤 견적을 제공해 드립니다.</p>
+              <p>네, 체류 기간이 길수록 1박당 비용이 절감됩니다. Trial(3박) 50%, Starter(7박) 60%, Professional(14박) 65%, Nomad(30박) 68% 할인이 적용됩니다. 1박당 최저 33,000원부터 이용 가능하며, 기업 단체의 경우 별도 맞춤 견적을 제공해 드립니다.</p>
             </div>
           </div>
         </div>
@@ -1608,12 +1589,26 @@
           <h3 class="booking-form__title">예약 문의</h3>
           <div class="booking-form__row">
             <div class="form-group">
+              <label class="form-label" for="memberType">회원 구분 *</label>
+              <select class="form-select" id="memberType" name="memberType" required>
+                <option value="">선택해주세요</option>
+                <option value="general">일반회원</option>
+                <option value="owner">분양회원</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label class="form-label" for="name">이름 *</label>
               <input class="form-input" type="text" id="name" name="name" required placeholder="홍길동">
             </div>
-            <div class="form-group">
+          </div>
+          <div class="booking-form__row">
+            <div class="form-group" id="companyGroup">
               <label class="form-label" for="company">회사/소속</label>
               <input class="form-input" type="text" id="company" name="company" placeholder="회사명">
+            </div>
+            <div class="form-group" id="roomNumberGroup" style="display:none;">
+              <label class="form-label" for="roomNumber">호실 번호</label>
+              <input class="form-input" type="text" id="roomNumber" name="roomNumber" placeholder="예: 301호">
             </div>
           </div>
           <div class="booking-form__row">
@@ -1642,10 +1637,10 @@
             <label class="form-label" for="package">관심 패키지</label>
             <select class="form-select" id="package" name="package">
               <option value="">패키지를 선택하세요</option>
+              <option value="trial">Trial - 3박 패키지</option>
               <option value="starter">Starter - 7박 패키지</option>
               <option value="professional">Professional - 14박 패키지</option>
               <option value="nomad">Nomad - 30박 패키지</option>
-              <option value="paradise">Paradise - 90박 패키지</option>
               <option value="custom">기업 맞춤 패키지</option>
             </select>
           </div>
@@ -1669,10 +1664,10 @@
             <label class="form-label" for="message">문의 내용</label>
             <textarea class="form-textarea" id="message" name="message" rows="4" placeholder="문의하실 내용을 입력해 주세요"></textarea>
           </div>
-          <div class="form-group" style="display:flex;align-items:center;gap:0.75rem;">
-            <input type="checkbox" id="privacy" name="privacy" required>
-            <label for="privacy" style="margin-bottom:0;font-weight:400;">개인정보 수집 및 이용에 동의합니다. *</label>
-          </div>
+          <label for="privacy" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;margin:0.5rem 0 0.75rem;">
+            <input type="checkbox" id="privacy" name="privacy" required style="margin:0;flex-shrink:0;width:16px;height:16px;">
+            <span style="font-weight:500;font-size:0.95rem;color:#1f2937;">개인정보 수집·이용 동의 *</span>
+          </label>
           <div class="cf-turnstile" data-sitekey="0x4AAAAAACtRDcLh-uUop9B-" data-callback="onTurnstileSuccess" data-theme="light"></div>
           <button type="submit" class="btn btn--primary btn--lg" style="width:100%" id="btnSubmitInquiry">문의 보내기</button>
         </form>

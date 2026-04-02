@@ -246,8 +246,10 @@ exports.submitInquiry = onRequest(
 
     // Input validation: whitelist allowed fields with max lengths
     const ALLOWED_FIELDS = {
+      memberType: 20,
       name: 50,
       company: 100,
+      roomNumber: 20,
       email: 254,
       phone: 20,
       package: 30,
@@ -356,10 +358,10 @@ exports.onNewInquiry = onDocumentCreated(
     }
 
     const packageNames = {
+      trial: "Trial (3박)",
       starter: "Starter (7박)",
       professional: "Professional (14박)",
       nomad: "Nomad (30박)",
-      paradise: "Paradise (90박)",
       custom: "기업 맞춤",
     };
 
@@ -433,12 +435,16 @@ exports.checkIpChange = onSchedule(
       const ipDoc = await db.collection("settings").doc("server_ip").get();
       const storedIp = ipDoc.exists ? ipDoc.data().ip : null;
 
-      if (storedIp && storedIp !== currentIp) {
+      // 앞 3자리 대역(예: 34.96.43)이 바뀔 때만 알림
+      const currentPrefix = currentIp.split(".").slice(0, 3).join(".");
+      const storedPrefix = storedIp ? storedIp.split(".").slice(0, 3).join(".") : null;
+
+      if (storedPrefix && storedPrefix !== currentPrefix) {
         await sendTelegramAlert(
-          `⚠️ 서버 IP 변경 감지\n\n` +
-          `이전 IP: ${storedIp}\n` +
-          `현재 IP: ${currentIp}\n\n` +
-          `알리고 발송 서버 IP를 업데이트해주세요.\n` +
+          `⚠️ 서버 IP 대역 변경 감지\n\n` +
+          `이전 대역: ${storedPrefix}.x\n` +
+          `현재 대역: ${currentPrefix}.x\n\n` +
+          `알리고 발송 서버 IP 대역을 업데이트해주세요.\n` +
           `알리고 > 문자API > 신청/인증 > 발송 서버 IP`
         );
       }

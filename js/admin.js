@@ -177,10 +177,10 @@ function updateStats() {
   });
   const topPkg = Object.entries(pkgCount).sort((a, b) => b[1] - a[1])[0];
   const packageNames = {
+    trial: 'Trial',
     starter: 'Starter',
     professional: 'Professional',
     nomad: 'Nomad',
-    paradise: 'Paradise',
     custom: '기업 맞춤'
   };
 
@@ -265,10 +265,10 @@ function renderTable(inquiries) {
   }
 
   const packageNames = {
+    trial: 'Trial - 3박',
     starter: 'Starter - 7박',
     professional: 'Professional - 14박',
     nomad: 'Nomad - 30박',
-    paradise: 'Paradise - 90박',
     custom: '기업 맞춤'
   };
 
@@ -315,10 +315,10 @@ function showDetail(index) {
   if (!item) return;
 
   const packageNames = {
+    trial: 'Trial - 3박',
     starter: 'Starter - 7박',
     professional: 'Professional - 14박',
     nomad: 'Nomad - 30박',
-    paradise: 'Paradise - 90박',
     custom: '기업 맞춤 패키지'
   };
 
