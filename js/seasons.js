@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const pills = selector ? selector.querySelectorAll('.season-pill') : [];
   const mobileBtns = mobileSelector ? mobileSelector.querySelectorAll('.nav-season-btn') : [];
   const allBtns = [...pills, ...mobileBtns];
-  const heroLayers = document.querySelectorAll('.hero__bg-layer');
   const body = document.body;
   let isTransitioning = false;
 
@@ -50,32 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
    * @param {boolean} animate - whether to use crossfade transition
    */
   function applySeason(season, animate) {
+    body.setAttribute('data-season', season);
     if (animate) {
       isTransitioning = true;
-
-      // Crossfade hero background layers
-      heroLayers.forEach(layer => {
-        if (layer.dataset.heroSeason === season) {
-          layer.classList.add('active');
-        } else {
-          layer.classList.remove('active');
-        }
-      });
-
-      // Set season attribute (triggers CSS variable cascade)
-      body.setAttribute('data-season', season);
-
-      // Unlock after transition completes
-      setTimeout(() => {
-        isTransitioning = false;
-      }, 800);
-
-    } else {
-      // Instant (page load)
-      body.setAttribute('data-season', season);
-      heroLayers.forEach(layer => {
-        layer.classList.toggle('active', layer.dataset.heroSeason === season);
-      });
+      setTimeout(() => { isTransitioning = false; }, 800);
     }
   }
 
@@ -90,17 +67,4 @@ document.addEventListener('DOMContentLoaded', () => {
     return 'winter';
   }
 
-  // Preload hero images after initial page load
-  setTimeout(() => {
-    const heroImages = {
-      spring: 'images/main/KakaoTalk_20260318_114517829_01.png',
-      summer: 'images/main/KakaoTalk_20260318_114517829_02.png',
-      fall: 'images/main/KakaoTalk_20260318_114517829_03.png',
-      winter: 'images/main/KakaoTalk_20260318_114517829_04.png'
-    };
-    Object.values(heroImages).forEach(src => {
-      const img = new Image();
-      img.src = src;
-    });
-  }, 2000);
 });
