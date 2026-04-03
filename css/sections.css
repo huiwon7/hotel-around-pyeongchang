@@ -1196,7 +1196,65 @@
 
 
 /* =============================================
-   15. Footer
+   15. Download CTA
+   ============================================= */
+
+.download-cta {
+  text-align: center;
+  padding: 5rem 0;
+  background: linear-gradient(135deg, #1a2e1f 0%, #2a4a35 50%, #1a2e1f 100%);
+  color: #fff;
+}
+
+.download-cta__subtitle {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 0.75rem;
+}
+
+.download-cta__title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
+}
+
+.download-cta__desc {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.download-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 1rem 2.5rem;
+  background: #fff;
+  color: #1a2e1f;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.download-cta__btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+@media (max-width: 768px) {
+  .download-cta { padding: 3.5rem 0; }
+  .download-cta__title { font-size: 1.8rem; }
+  .download-cta__btn { padding: 0.85rem 2rem; font-size: 0.95rem; }
+}
+
+/* =============================================
+   16. Footer
    ============================================= */
 
 .footer {
