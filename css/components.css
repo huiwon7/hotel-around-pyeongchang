@@ -4,6 +4,12 @@
    Uses design tokens from variables.css
    ============================================ */
 
+/* Nav Download Link */
+.nav__link--download {
+  opacity: 0.75;
+  font-size: 0.85em;
+}
+
 
 /* ============================================
    1. Buttons

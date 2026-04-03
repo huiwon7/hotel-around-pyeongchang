@@ -657,12 +657,12 @@ function initLightbox() {
         caption: `연회장 ${i+1}`
       }))
     },
-    'shuttle': {
-      title: '셔틀버스',
-      images: Array.from({length: 3}, (_, i) => ({
-        src: `images/gallery/facilities/shuttle-${i+1}.jpg`,
-        caption: `셔틀버스 ${i+1}`
-      }))
+    'wellness': {
+      title: '웰니스 요가/명상',
+      images: [{
+        src: 'images/yoga1-1.jpg',
+        caption: '웰니스 요가/명상'
+      }]
     },
     'lobby': {
       title: '로비 & 라운지',
