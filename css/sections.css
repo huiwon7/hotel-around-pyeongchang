@@ -1270,6 +1270,38 @@
   padding-bottom: var(--space-xl);
 }
 
+.footer__company {
+  padding-bottom: var(--space-xl);
+}
+
+.footer__company-name {
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-lg);
+}
+
+.footer__company-name strong {
+  color: var(--color-white);
+  font-weight: var(--weight-semibold);
+}
+
+.footer__info p {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.9;
+  margin: 0;
+}
+
+.footer__info p strong {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: var(--weight-semibold);
+}
+
+.footer__legal {
+  margin-top: var(--space-md);
+}
+
 /* Brand column */
 .footer__brand {
   padding-right: var(--space-lg);
