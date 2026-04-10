@@ -273,7 +273,7 @@
 }
 
 .accordion-item.active .accordion-body {
-  max-height: 500px;
+  max-height: 2000px;
   padding-bottom: var(--space-md);
 }
 

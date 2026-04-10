@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /login
+Disallow: /mypage
+Disallow: /coupon-strategy
+Disallow: /investor-presentation
+Disallow: /investor-summary
+Disallow: /report-feb-mar
+
+Sitemap: https://aroundpartners.co.kr/sitemap.xml

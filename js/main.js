@@ -273,25 +273,7 @@ function initContactForm() {
     checkinInput.min = tomorrow.toISOString().split('T')[0];
   }
 
-  // === 회원 구분 토글 ===
-  const memberTypeSelect = document.getElementById('memberType');
-  const companyGroup = document.getElementById('companyGroup');
-  const roomNumberGroup = document.getElementById('roomNumberGroup');
-
-  if (memberTypeSelect) {
-    memberTypeSelect.addEventListener('change', () => {
-      const type = memberTypeSelect.value;
-      if (type === 'owner') {
-        companyGroup.style.display = 'none';
-        roomNumberGroup.style.display = '';
-        document.getElementById('company').value = '';
-      } else {
-        companyGroup.style.display = '';
-        roomNumberGroup.style.display = 'none';
-        document.getElementById('roomNumber').value = '';
-      }
-    });
-  }
+  // === 회원 구분 토글 (제거됨 - 일반회원만 운영) ===
 
   // === OTP 인증 ===
   let phoneVerificationToken = null;
