@@ -79,6 +79,10 @@
     max-width: 50%;
     margin: 0 auto;
   }
+
+  .attraction-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 /* ============================================
@@ -174,6 +178,15 @@
     grid-column: auto;
   }
 
+  /* Attractions grid */
+  .attraction-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .attraction-season-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   /* Footer */
   .footer-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -259,5 +272,17 @@
 
   .booking-form__row {
     grid-template-columns: 1fr;
+  }
+
+  .attraction-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .attraction-season-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .attraction-season-guide {
+    padding: 1.5rem;
   }
 }
