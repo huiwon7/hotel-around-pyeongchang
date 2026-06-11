@@ -441,105 +441,217 @@
         </p>
       </div>
 
-      <div class="rooms-slider" id="roomsSlider">
-        <div class="rooms-track">
-          <div class="room-card">
-            <div class="room-image" style="background-image: url('images/rooms/superior-family-twin/5.webp')"></div>
-            <div class="room-content">
-              <span class="room-type">SUPERIOR</span>
-              <h3>슈페리어 패밀리 트윈</h3>
-              <p>더블 1 + 싱글 1로 구성된 합리적 패밀리 객실</p>
-              <ul class="room-specs">
-                <li>기준 3명</li>
-                <li>더블1 + 싱글1</li>
-              </ul>
+      <div class="rooms-grid">
+        <!-- 슈페리어 패밀리 트윈 -->
+        <div class="room-card">
+          <div class="room-gallery">
+            <div class="room-gallery-track">
+              <img src="images/rooms/superior-family-twin/5.webp" alt="슈페리어 패밀리 트윈 1">
+              <img src="images/rooms/superior-family-twin/9.webp" alt="슈페리어 패밀리 트윈 2" loading="lazy">
+              <img src="images/rooms/superior-family-twin/6.webp" alt="슈페리어 패밀리 트윈 3" loading="lazy">
+              <img src="images/rooms/superior-family-twin/2.webp" alt="슈페리어 패밀리 트윈 4" loading="lazy">
+              <img src="images/rooms/superior-family-twin/3.webp" alt="슈페리어 패밀리 트윈 5" loading="lazy">
             </div>
+            <button class="room-gallery-btn prev" aria-label="이전 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="room-gallery-btn next" aria-label="다음 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <div class="room-gallery-dots"></div>
+            <span class="room-gallery-counter">1/5</span>
           </div>
-          <div class="room-card">
-            <div class="room-image" style="background-image: url('https://cdn.imweb.me/thumbnail/20260406/bdccf5a0d6906.jpg')"></div>
-            <div class="room-content">
-              <span class="room-type">JUNIOR SUITE</span>
-              <h3>주니어 스위트</h3>
-              <p>더블 침대 2개, 가족이나 친구 4명이 머물기 좋은 입문형 스위트</p>
-              <ul class="room-specs">
-                <li>기준 4명</li>
-                <li>더블2</li>
-              </ul>
-            </div>
-          </div>
-          <div class="room-card">
-            <div class="room-image" style="background-image: url('https://cdn.imweb.me/thumbnail/20260406/1523041c2a538.jpg')"></div>
-            <div class="room-content">
-              <span class="room-type">WHITE SUITE</span>
-              <h3>화이트 스위트</h3>
-              <p>더블 2 + 싱글 1, 채광 좋은 대형 스위트룸</p>
-              <ul class="room-specs">
-                <li>기준 5명</li>
-                <li>더블2 + 싱글1</li>
-              </ul>
-            </div>
-          </div>
-          <div class="room-card">
-            <div class="room-image" style="background-image: url('https://cdn.imweb.me/thumbnail/20260406/e715b05fe9c92.jpg')"></div>
-            <div class="room-content">
-              <span class="room-type">TERRACE SUITE</span>
-              <h3>테라스 스위트</h3>
-              <p>전용 테라스에서 즐기는 평창의 공기. 반려동물 동반 가능</p>
-              <ul class="room-specs">
-                <li>기준 4명</li>
-                <li>더블2</li>
-                <li>🐾 펫 OK</li>
-              </ul>
-            </div>
-          </div>
-          <div class="room-card">
-            <div class="room-image" style="background-image: url('https://cdn.imweb.me/thumbnail/20260406/8437d32a7554e.jpg')"></div>
-            <div class="room-content">
-              <span class="room-type">VILLA SUITE</span>
-              <h3>빌라 스위트</h3>
-              <p>완전 독립된 빌라형 객실. 거실+침실 분리, 주방 시설 완비</p>
-              <ul class="room-specs">
-                <li>기준 6명</li>
-                <li>더블3</li>
-              </ul>
-            </div>
-          </div>
-          <div class="room-card">
-            <div class="room-image" style="background-image: url('https://cdn.imweb.me/thumbnail/20260407/825b48cf0d6d4.jpg')"></div>
-            <div class="room-content">
-              <span class="room-type">VILLA DUPLEX</span>
-              <h3>빌라 듀플렉스 (더블)</h3>
-              <p>복층 구조의 프라이빗 빌라. 풀 키친, 바비큐 가능 데크</p>
-              <ul class="room-specs">
-                <li>기준 6명</li>
-                <li>더블3</li>
-              </ul>
-            </div>
-          </div>
-          <div class="room-card">
-            <div class="room-image" style="background-image: url('https://cdn.imweb.me/thumbnail/20260407/ccd3c8b1cff45.jpg')"></div>
-            <div class="room-content">
-              <span class="room-type">VILLA DUPLEX</span>
-              <h3>빌라 듀플렉스 (패밀리)</h3>
-              <p>더블 2 + 싱글 2, 2층 침실과 넓은 거실로 모두가 편안한 휴식</p>
-              <ul class="room-specs">
-                <li>기준 6명</li>
-                <li>더블2 + 싱글2</li>
-              </ul>
-            </div>
+          <div class="room-content">
+            <span class="room-type">SUPERIOR</span>
+            <h3>슈페리어 패밀리 트윈</h3>
+            <p>더블 1 + 싱글 1로 구성된 합리적 패밀리 객실</p>
+            <ul class="room-specs">
+              <li>기준 3명</li>
+              <li>더블1 + 싱글1</li>
+            </ul>
           </div>
         </div>
-        <div class="rooms-nav">
-          <button class="rooms-nav-btn prev" id="roomsPrev">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-          </button>
-          <button class="rooms-nav-btn next" id="roomsNext">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
-          </button>
+
+        <!-- 주니어 스위트 -->
+        <div class="room-card">
+          <div class="room-gallery">
+            <div class="room-gallery-track">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/bdccf5a0d6906.jpg" alt="주니어 스위트 1">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/be316411b947d.jpg" alt="주니어 스위트 2" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/1dc5ce40bd868.jpg" alt="주니어 스위트 3" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/090ddf3efe911.jpg" alt="주니어 스위트 4" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/c28b24bee939a.jpg" alt="주니어 스위트 5" loading="lazy">
+            </div>
+            <button class="room-gallery-btn prev" aria-label="이전 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="room-gallery-btn next" aria-label="다음 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <div class="room-gallery-dots"></div>
+            <span class="room-gallery-counter">1/5</span>
+          </div>
+          <div class="room-content">
+            <span class="room-type">JUNIOR SUITE</span>
+            <h3>주니어 스위트</h3>
+            <p>더블 침대 2개, 가족이나 친구 4명이 머물기 좋은 입문형 스위트</p>
+            <ul class="room-specs">
+              <li>기준 4명</li>
+              <li>더블2</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 화이트 스위트 -->
+        <div class="room-card">
+          <div class="room-gallery">
+            <div class="room-gallery-track">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/1523041c2a538.jpg" alt="화이트 스위트 1">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/41f73274cab9c.jpg" alt="화이트 스위트 2" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/dc1ede0f6f1bf.jpg" alt="화이트 스위트 3" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/c0f3d27cc1c6a.jpg" alt="화이트 스위트 4" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/10ee3b4e75415.jpg" alt="화이트 스위트 5" loading="lazy">
+            </div>
+            <button class="room-gallery-btn prev" aria-label="이전 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="room-gallery-btn next" aria-label="다음 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <div class="room-gallery-dots"></div>
+            <span class="room-gallery-counter">1/5</span>
+          </div>
+          <div class="room-content">
+            <span class="room-type">WHITE SUITE</span>
+            <h3>화이트 스위트</h3>
+            <p>더블 2 + 싱글 1, 채광 좋은 대형 스위트룸</p>
+            <ul class="room-specs">
+              <li>기준 5명</li>
+              <li>더블2 + 싱글1</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 테라스 스위트 -->
+        <div class="room-card">
+          <div class="room-gallery">
+            <div class="room-gallery-track">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/e715b05fe9c92.jpg" alt="테라스 스위트 1">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/0af5af792172e.jpg" alt="테라스 스위트 2" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/a2e098c17b86d.jpg" alt="테라스 스위트 3" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/aca052a98104d.jpg" alt="테라스 스위트 4" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/fbbc3f35ebfdf.jpg" alt="테라스 스위트 5" loading="lazy">
+            </div>
+            <button class="room-gallery-btn prev" aria-label="이전 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="room-gallery-btn next" aria-label="다음 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <div class="room-gallery-dots"></div>
+            <span class="room-gallery-counter">1/5</span>
+            <span class="room-pet-badge">🐶 반려동물 OK</span>
+          </div>
+          <div class="room-content">
+            <span class="room-type">TERRACE SUITE</span>
+            <h3>테라스 스위트</h3>
+            <p>전용 테라스에서 즐기는 평창의 공기. 반려동물 동반 가능</p>
+            <ul class="room-specs">
+              <li>기준 4명</li>
+              <li>더블2</li>
+              <li>🐾 펫 OK</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 빌라 스위트 -->
+        <div class="room-card">
+          <div class="room-gallery">
+            <div class="room-gallery-track">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/8437d32a7554e.jpg" alt="빌라 스위트 1">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/fe29d9cb8300d.jpg" alt="빌라 스위트 2" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/ef33cc1962195.jpg" alt="빌라 스위트 3" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/c07a52a6225a5.jpg" alt="빌라 스위트 4" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260406/502c172b9e0ca.jpg" alt="빌라 스위트 5" loading="lazy">
+            </div>
+            <button class="room-gallery-btn prev" aria-label="이전 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="room-gallery-btn next" aria-label="다음 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <div class="room-gallery-dots"></div>
+            <span class="room-gallery-counter">1/5</span>
+          </div>
+          <div class="room-content">
+            <span class="room-type">VILLA SUITE</span>
+            <h3>빌라 스위트</h3>
+            <p>완전 독립된 빌라형 객실. 거실+침실 분리, 주방 시설 완비</p>
+            <ul class="room-specs">
+              <li>기준 6명</li>
+              <li>더블3</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 빌라 듀플렉스 (더블) -->
+        <div class="room-card">
+          <div class="room-gallery">
+            <div class="room-gallery-track">
+              <img src="https://cdn.imweb.me/thumbnail/20260407/825b48cf0d6d4.jpg" alt="빌라 듀플렉스 더블 1">
+              <img src="https://cdn.imweb.me/thumbnail/20260407/c4e9d82fbb5b5.jpg" alt="빌라 듀플렉스 더블 2" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260407/ce230c1bfffc0.jpg" alt="빌라 듀플렉스 더블 3" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260407/f117e76cd1cc2.jpg" alt="빌라 듀플렉스 더블 4" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260407/eea06dcf20647.jpg" alt="빌라 듀플렉스 더블 5" loading="lazy">
+            </div>
+            <button class="room-gallery-btn prev" aria-label="이전 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="room-gallery-btn next" aria-label="다음 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <div class="room-gallery-dots"></div>
+            <span class="room-gallery-counter">1/5</span>
+          </div>
+          <div class="room-content">
+            <span class="room-type">VILLA DUPLEX</span>
+            <h3>빌라 듀플렉스 (더블)</h3>
+            <p>복층 구조의 프라이빗 빌라. 풀 키친, 바비큐 가능 데크</p>
+            <ul class="room-specs">
+              <li>기준 6명</li>
+              <li>더블3</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 빌라 듀플렉스 (패밀리) -->
+        <div class="room-card">
+          <div class="room-gallery">
+            <div class="room-gallery-track">
+              <img src="https://cdn.imweb.me/thumbnail/20260407/ccd3c8b1cff45.jpg" alt="빌라 듀플렉스 패밀리 1">
+              <img src="https://cdn.imweb.me/thumbnail/20260407/c568e6940a7d4.jpg" alt="빌라 듀플렉스 패밀리 2" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260407/143a2e3ee5e09.jpg" alt="빌라 듀플렉스 패밀리 3" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260407/41b0d7bdcb14e.jpg" alt="빌라 듀플렉스 패밀리 4" loading="lazy">
+              <img src="https://cdn.imweb.me/thumbnail/20260407/d2cae384370ab.jpg" alt="빌라 듀플렉스 패밀리 5" loading="lazy">
+            </div>
+            <button class="room-gallery-btn prev" aria-label="이전 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="room-gallery-btn next" aria-label="다음 이미지">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <div class="room-gallery-dots"></div>
+            <span class="room-gallery-counter">1/5</span>
+          </div>
+          <div class="room-content">
+            <span class="room-type">VILLA DUPLEX</span>
+            <h3>빌라 듀플렉스 (패밀리)</h3>
+            <p>더블 2 + 싱글 2, 2층 침실과 넓은 거실로 모두가 편안한 휴식</p>
+            <ul class="room-specs">
+              <li>기준 6명</li>
+              <li>더블2 + 싱글2</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

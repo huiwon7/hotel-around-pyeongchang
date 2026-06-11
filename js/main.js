@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initScrollEffects();
   initStatsCounter();
-  initRoomsSlider();
+  initRoomGalleries();
   initContactForm();
   initTabs();
   initLightbox();
@@ -152,72 +152,56 @@ function animateCounter(element, target) {
 }
 
 /**
- * Rooms slider
+ * Room image galleries
  */
-function initRoomsSlider() {
-  const slider = document.getElementById('roomsSlider');
-  if (!slider) return;
+function initRoomGalleries() {
+  document.querySelectorAll('.room-gallery').forEach(gallery => {
+    const track = gallery.querySelector('.room-gallery-track');
+    const images = track.querySelectorAll('img');
+    const prevBtn = gallery.querySelector('.room-gallery-btn.prev');
+    const nextBtn = gallery.querySelector('.room-gallery-btn.next');
+    const dotsContainer = gallery.querySelector('.room-gallery-dots');
+    const counter = gallery.querySelector('.room-gallery-counter');
+    const total = images.length;
+    let current = 0;
 
-  const track = slider.querySelector('.rooms-track');
-  const cards = slider.querySelectorAll('.room-card');
-  const prevBtn = document.getElementById('roomsPrev');
-  const nextBtn = document.getElementById('roomsNext');
-
-  let currentIndex = 0;
-
-  function getVisibleCards() {
-    const sliderWidth = slider.offsetWidth;
-    const cardWidth = cards[0]?.offsetWidth || 300;
-    const gap = 32;
-    return Math.floor((sliderWidth + gap) / (cardWidth + gap)) || 1;
-  }
-
-  function getMaxIndex() {
-    const visibleCards = getVisibleCards();
-    return Math.max(0, cards.length - visibleCards);
-  }
-
-  function updateSlider() {
-    const cardWidth = cards[0]?.offsetWidth || 300;
-    const gap = 32;
-    const maxIdx = getMaxIndex();
-    if (currentIndex > maxIdx) currentIndex = maxIdx;
-    const offset = currentIndex * (cardWidth + gap);
-    track.style.transform = `translateX(-${offset}px)`;
-    if (prevBtn) prevBtn.style.opacity = currentIndex === 0 ? '0.5' : '1';
-    if (nextBtn) nextBtn.style.opacity = currentIndex >= maxIdx ? '0.5' : '1';
-  }
-
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      if (currentIndex > 0) { currentIndex--; updateSlider(); }
+    images.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'room-gallery-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', '이미지 ' + (i + 1));
+      dot.addEventListener('click', e => { e.stopPropagation(); scrollTo(i); });
+      dotsContainer.appendChild(dot);
     });
-  }
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      if (currentIndex < getMaxIndex()) { currentIndex++; updateSlider(); }
-    });
-  }
 
-  let resizeTimeout;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => { currentIndex = 0; updateSlider(); }, 250);
+    function goTo(i) {
+      current = Math.max(0, Math.min(total - 1, i));
+      track.style.transform = 'translateX(-' + (current * 100) + '%)';
+      update();
+    }
+
+    function update() {
+      if (counter) counter.textContent = (current + 1) + '/' + total;
+      dotsContainer.querySelectorAll('.room-gallery-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+      });
+      if (prevBtn) prevBtn.disabled = current === 0;
+      if (nextBtn) nextBtn.disabled = current === total - 1;
+    }
+
+    prevBtn.addEventListener('click', e => { e.stopPropagation(); goTo(current - 1); });
+    nextBtn.addEventListener('click', e => { e.stopPropagation(); goTo(current + 1); });
+
+    // Touch swipe
+    let startX = 0;
+    track.addEventListener('touchstart', e => { startX = e.changedTouches[0].screenX; }, { passive: true });
+    track.addEventListener('touchend', e => {
+      var diff = startX - e.changedTouches[0].screenX;
+      if (diff > 40) goTo(current + 1);
+      else if (diff < -40) goTo(current - 1);
+    }, { passive: true });
+
+    update();
   });
-
-  // Touch support
-  let touchStartX = 0;
-  track.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-  }, { passive: true });
-
-  track.addEventListener('touchend', (e) => {
-    const diff = touchStartX - e.changedTouches[0].screenX;
-    if (diff > 50 && currentIndex < getMaxIndex()) { currentIndex++; updateSlider(); }
-    else if (diff < -50 && currentIndex > 0) { currentIndex--; updateSlider(); }
-  }, { passive: true });
-
-  updateSlider();
 }
 
 /**
