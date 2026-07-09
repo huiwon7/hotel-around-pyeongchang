@@ -1779,19 +1779,7 @@
             </div>
             <div class="form-group">
               <label class="form-label" for="phone">연락처 *</label>
-              <div style="display:flex;gap:0.5rem;">
-                <input class="form-input" type="tel" id="phone" name="phone" required placeholder="010-0000-0000" style="flex:1;">
-                <button type="button" id="btnSendOtp" class="btn btn--outline-dark" style="white-space:nowrap;padding:0.5rem 1rem;font-size:0.85rem;">인증요청</button>
-              </div>
-              <div id="otpRow" style="display:none;margin-top:0.5rem;">
-                <div style="display:flex;gap:0.5rem;align-items:center;">
-                  <input class="form-input" type="text" id="otpCode" maxlength="6" placeholder="인증번호 6자리" inputmode="numeric" style="flex:1;letter-spacing:0.2em;text-align:center;">
-                  <span id="otpTimer" style="color:#ef4444;font-size:0.85rem;min-width:3rem;text-align:center;"></span>
-                  <button type="button" id="btnVerifyOtp" class="btn btn--primary" style="white-space:nowrap;padding:0.5rem 1rem;font-size:0.85rem;">확인</button>
-                </div>
-                <p id="otpMessage" style="margin:0.25rem 0 0;font-size:0.8rem;"></p>
-              </div>
-              <p id="phoneVerified" style="display:none;margin:0.25rem 0 0;font-size:0.8rem;color:#22c55e;">✓ 인증완료</p>
+              <input class="form-input" type="tel" id="phone" name="phone" required placeholder="010-0000-0000">
             </div>
           </div>
           <div class="form-group">
