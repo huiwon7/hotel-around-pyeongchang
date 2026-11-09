@@ -7,12 +7,14 @@
   --color-primary: #1e2a1f;
   --color-secondary: #2d3a2e;
   --color-accent: #4a7c59;
+  --color-accent-rgb: 74, 124, 89;
   --color-accent-light: #6b9d78;
   --color-accent-dark: #355c42;
   --color-warm: #c4956a;
   --color-warm-light: #d4ae8a;
   --color-white: #ffffff;
   --color-off-white: #f7f9f5;
+  --color-bg-soft: #faf8f5;
   --color-gray-100: #f0f2ee;
   --color-gray-200: #dfe2dc;
   --color-gray-300: #c0c4bc;
@@ -36,8 +38,8 @@
   --season-fall-bg: #fdf5ef;
   --season-fall-gradient: linear-gradient(135deg, #fde8d0 0%, #f0c49b 50%, #c4774a 100%);
 
-  --season-winter-primary: #5a8cb5;
-  --season-winter-secondary: #3d6f94;
+  --season-winter-primary: #3f6e93;
+  --season-winter-secondary: #2c5373;
   --season-winter-bg: #f0f5fa;
   --season-winter-gradient: linear-gradient(135deg, #e3eef7 0%, #a8cce0 50%, #5a8cb5 100%);
 

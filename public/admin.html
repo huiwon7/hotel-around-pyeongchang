@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>관리자 대시보드 | 호텔어라운드 평창</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,7 +66,7 @@
       </div>
       <div class="stat-card packages">
         <div class="stat-number" id="statPackage">-</div>
-        <div class="stat-label">인기 패키지</div>
+        <div class="stat-label">인기 여행 유형</div>
       </div>
     </section>
 
@@ -76,12 +77,13 @@
       </div>
       <div class="filter-group">
         <select id="filterPackage">
-          <option value="">전체 패키지</option>
-          <option value="trial">Trial</option>
-          <option value="starter">Starter</option>
-          <option value="professional">Professional</option>
-          <option value="nomad">Nomad</option>
-          <option value="custom">기업 맞춤</option>
+          <option value="">전체 유형</option>
+          <option value="basecamp">베이스캠프 여행</option>
+          <option value="burnout">번아웃 리셋</option>
+          <option value="workation">워케이션</option>
+          <option value="family">가족 힐링</option>
+          <option value="business">기업 행사</option>
+          <option value="other">기타</option>
         </select>
         <select id="filterStatus">
           <option value="">전체 상태</option>
@@ -108,7 +110,7 @@
               <th>접수일시</th>
               <th>이름</th>
               <th>회사</th>
-              <th>패키지</th>
+              <th>여행 유형</th>
               <th>진행상태</th>
               <th>연락처</th>
               <th>체크인</th>
@@ -159,14 +161,15 @@
             </div>
             <div class="add-form-row">
               <div class="add-form-group">
-                <label>패키지</label>
-                <select name="package">
+                <label>여행 유형</label>
+                <select name="stayType">
                   <option value="">선택</option>
-                  <option value="trial">Trial - 3박</option>
-                  <option value="starter">Starter - 7박</option>
-                  <option value="professional">Professional - 14박</option>
-                  <option value="nomad">Nomad - 30박</option>
-                  <option value="custom">기업 맞춤</option>
+                  <option value="basecamp">베이스캠프 여행</option>
+                  <option value="burnout">번아웃 리셋</option>
+                  <option value="workation">워케이션</option>
+                  <option value="family">가족 힐링</option>
+                  <option value="business">기업 행사</option>
+                  <option value="other">기타</option>
                 </select>
               </div>
               <div class="add-form-group">

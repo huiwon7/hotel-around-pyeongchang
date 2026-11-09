@@ -1,4 +1,5 @@
 const { onRequest } = require("firebase-functions/v2/https");
+const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const admin = require("firebase-admin");
 const axios = require("axios");
 
@@ -25,204 +26,28 @@ function getCorsHeaders(req) {
   return headers;
 }
 
-/**
- * Send OTP via Aligo SMS
- * POST /sendOtp { phone: "01012345678" }
- */
-exports.sendOtp = onRequest({ region: "asia-northeast3", secrets: ["ALIGO_API_KEY", "ALIGO_USER_ID", "ALIGO_SENDER", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_IDS"] }, async (req, res) => {
-  // CORS preflight
-  if (req.method === "OPTIONS") {
-    res.set(getCorsHeaders(req)).status(204).send("");
-    return;
-  }
+// 여행 유형 (index.html #stayType 옵션과 동일하게 유지)
+const STAY_TYPES = {
+  basecamp: "강원도 베이스캠프 여행",
+  burnout: "번아웃 리셋",
+  workation: "워케이션",
+  family: "가족 힐링 여행",
+  business: "기업 행사/세미나",
+  other: "기타",
+};
+const GUEST_OPTIONS = ["1", "2", "3-5", "6-10", "10+"];
 
-  res.set(getCorsHeaders(req));
-
-  if (req.method !== "POST") {
-    res.status(405).json({ success: false, message: "Method not allowed" });
-    return;
-  }
-
-  const { phone } = req.body;
-  if (!phone) {
-    res.status(400).json({ success: false, message: "전화번호가 필요합니다." });
-    return;
-  }
-
-  // Normalize phone: remove dashes
-  const cleanPhone = phone.replace(/-/g, "");
-
-  // Validate Korean mobile number format
-  if (!/^01[016789]\d{7,8}$/.test(cleanPhone)) {
-    res.status(400).json({ success: false, message: "올바른 휴대폰 번호를 입력해주세요." });
-    return;
-  }
-
-  // Rate limit: max 5 OTP requests per phone per hour
-  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-  const recentOtps = await db.collection("otps")
-    .where("phone", "==", cleanPhone)
-    .where("createdAt", ">", oneHourAgo)
-    .get();
-
-  if (recentOtps.size >= 5) {
-    res.status(429).json({ success: false, message: "인증 요청이 너무 많습니다. 1시간 후 다시 시도해주세요." });
-    return;
-  }
-
-  // Generate 6-digit OTP (cryptographically secure)
-  const crypto = require("crypto");
-  const otpCode = String(100000 + (crypto.randomInt(900000)));
-  const expiresAt = new Date(Date.now() + 3 * 60 * 1000); // 3 minutes
-
-  try {
-    // Store OTP in Firestore
-    await db.collection("otps").add({
-      phone: cleanPhone,
-      code: otpCode,
-      verified: false,
-      createdAt: new Date(),
-      expiresAt: expiresAt,
-    });
-
-    // Send SMS via Aligo
-    const aligoResult = await sendAligoSms(cleanPhone, `[호텔어라운드 평창] 인증번호: ${otpCode}\n3분 이내에 입력해주세요.`);
-
-    if (String(aligoResult.result_code) === "1") {
-      res.json({ success: true, message: "인증번호가 발송되었습니다." });
-    } else {
-      console.error("Aligo SMS 발송 실패:", aligoResult);
-      // IP 인증 오류 시 텔레그램으로 관리자에게 알림
-      if (aligoResult.result_code === -101) {
-        try {
-          const ipRes = await axios.get("https://api.ipify.org?format=json");
-          await sendTelegramAlert(
-            `⚠️ 알리고 SMS 발송 실패 (IP 인증오류)\n\n` +
-            `현재 서버 IP: ${ipRes.data.ip}\n` +
-            `알리고 발송 서버 IP를 업데이트해주세요.\n` +
-            `알리고 > 문자API > 신청/인증 > 발송 서버 IP`
-          );
-        } catch (e) { console.error("IP 알림 전송 실패:", e.message); }
-      }
-      res.status(500).json({ success: false, message: "문자 발송에 실패했습니다. 잠시 후 다시 시도해주세요." });
-    }
-  } catch (err) {
-    console.error("OTP 발송 에러:", err);
-    res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
-  }
-});
-
-/**
- * Verify OTP
- * POST /verifyOtp { phone: "01012345678", code: "123456" }
- */
-exports.verifyOtp = onRequest({ region: "asia-northeast3" }, async (req, res) => {
-  // CORS preflight
-  if (req.method === "OPTIONS") {
-    res.set(getCorsHeaders(req)).status(204).send("");
-    return;
-  }
-
-  res.set(getCorsHeaders(req));
-
-  if (req.method !== "POST") {
-    res.status(405).json({ success: false, message: "Method not allowed" });
-    return;
-  }
-
-  const { phone, code } = req.body;
-  if (!phone || !code) {
-    res.status(400).json({ success: false, message: "전화번호와 인증번호가 필요합니다." });
-    return;
-  }
-
-  const cleanPhone = phone.replace(/-/g, "");
-
-  try {
-    const now = new Date();
-
-    // Find the latest unverified OTP for this phone
-    const otpSnapshot = await db.collection("otps")
-      .where("phone", "==", cleanPhone)
-      .where("verified", "==", false)
-      .orderBy("createdAt", "desc")
-      .limit(1)
-      .get();
-
-    if (otpSnapshot.empty) {
-      res.status(400).json({ success: false, message: "인증번호가 올바르지 않습니다." });
-      return;
-    }
-
-    const otpDoc = otpSnapshot.docs[0];
-    const otpData = otpDoc.data();
-
-    // Check if max attempts exceeded
-    const attempts = otpData.attempts || 0;
-    if (attempts >= 5) {
-      // Invalidate the OTP
-      await otpDoc.ref.update({ verified: true, invalidated: true });
-      res.status(429).json({ success: false, message: "인증 시도 횟수를 초과했습니다. 새 인증번호를 요청해주세요." });
-      return;
-    }
-
-    // Check expiry
-    const expiresAt = otpData.expiresAt.toDate ? otpData.expiresAt.toDate() : new Date(otpData.expiresAt);
-    if (now > expiresAt) {
-      res.status(400).json({ success: false, message: "인증번호가 만료되었습니다. 다시 요청해주세요." });
-      return;
-    }
-
-    // Check if code matches
-    if (otpData.code !== code) {
-      // Increment attempt count
-      await otpDoc.ref.update({ attempts: attempts + 1 });
-      const remaining = 4 - attempts;
-      res.status(400).json({ success: false, message: `인증번호가 올바르지 않습니다. (남은 시도: ${remaining}회)` });
-      return;
-    }
-
-    // Mark as verified
-    await otpDoc.ref.update({ verified: true, verifiedAt: now });
-
-    // Create a verification token (valid for 10 min)
-    const token = generateToken();
-    await db.collection("verified_phones").doc(token).set({
-      phone: cleanPhone,
-      createdAt: now,
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
-    });
-
-    res.json({ success: true, message: "인증이 완료되었습니다.", token: token });
-  } catch (err) {
-    console.error("OTP 검증 에러:", err);
-    res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
-  }
-});
-
-/**
- * Send SMS via Aligo API
- */
-async function sendAligoSms(phone, message) {
-  // Aligo API credentials are stored in Firebase environment config
-  // Set via: firebase functions:secrets:set ALIGO_API_KEY, ALIGO_USER_ID, ALIGO_SENDER
-  const apiKey = process.env.ALIGO_API_KEY;
-  const userId = process.env.ALIGO_USER_ID;
-  const sender = process.env.ALIGO_SENDER;
-
-  const params = new URLSearchParams();
-  params.append("key", apiKey);
-  params.append("user_id", userId);
-  params.append("sender", sender);
-  params.append("receiver", phone);
-  params.append("msg", message);
-
-  const response = await axios.post("https://apis.aligo.in/send/", params, {
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  });
-
-  return response.data;
-}
+// Input validation: field -> { max length, format check }
+const FIELD_RULES = {
+  name: { max: 50, required: true },
+  company: { max: 100 },
+  email: { max: 254, required: true, test: (v) => /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/.test(v) },
+  phone: { max: 20, required: true, test: (v) => /^[0-9-]{9,13}$/.test(v) },
+  stayType: { max: 30, test: (v) => Object.prototype.hasOwnProperty.call(STAY_TYPES, v) },
+  checkin: { max: 10, test: (v) => /^\d{4}-\d{2}-\d{2}$/.test(v) },
+  guests: { max: 10, test: (v) => GUEST_OPTIONS.includes(v) },
+  message: { max: 2000 },
+};
 
 /**
  * Submit inquiry with Turnstile verification
@@ -242,64 +67,29 @@ exports.submitInquiry = onRequest(
       return;
     }
 
-    const { turnstileToken, verificationToken, ...rawData } = req.body;
+    const { turnstileToken, ...rawData } = req.body || {};
 
-    // Input validation: whitelist allowed fields with max lengths
-    const ALLOWED_FIELDS = {
-      memberType: 20,
-      name: 50,
-      company: 100,
-      roomNumber: 20,
-      email: 254,
-      phone: 20,
-      package: 30,
-      checkin: 20,
-      guests: 10,
-      message: 2000,
-    };
-
+    // Whitelist fields, enforce length and format
     const formData = {};
-    for (const [key, maxLen] of Object.entries(ALLOWED_FIELDS)) {
-      if (rawData[key] !== undefined && rawData[key] !== null) {
-        const value = String(rawData[key]).trim();
-        if (value.length > maxLen) {
-          res.status(400).json({ success: false, message: `${key} 필드가 너무 깁니다. (최대 ${maxLen}자)` });
+    for (const [key, rule] of Object.entries(FIELD_RULES)) {
+      const raw = rawData[key];
+      const value = raw === undefined || raw === null ? "" : String(raw).trim();
+      if (!value) {
+        if (rule.required) {
+          res.status(400).json({ success: false, message: "필수 항목을 입력해주세요." });
           return;
         }
-        if (value.length > 0) {
-          formData[key] = value;
-        }
+        continue;
       }
-    }
-
-    // Verify phone verification token
-    if (!verificationToken) {
-      res.status(400).json({ success: false, message: "휴대폰 인증이 필요합니다." });
-      return;
-    }
-
-    try {
-      const tokenDoc = await db.collection("verified_phones").doc(verificationToken).get();
-      if (!tokenDoc.exists) {
-        res.status(403).json({ success: false, message: "유효하지 않은 인증입니다. 다시 인증해주세요." });
+      if (value.length > rule.max || (rule.test && !rule.test(value))) {
+        res.status(400).json({ success: false, message: "입력값을 확인해주세요." });
         return;
       }
-      const tokenData = tokenDoc.data();
-      const expiresAt = tokenData.expiresAt.toDate ? tokenData.expiresAt.toDate() : new Date(tokenData.expiresAt);
-      if (new Date() > expiresAt) {
-        res.status(403).json({ success: false, message: "인증이 만료되었습니다. 다시 인증해주세요." });
-        return;
-      }
-      // Clean up used token
-      await db.collection("verified_phones").doc(verificationToken).delete();
-    } catch (err) {
-      console.error("인증 토큰 검증 에러:", err.message);
-      res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
-      return;
+      formData[key] = value;
     }
 
     // Verify Turnstile token
-    if (!turnstileToken) {
+    if (!turnstileToken || typeof turnstileToken !== "string") {
       res.status(400).json({ success: false, message: "보안 인증이 필요합니다." });
       return;
     }
@@ -343,8 +133,6 @@ exports.submitInquiry = onRequest(
  * Send Telegram notification when new inquiry is created
  * Triggered by Firestore onCreate
  */
-const { onDocumentCreated } = require("firebase-functions/v2/firestore");
-
 exports.onNewInquiry = onDocumentCreated(
   { document: "inquiries/{docId}", region: "asia-northeast3", secrets: ["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_IDS"] },
   async (event) => {
@@ -357,20 +145,11 @@ exports.onNewInquiry = onDocumentCreated(
       return;
     }
 
-    const packageNames = {
-      trial: "Trial (3박)",
-      starter: "Starter (7박)",
-      professional: "Professional (14박)",
-      nomad: "Nomad (30박)",
-      custom: "기업 맞춤",
-    };
-
-    const pkgName = packageNames[data.package] || data.package || "-";
     const text =
       `🔔 새 예약문의\n\n` +
       `이름: ${data.name || "-"}\n` +
       `회사: ${data.company || "-"}\n` +
-      `패키지: ${pkgName}\n` +
+      `여행 유형: ${STAY_TYPES[data.stayType] || "-"}\n` +
       `체크인: ${data.checkin || "-"}\n` +
       `인원: ${data.guests || "-"}명\n` +
       `연락처: ${data.phone || "-"}\n` +
@@ -391,80 +170,3 @@ exports.onNewInquiry = onDocumentCreated(
     }
   }
 );
-
-
-/**
- * Send Telegram alert to admins
- */
-async function sendTelegramAlert(text) {
-  const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  const chatIds = process.env.TELEGRAM_CHAT_IDS;
-  if (!botToken || !chatIds) return;
-
-  const ids = chatIds.split(",");
-  for (const chatId of ids) {
-    try {
-      await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        chat_id: chatId.trim(),
-        text: text,
-      });
-    } catch (err) {
-      console.error(`Telegram 알림 실패 (${chatId}):`, err.message);
-    }
-  }
-}
-
-/**
- * Daily IP check - runs every day at 9:00 AM KST
- * Compares current outbound IP with stored IP, alerts via Telegram if changed
- */
-const { onSchedule } = require("firebase-functions/v2/scheduler");
-
-exports.checkIpChange = onSchedule(
-  {
-    schedule: "0 0 * * *",
-    timeZone: "Asia/Seoul",
-    region: "asia-northeast3",
-    secrets: ["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_IDS"],
-  },
-  async () => {
-    try {
-      const ipRes = await axios.get("https://api.ipify.org?format=json");
-      const currentIp = ipRes.data.ip;
-
-      const ipDoc = await db.collection("settings").doc("server_ip").get();
-      const storedIp = ipDoc.exists ? ipDoc.data().ip : null;
-
-      // 앞 3자리 대역(예: 34.96.43)이 바뀔 때만 알림
-      const currentPrefix = currentIp.split(".").slice(0, 3).join(".");
-      const storedPrefix = storedIp ? storedIp.split(".").slice(0, 3).join(".") : null;
-
-      if (storedPrefix && storedPrefix !== currentPrefix) {
-        await sendTelegramAlert(
-          `⚠️ 서버 IP 대역 변경 감지\n\n` +
-          `이전 대역: ${storedPrefix}.x\n` +
-          `현재 대역: ${currentPrefix}.x\n\n` +
-          `알리고 발송 서버 IP 대역을 업데이트해주세요.\n` +
-          `알리고 > 문자API > 신청/인증 > 발송 서버 IP`
-        );
-      }
-
-      await db.collection("settings").doc("server_ip").set({
-        ip: currentIp,
-        checkedAt: new Date().toISOString(),
-      });
-
-      console.log(`IP 체크 완료: ${currentIp} (이전: ${storedIp || "없음"})`);
-    } catch (err) {
-      console.error("IP 체크 실패:", err.message);
-    }
-  }
-);
-
-/**
- * Generate random token
- */
-function generateToken() {
-  const crypto = require("crypto");
-  return crypto.randomBytes(24).toString("hex");
-}

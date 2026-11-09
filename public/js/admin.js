@@ -168,27 +168,21 @@ function updateStats() {
     i.timestamp && new Date(i.timestamp) >= weekAgo
   ).length;
 
-  // Popular package
+  // Popular stay type
   const pkgCount = {};
   allInquiries.forEach(i => {
-    if (i.package) {
-      pkgCount[i.package] = (pkgCount[i.package] || 0) + 1;
+    const key = inquiryTypeKey(i);
+    if (key) {
+      pkgCount[key] = (pkgCount[key] || 0) + 1;
     }
   });
   const topPkg = Object.entries(pkgCount).sort((a, b) => b[1] - a[1])[0];
-  const packageNames = {
-    trial: 'Trial',
-    starter: 'Starter',
-    professional: 'Professional',
-    nomad: 'Nomad',
-    custom: '기업 맞춤'
-  };
 
   document.getElementById('statTotal').textContent = total;
   document.getElementById('statToday').textContent = todayCount;
   document.getElementById('statWeek').textContent = weekCount;
   document.getElementById('statPackage').textContent =
-    topPkg ? (packageNames[topPkg[0]] || topPkg[0]) : '-';
+    topPkg ? (TYPE_NAMES[topPkg[0]] || topPkg[0]) : '-';
 }
 
 /**
@@ -213,7 +207,7 @@ function applyFilters() {
 
   // Package filter
   if (pkgFilter) {
-    filtered = filtered.filter(i => i.package === pkgFilter);
+    filtered = filtered.filter(i => inquiryTypeKey(i) === pkgFilter);
   }
 
   // Status filter
@@ -264,14 +258,6 @@ function renderTable(inquiries) {
     return;
   }
 
-  const packageNames = {
-    trial: 'Trial - 3박',
-    starter: 'Starter - 7박',
-    professional: 'Professional - 14박',
-    nomad: 'Nomad - 30박',
-    custom: '기업 맞춤'
-  };
-
   // Store filtered results for detail view
   window._filteredInquiries = inquiries;
 
@@ -284,9 +270,9 @@ function renderTable(inquiries) {
 
   tbody.innerHTML = inquiries.map((item, idx) => {
     const date = item.timestamp ? formatDate(item.timestamp) : '-';
-    const pkgName = packageNames[item.package] || item.package || '-';
-    const pkgClass = item.package || 'custom';
-    const statusClass = item.status || 'pending';
+    const pkgName = escapeHtml(inquiryTypeName(item));
+    const pkgClass = TYPE_NAMES[inquiryTypeKey(item)] ? inquiryTypeKey(item) : 'custom';
+    const statusClass = statusNames[item.status] ? item.status : 'pending';
     const statusName = statusNames[statusClass] || '신규';
     const memoPreview = item.memo ? escapeHtml(item.memo) : '';
     const memoAuthorShort = item.memoAuthor ? item.memoAuthor.split('@')[0] : '';
@@ -299,7 +285,7 @@ function renderTable(inquiries) {
         <td><span class="pkg-badge ${pkgClass}">${pkgName}</span></td>
         <td><span class="status-badge status-${statusClass}">${statusName}</span></td>
         <td>${escapeHtml(item.phone || '-')}</td>
-        <td>${item.checkin || '-'}</td>
+        <td>${escapeHtml(item.checkin || '-')}</td>
         <td>${escapeHtml(item.guests || '-')}</td>
         <td class="memo-cell">${memoPreview ? '<span class="memo-preview">' + memoPreview + '</span>' + (memoAuthorShort ? '<span class="memo-author">' + escapeHtml(memoAuthorShort) + '</span>' : '') : '<span class="memo-empty">-</span>'}</td>
       </tr>
@@ -313,14 +299,6 @@ function renderTable(inquiries) {
 function showDetail(index) {
   const item = (window._filteredInquiries || allInquiries)[index];
   if (!item) return;
-
-  const packageNames = {
-    trial: 'Trial - 3박',
-    starter: 'Starter - 7박',
-    professional: 'Professional - 14박',
-    nomad: 'Nomad - 30박',
-    custom: '기업 맞춤 패키지'
-  };
 
   const currentStatus = item.status || 'pending';
   const statusNames = {
@@ -362,12 +340,12 @@ function showDetail(index) {
       <div class="detail-value"><a href="tel:${escapeHtml(item.phone)}">${escapeHtml(item.phone || '-')}</a></div>
     </div>
     <div class="detail-row">
-      <div class="detail-label">패키지</div>
-      <div class="detail-value">${packageNames[item.package] || item.package || '-'}</div>
+      <div class="detail-label">여행 유형</div>
+      <div class="detail-value">${escapeHtml(inquiryTypeName(item))}</div>
     </div>
     <div class="detail-row">
       <div class="detail-label">체크인</div>
-      <div class="detail-value">${item.checkin || '-'}</div>
+      <div class="detail-value">${escapeHtml(item.checkin || '-')}</div>
     </div>
     <div class="detail-row">
       <div class="detail-label">인원</div>
@@ -505,9 +483,36 @@ function updateLastUpdated() {
 }
 
 function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// 여행 유형(stayType, 현재 폼) + 구 패키지(package, 이전 문의) 표시명
+const TYPE_NAMES = {
+  basecamp: '베이스캠프 여행',
+  burnout: '번아웃 리셋',
+  workation: '워케이션',
+  family: '가족 힐링',
+  business: '기업 행사',
+  other: '기타',
+  trial: 'Trial - 3박',
+  starter: 'Starter - 7박',
+  professional: 'Professional - 14박',
+  nomad: 'Nomad - 30박',
+  custom: '기업 맞춤'
+};
+
+function inquiryTypeKey(item) {
+  return item.stayType || item.package || '';
+}
+
+function inquiryTypeName(item) {
+  const key = inquiryTypeKey(item);
+  return TYPE_NAMES[key] || key || '-';
 }
 
 /**

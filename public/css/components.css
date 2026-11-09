@@ -336,7 +336,7 @@
 .form-textarea:focus,
 .form-select:focus {
   border-color: var(--season-active, var(--color-accent));
-  box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.15);
+  box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.15);
 }
 
 .form-textarea {

@@ -129,7 +129,7 @@
 }
 
 .nav--scrolled .nav__cta {
-  color: var(--color-primary);
+  color: var(--color-white);
   background: var(--color-accent);
   border-color: var(--color-accent);
 }
@@ -712,7 +712,7 @@
    ============================================= */
 
 .rooms {
-  background: #faf8f5;
+  background: var(--color-bg-soft);
 }
 
 /* Rooms Grid */
@@ -909,7 +909,7 @@
 
 .facilities-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-lg);
 }
 
@@ -970,7 +970,7 @@
    ============================================= */
 
 .local-food-section {
-  background: #faf8f5;
+  background: var(--color-bg-soft);
 }
 
 .food-grid {
@@ -1125,6 +1125,11 @@
 
 .attraction-tag--amber {
   background: #c79434;
+  color: var(--color-white);
+}
+
+.attraction-tag--blue {
+  background: #3f6e93;
   color: var(--color-white);
 }
 
@@ -1425,7 +1430,7 @@
 .booking-form .form-group textarea:focus {
   outline: none;
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
+  box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.1);
 }
 
 .booking-form .form-group textarea {
@@ -2061,7 +2066,7 @@
 
 .timeline-item--highlight .timeline-dot {
   background: var(--season-active, var(--color-accent));
-  box-shadow: 0 0 12px rgba(74, 124, 89, 0.5);
+  box-shadow: 0 0 12px rgba(var(--color-accent-rgb), 0.5);
 }
 
 .timeline-content h4 {
@@ -2363,7 +2368,7 @@
    ============================================= */
 
 .corporate-section {
-  background: #faf8f5;
+  background: var(--color-bg-soft);
 }
 
 .corporate-benefits {

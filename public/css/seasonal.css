@@ -47,6 +47,24 @@
   --season-active-tint-alt: var(--season-winter-tint-alt);
   --season-active-border: var(--season-winter-border);
   --season-active-shadow: var(--season-winter-shadow);
+
+  /* Winter base palette: 숲 초록 → 설원 네이비·아이스 블루 */
+  --color-primary: #16222e;
+  --color-secondary: #22303d;
+  --color-accent: #3f6e93;
+  --color-accent-rgb: 63, 110, 147;
+  --color-accent-light: #6f9dc0;
+  --color-accent-dark: #2c5373;
+  --color-warm: #8fb3cf;
+  --color-warm-light: #b9d1e3;
+  --color-off-white: #f4f7fa;
+  --color-bg-soft: #f2f5f9;
+  --color-gray-100: #eef2f6;
+  --color-gray-200: #dce3ea;
+  --color-gray-300: #bcc6d0;
+  --color-gray-400: #85919d;
+  --color-gray-500: #56626e;
+  --color-gray-600: #36414c;
 }
 
 
@@ -113,11 +131,17 @@
 [data-season="winter"] .hero__overlay {
   background: linear-gradient(
     to bottom,
-    rgba(168, 204, 224, 0.2) 0%,
-    rgba(0, 0, 0, 0.2) 40%,
-    rgba(0, 0, 0, 0.5) 100%
+    rgba(22, 34, 46, 0.45) 0%,
+    rgba(22, 34, 46, 0.35) 40%,
+    rgba(22, 34, 46, 0.65) 100%
   );
 }
+
+/* Winter hero: 단풍 항공 영상 대신 설경 스틸 */
+[data-season="winter"] .hero__video { display: none; }
+[data-season="winter"] .hero__bg-layer--winter { opacity: 1; }
+[data-season="winter"] .hero__subtitle,
+[data-season="winter"] .nav:not(.nav--scrolled) .nav__logo-sub { color: #cfe3f2; }
 
 
 /* ============================================

@@ -11,7 +11,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="apple-touch-icon" href="/favicon.svg">
-  <meta name="theme-color" content="#1a2e1a">
+  <meta name="theme-color" content="#16222e">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
@@ -133,7 +133,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(74, 124, 89, 0.08);
+      background: rgba(var(--color-accent-rgb), 0.08);
       border-radius: var(--radius-full);
     }
     .usp-card__icon svg {
@@ -299,7 +299,7 @@
       font-size: var(--text-xs);
       font-weight: var(--weight-medium);
       color: var(--color-accent);
-      background: rgba(74, 124, 89, 0.08);
+      background: rgba(var(--color-accent-rgb), 0.08);
       padding: 0.3rem 0.8rem;
       border-radius: var(--radius-sm);
       letter-spacing: 0.05em;
@@ -346,7 +346,7 @@
       margin: 0 auto;
       position: relative;
       z-index: 2;
-      box-shadow: var(--shadow-lg), 0 0 0 8px rgba(74, 124, 89, 0.15), 0 0 0 16px rgba(74, 124, 89, 0.06);
+      box-shadow: var(--shadow-lg), 0 0 0 8px rgba(var(--color-accent-rgb), 0.15), 0 0 0 16px rgba(var(--color-accent-rgb), 0.06);
       text-align: center;
     }
     .hub-center__icon {
@@ -546,7 +546,7 @@
     }
   </style>
 </head>
-<body>
+<body data-season="winter">
   <!-- Navigation -->
   <nav class="nav" id="navbar">
     <div class="nav__inner">
@@ -580,6 +580,7 @@
       <video class="hero__video" autoplay muted loop playsinline>
         <source src="images/hero-video.mp4" type="video/mp4">
       </video>
+      <div class="hero__bg-layer hero__bg-layer--winter" role="img" aria-label="눈 덮인 평창 설원"></div>
       <div class="hero__overlay"></div>
     </div>
     <div class="hero__content">
@@ -1138,15 +1139,8 @@
         <div class="facility-item">
           <div class="facility-image" style="background-image: url('images/facilities/breakfast-menu.png')"></div>
           <div class="facility-content">
-            <h4>조식</h4>
-            <p>07:30~10:30 · 12,000원</p>
-          </div>
-        </div>
-        <div class="facility-item">
-          <div class="facility-image" style="background-image: url('images/facilities/kids-pool.png')"></div>
-          <div class="facility-content">
-            <h4>키즈풀</h4>
-            <p>야외 워터파크 · 여름 시즌</p>
+            <h4>조식 뷔페</h4>
+            <p>주말 운영 · 성인 22,000원</p>
           </div>
         </div>
       </div>
@@ -1257,55 +1251,55 @@
         <div class="attraction-grid">
           <div class="attraction-card">
             <div class="attraction-image">
-              <img src="images/attractions/gyechon-classic.webp" alt="계촌 클래식 축제" loading="lazy">
+              <img src="images/attractions/ski-resort.webp" alt="휘닉스 평창 스키" loading="lazy">
               <span class="attraction-number">#01</span>
+              <span class="attraction-drive">15 MIN</span>
+            </div>
+            <div class="attraction-content">
+              <h3 class="attraction-name">휘닉스 평창 스키</h3>
+              <p class="attraction-subtitle">Phoenix Pyeongchang Ski Resort</p>
+              <p class="attraction-desc">봉평 옆 휘닉스 평창. 초급부터 상급까지 다양한 슬로프와 곤돌라 운영. 야간 스키도 가능.</p>
+              <div class="attraction-meta">
+                <span class="attraction-meta-item">📍 호텔 기준 도보 15분</span>
+                <span class="attraction-meta-item">📅 12월~3월</span>
+              </div>
+              <span class="attraction-tag attraction-tag--blue">겨울 시즌</span>
+            </div>
+          </div>
+
+          <div class="attraction-card">
+            <div class="attraction-image">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Close_up_of_rainbow_trout_fish_underwater_oncorhynchus_mykiss.jpg" alt="평창 송어축제" loading="lazy">
+              <span class="attraction-number">#02</span>
+              <span class="attraction-drive">30 MIN</span>
+            </div>
+            <div class="attraction-content">
+              <h3 class="attraction-name">평창 송어축제</h3>
+              <p class="attraction-subtitle">Trout Ice Fishing Festival</p>
+              <p class="attraction-desc">겨울 시즌 대표 축제. 얼음낚시·썰매·얼음미끄럼틀. 잡은 송어 바로 회·구이로 조리 가능.</p>
+              <div class="attraction-meta">
+                <span class="attraction-meta-item">📍 호텔 기준 30분</span>
+                <span class="attraction-meta-item">📅 12월 말~2월</span>
+              </div>
+              <span class="attraction-tag attraction-tag--red">겨울 한정</span>
+            </div>
+          </div>
+
+          <div class="attraction-card">
+            <div class="attraction-image">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Pyeongchang_Olympic_Plaza_in_2018.jpg" alt="평창 올림픽 파크" loading="lazy">
+              <span class="attraction-number">#03</span>
               <span class="attraction-drive">25 MIN</span>
             </div>
             <div class="attraction-content">
-              <h3 class="attraction-name">계촌 클래식 축제</h3>
-              <p class="attraction-subtitle">Gyechon Classic Festival 2026</p>
-              <p class="attraction-desc">평창 계촌마을 한복판에서 별빛 아래 클래식을. 6.5(금)~6.7(일) 3일간, 매일 19:00~21:00. 부천필·디토 체임버 등 라인업.</p>
+              <h3 class="attraction-name">평창 올림픽 파크</h3>
+              <p class="attraction-subtitle">2018 Olympic Plaza</p>
+              <p class="attraction-desc">2018 동계올림픽 개·폐회식장. 기념관, 오륜 광장, 스노우 피크. 겨울 이벤트가 많음.</p>
               <div class="attraction-meta">
                 <span class="attraction-meta-item">📍 호텔 기준 25분</span>
-                <span class="attraction-meta-item">📅 2026.6.5~6.7 한정</span>
+                <span class="attraction-meta-item">📅 겨울 절정</span>
               </div>
-              <span class="attraction-tag attraction-tag--red">시즌 한정</span>
-            </div>
-          </div>
-
-          <div class="attraction-card">
-            <div class="attraction-image">
-              <img src="images/attractions/blue-canyon.jpg" alt="블루캐니언 워터파크" loading="lazy">
-              <span class="attraction-number">#02</span>
-              <span class="attraction-drive">15 MIN</span>
-            </div>
-            <div class="attraction-content">
-              <h3 class="attraction-name">블루캐니언 워터파크</h3>
-              <p class="attraction-subtitle">Phoenix Blue Canyon Water Park</p>
-              <p class="attraction-desc">휘닉스 평창 내 강원 대표 워터파크. 국내 최장 201m 웨이브 리버, 한국 최초 업힐 슬라이드, 140m 스피드 슬라이드, 파도풀·유수풀까지.</p>
-              <div class="attraction-meta">
-                <span class="attraction-meta-item">📍 호텔 기준 도보 15분</span>
-                <span class="attraction-meta-item">📅 연중 · 10:00~18:00 · 수요일 휴장</span>
-              </div>
-              <span class="attraction-tag attraction-tag--green">가족·물놀이</span>
-            </div>
-          </div>
-
-          <div class="attraction-card">
-            <div class="attraction-image">
-              <img src="images/attractions/lugeland.jpg" alt="휘닉스 평창 루지랜드" loading="lazy">
-              <span class="attraction-number">#03</span>
-              <span class="attraction-drive">15 MIN</span>
-            </div>
-            <div class="attraction-content">
-              <h3 class="attraction-name">휘닉스 평창 루지랜드</h3>
-              <p class="attraction-subtitle">Phoenix Pyeongchang Luge Land</p>
-              <p class="attraction-desc">무동력 카트로 산비탈을 활강하는 휘닉스 평창 대표 액티비티. 곤돌라로 올라가 코스를 따라 내려오는 짜릿한 코너링.</p>
-              <div class="attraction-meta">
-                <span class="attraction-meta-item">📍 호텔 기준 도보 15분</span>
-                <span class="attraction-meta-item">📅 봄~가을 시즌 운영</span>
-              </div>
-              <span class="attraction-tag attraction-tag--amber">액티비티</span>
+              <span class="attraction-tag attraction-tag--red">기념·가족</span>
             </div>
           </div>
 
@@ -1329,8 +1323,44 @@
 
           <div class="attraction-card">
             <div class="attraction-image">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Daegwallyeong_Sheep_Farm.jpg" alt="대관령 양떼목장" loading="lazy">
+              <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=1200&q=80" alt="태기산 별 관측" loading="lazy">
               <span class="attraction-number">#05</span>
+              <span class="attraction-drive">15 MIN</span>
+            </div>
+            <div class="attraction-content">
+              <h3 class="attraction-name">태기산 별 관측</h3>
+              <p class="attraction-subtitle">Stargazing at Taegisan</p>
+              <p class="attraction-desc">해발 800m 이상 고지대. 빛공해가 적고 겨울 공기가 맑아 별이 가장 선명한 계절. 오리온자리·겨울 대삼각형 관측. 방한복 필수.</p>
+              <div class="attraction-meta">
+                <span class="attraction-meta-item">📍 호텔 기준 15분</span>
+                <span class="attraction-meta-item">📅 맑은 밤 · 겨울 추천</span>
+              </div>
+              <span class="attraction-tag attraction-tag--amber">야간</span>
+            </div>
+          </div>
+
+          <div class="attraction-card">
+            <div class="attraction-image">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/%EA%B5%AD%EB%A6%BD%EC%88%98%EB%AA%A9%EC%9B%90_%EC%A0%84%EB%82%98%EB%AC%B4%EC%88%B2_%28Needle_Fir_forest_in_the_Korea_National_Arboretum%29_01.jpg" alt="월정사 전나무숲길" loading="lazy">
+              <span class="attraction-number">#06</span>
+              <span class="attraction-drive">40 MIN</span>
+            </div>
+            <div class="attraction-content">
+              <h3 class="attraction-name">월정사 전나무숲길</h3>
+              <p class="attraction-subtitle">Woljeongsa Fir Forest</p>
+              <p class="attraction-desc">오대산 국립공원 초입. 천년 고찰까지 이어지는 1km 전나무 숲길. 눈 내린 겨울 숲길은 특히 고요하고 아름다움.</p>
+              <div class="attraction-meta">
+                <span class="attraction-meta-item">📍 호텔 기준 40분</span>
+                <span class="attraction-meta-item">📅 사계절 · 겨울 설경</span>
+              </div>
+              <span class="attraction-tag attraction-tag--green">힐링</span>
+            </div>
+          </div>
+
+          <div class="attraction-card">
+            <div class="attraction-image">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Daegwallyeong_Sheep_Farm.jpg" alt="대관령 양떼목장" loading="lazy">
+              <span class="attraction-number">#07</span>
               <span class="attraction-drive">35 MIN</span>
             </div>
             <div class="attraction-content">
@@ -1347,26 +1377,8 @@
 
           <div class="attraction-card">
             <div class="attraction-image">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/%EA%B5%AD%EB%A6%BD%EC%88%98%EB%AA%A9%EC%9B%90_%EC%A0%84%EB%82%98%EB%AC%B4%EC%88%B2_%28Needle_Fir_forest_in_the_Korea_National_Arboretum%29_01.jpg" alt="월정사 전나무숲길" loading="lazy">
-              <span class="attraction-number">#06</span>
-              <span class="attraction-drive">40 MIN</span>
-            </div>
-            <div class="attraction-content">
-              <h3 class="attraction-name">월정사 전나무숲길</h3>
-              <p class="attraction-subtitle">Woljeongsa Fir Forest</p>
-              <p class="attraction-desc">오대산 국립공원 초입. 천년 고찰까지 이어지는 1km 전나무 숲길. 여름에도 서늘하고 공기가 다름.</p>
-              <div class="attraction-meta">
-                <span class="attraction-meta-item">📍 호텔 기준 40분</span>
-                <span class="attraction-meta-item">📅 사계절</span>
-              </div>
-              <span class="attraction-tag attraction-tag--green">힐링</span>
-            </div>
-          </div>
-
-          <div class="attraction-card">
-            <div class="attraction-image">
               <img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/%EB%A9%94%EB%B0%80%EA%BD%83_%EA%B5%B0%EB%9D%BD.jpg" alt="봉평 메밀꽃밭" loading="lazy">
-              <span class="attraction-number">#07</span>
+              <span class="attraction-number">#08</span>
               <span class="attraction-drive">15 MIN</span>
             </div>
             <div class="attraction-content">
@@ -1383,80 +1395,44 @@
 
           <div class="attraction-card">
             <div class="attraction-image">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Pyeongchang_Olympic_Plaza_in_2018.jpg" alt="평창 올림픽 파크" loading="lazy">
-              <span class="attraction-number">#08</span>
-              <span class="attraction-drive">25 MIN</span>
-            </div>
-            <div class="attraction-content">
-              <h3 class="attraction-name">평창 올림픽 파크</h3>
-              <p class="attraction-subtitle">2018 Olympic Plaza</p>
-              <p class="attraction-desc">2018 동계올림픽 개·폐회식장. 기념관, 오륜 광장, 스노우 피크. 겨울 이벤트가 많음.</p>
-              <div class="attraction-meta">
-                <span class="attraction-meta-item">📍 호텔 기준 25분</span>
-                <span class="attraction-meta-item">📅 겨울 절정</span>
-              </div>
-              <span class="attraction-tag attraction-tag--red">기념·가족</span>
-            </div>
-          </div>
-
-          <div class="attraction-card">
-            <div class="attraction-image">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Close_up_of_rainbow_trout_fish_underwater_oncorhynchus_mykiss.jpg" alt="평창 송어축제" loading="lazy">
+              <img src="images/attractions/blue-canyon.jpg" alt="블루캐니언 워터파크" loading="lazy">
               <span class="attraction-number">#09</span>
-              <span class="attraction-drive">30 MIN</span>
+              <span class="attraction-drive">15 MIN</span>
             </div>
             <div class="attraction-content">
-              <h3 class="attraction-name">평창 송어축제</h3>
-              <p class="attraction-subtitle">Trout Ice Fishing Festival</p>
-              <p class="attraction-desc">겨울 시즌 대표 축제. 얼음낚시·썰매·얼음미끄럼틀. 잡은 송어 바로 회·구이로 조리 가능.</p>
+              <h3 class="attraction-name">블루캐니언 워터파크</h3>
+              <p class="attraction-subtitle">Phoenix Blue Canyon Water Park</p>
+              <p class="attraction-desc">휘닉스 평창 내 강원 대표 워터파크. 국내 최장 201m 웨이브 리버, 한국 최초 업힐 슬라이드, 140m 스피드 슬라이드, 파도풀·유수풀까지.</p>
               <div class="attraction-meta">
-                <span class="attraction-meta-item">📍 호텔 기준 30분</span>
-                <span class="attraction-meta-item">📅 12월 말~2월</span>
+                <span class="attraction-meta-item">📍 호텔 기준 도보 15분</span>
+                <span class="attraction-meta-item">📅 시즌 운영 · 방문 전 운영 일정 확인</span>
               </div>
-              <span class="attraction-tag attraction-tag--red">겨울 한정</span>
+              <span class="attraction-tag attraction-tag--green">가족·물놀이</span>
             </div>
           </div>
 
           <div class="attraction-card">
             <div class="attraction-image">
-              <img src="images/attractions/ski-resort.webp" alt="휘닉스 평창 스키" loading="lazy">
+              <img src="images/attractions/lugeland.jpg" alt="휘닉스 평창 루지랜드" loading="lazy">
               <span class="attraction-number">#10</span>
               <span class="attraction-drive">15 MIN</span>
             </div>
             <div class="attraction-content">
-              <h3 class="attraction-name">휘닉스 평창 스키</h3>
-              <p class="attraction-subtitle">Phoenix Pyeongchang Ski Resort</p>
-              <p class="attraction-desc">봉평 옆 휘닉스 평창. 초급부터 상급까지 다양한 슬로프와 곤돌라 운영. 야간 스키도 가능.</p>
+              <h3 class="attraction-name">휘닉스 평창 루지랜드</h3>
+              <p class="attraction-subtitle">Phoenix Pyeongchang Luge Land</p>
+              <p class="attraction-desc">무동력 카트로 산비탈을 활강하는 휘닉스 평창 대표 액티비티. 곤돌라로 올라가 코스를 따라 내려오는 짜릿한 코너링.</p>
               <div class="attraction-meta">
                 <span class="attraction-meta-item">📍 호텔 기준 도보 15분</span>
-                <span class="attraction-meta-item">📅 12월~3월</span>
+                <span class="attraction-meta-item">📅 봄~가을 시즌 운영</span>
               </div>
-              <span class="attraction-tag attraction-tag--red">스키</span>
-            </div>
-          </div>
-
-          <div class="attraction-card">
-            <div class="attraction-image">
-              <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=1200&q=80" alt="태기산 별 관측" loading="lazy">
-              <span class="attraction-number">#11</span>
-              <span class="attraction-drive">15 MIN</span>
-            </div>
-            <div class="attraction-content">
-              <h3 class="attraction-name">태기산 별 관측</h3>
-              <p class="attraction-subtitle">Stargazing at Taegisan</p>
-              <p class="attraction-desc">해발 800m 이상 고지대. 빛공해 적어 은하수까지 보임. 여름 페르세우스 유성우 시즌 추천.</p>
-              <div class="attraction-meta">
-                <span class="attraction-meta-item">📍 호텔 기준 15분</span>
-                <span class="attraction-meta-item">📅 맑은 밤 · 여름 절정</span>
-              </div>
-              <span class="attraction-tag attraction-tag--amber">야간</span>
+              <span class="attraction-tag attraction-tag--amber">액티비티</span>
             </div>
           </div>
 
           <div class="attraction-card">
             <div class="attraction-image">
               <img src="images/attractions/600majigi.jpg" alt="600마지기" loading="lazy">
-              <span class="attraction-number">#12</span>
+              <span class="attraction-number">#11</span>
               <span class="attraction-drive">30 MIN</span>
             </div>
             <div class="attraction-content">
@@ -1465,7 +1441,7 @@
               <p class="attraction-desc">해발 1,256m 고랭지 배추밭이 펼쳐진 천상의 초원. 구불구불 이어지는 능선 드라이브와 탁 트인 전망이 압권.</p>
               <div class="attraction-meta">
                 <span class="attraction-meta-item">📍 호텔 기준 30분</span>
-                <span class="attraction-meta-item">📅 6월~10월 · 여름 배추밭 절정</span>
+                <span class="attraction-meta-item">📅 6월~10월 · 겨울철 도로 결빙 주의</span>
               </div>
               <span class="attraction-tag attraction-tag--green">드라이브·뷰</span>
             </div>
@@ -1671,7 +1647,7 @@
           </button>
           <div class="accordion-body">
             <div class="accordion-content">
-              <p>조식은 매일 오전 7시부터 오전 10시까지 1층 레스토랑에서 뷔페 형식으로 운영됩니다. 한식과 양식을 모두 즐기실 수 있습니다.</p>
+              <p>조식 뷔페는 주말(토·일)에 운영되며, 운영 시간은 오전 7시 30분부터 10시 30분까지입니다(마지막 입장 09:50). 장소는 L층 라포레 레스토랑이며, 요금은 성인 기준 22,000원입니다. 주중에는 조식이 운영되지 않으며, 주말에도 사정에 따라 운영이 어려울 수 있으니 예약 전 운영 여부를 꼭 확인해 주세요.</p>
             </div>
           </div>
         </div>
@@ -1733,7 +1709,7 @@
         <a href="https://pf.kakao.com/_xnxaxcxj" target="_blank" rel="noopener" class="btn btn--outline btn--lg">카카오톡 문의</a>
       </div>
       <div class="booking-cta__phone">
-        <a href="tel:033-330-7700">033-330-7700</a>
+        <a href="tel:033-832-8088">033-832-8088</a>
       </div>
     </div>
   </section>
@@ -1817,7 +1793,7 @@
           <div class="privacy-consent">
             <p class="privacy-consent__label">개인정보 수집 및 이용 동의 <span style="color:#ef4444;">*</span></p>
             <div class="privacy-consent__box">
-              <p>회사명(이하 '회사'라 한다)는 개인정보 보호법 제30조에 따라 정보 주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보 처리지침을 수립, 공개합니다.</p>
+              <p>호텔어라운드 평창(이하 '회사'라 한다)은 개인정보 보호법 제30조에 따라 정보 주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보 처리지침을 수립, 공개합니다.</p>
 
               <p><strong>제1조 (개인정보의 처리목적)</strong><br>
               회사는 다음의 목적을 위하여 개인정보를 처리합니다. 처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며, 이용 목적이 변경되는 경우에는 개인정보보호법 제18조에 따라 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.</p>
