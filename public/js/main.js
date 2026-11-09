@@ -464,12 +464,9 @@ function initLightbox() {
         caption: `조식 & 다이닝 ${i+1}`
       }))
     },
-    'bbq': {
-      title: 'BBQ 가든',
-      images: Array.from({length: 5}, (_, i) => ({
-        src: `images/gallery/facilities/bbq-${i+1}.jpg`,
-        caption: `BBQ 가든 ${i+1}`
-      }))
+    'pilates': {
+      title: '필라테스',
+      images: [{ src: 'images/gallery/facilities/pilates-1.jpg', caption: '필라테스' }]
     },
     'banquet': {
       title: '연회장',
