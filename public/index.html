@@ -427,11 +427,31 @@
     .explore-panel.active {
       display: block;
     }
-    .cafe-placeholder {
+    .cafe-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.9rem;
+    }
+    .cafe-area {
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      color: var(--color-accent);
+      letter-spacing: 0.08em;
+    }
+    .cafe-drive {
+      background: var(--color-accent);
+      color: var(--color-white);
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+    }
+    .cafe-note {
+      margin-top: var(--space-lg);
       text-align: center;
-      padding: var(--space-3xl) var(--space-lg);
+      font-size: var(--text-xs);
       color: var(--color-gray-400);
-      font-size: var(--text-lg);
     }
 
     /* ============================================
@@ -1474,9 +1494,144 @@
 
       <!-- TAB 03: 카페 -->
       <div class="explore-panel" id="explore-cafe">
-        <div class="cafe-placeholder">
-          <p>평창 주변 추천 카페 정보가 곧 업데이트됩니다.</p>
+        <div class="attraction-grid">
+          <div class="attraction-card">
+            <div class="attraction-content">
+              <div class="cafe-card-top">
+                <span class="cafe-area">봉평</span>
+                <span class="cafe-drive">약 5분</span>
+              </div>
+              <h3 class="attraction-name">마추픽추</h3>
+              <p class="attraction-subtitle">Alpaca Cafe</p>
+              <p class="attraction-desc">알파카를 가까이에서 만날 수 있는 체험형 카페. 아이와 함께 들르기 좋은 곳.</p>
+              <div class="attraction-meta">
+                <span class="attraction-meta-item">📍 봉평면 태기로 352</span>
+                <span class="attraction-meta-item">🚗 호텔 기준 차량 약 5분</span>
+              </div>
+              <span class="attraction-tag attraction-tag--green">알파카 체험</span>
+            </div>
+          </div>
+
+          <div class="attraction-card">
+            <div class="attraction-content">
+              <div class="cafe-card-top">
+                <span class="cafe-area">봉평</span>
+                <span class="cafe-drive">약 5분</span>
+              </div>
+              <h3 class="attraction-name">꼬로베이</h3>
+              <p class="attraction-subtitle">Brunch Cafe</p>
+              <p class="attraction-desc">직접 구운 빵과 브런치, 파스타를 내는 브런치 카페. 스키 시즌에는 대기가 있을 수 있습니다.</p>
+              <div class="attraction-meta">
+                <span class="attraction-meta-item">📍 봉평면 태기로 68</span>
+                <span class="attraction-meta-item">🚗 호텔 기준 차량 약 5분</span>
+              </div>
+              <span class="attraction-tag attraction-tag--amber">브런치</span>
+            </div>
+          </div>
+
+          <div class="attraction-card">
+            <div class="attraction-content">
+              <div class="cafe-card-top">
+                <span class="cafe-area">봉평</span>
+                <span class="cafe-drive">약 10분</span>
+              </div>
+              <h3 class="attraction-name">트리고</h3>
+              <p class="attraction-subtitle">Bakery &amp; Roastery</p>
+              <p class="attraction-desc">봉평 메밀을 활용한 베이커리·로스터리 카페. 메밀커피와 메밀 아이스크림, 메밀 소금빵이 인기.</p>
+              <div class="attraction-meta">
+                <span class="attraction-meta-item">📍 봉평면 메밀꽃길 10-1</span>
+                <span class="attraction-meta-item">🚗 호텔 기준 차량 약 10분</span>
+              </div>
+              <span class="attraction-tag attraction-tag--amber">베이커리</span>
+            </div>
+          </div>
+
+          <div class="attraction-card">
+            <div class="attraction-content">
+              <div class="cafe-card-top">
+                <span class="cafe-area">봉평</span>
+                <span class="cafe-drive">약 10분</span>
+              </div>
+              <h3 class="attraction-name">카페 마카</h3>
+              <p class="attraction-subtitle">Riverside Cafe</p>
+              <p class="attraction-desc">봉평 시내 강변에 자리한 카페. 루프탑 좌석과 핸드메이드 꽃차가 특징.</p>
+              <div class="attraction-meta">
+                <span class="attraction-meta-item">📍 봉평면 메밀꽃길 10-16</span>
+                <span class="attraction-meta-item">🚗 호텔 기준 차량 약 10분</span>
+              </div>
+              <span class="attraction-tag attraction-tag--blue">강변·루프탑</span>
+            </div>
+          </div>
+
+          <div class="attraction-card">
+            <div class="attraction-content">
+              <div class="cafe-card-top">
+                <span class="cafe-area">봉평</span>
+                <span class="cafe-drive">약 10분</span>
+              </div>
+              <h3 class="attraction-name">메밀스케치</h3>
+              <p class="attraction-subtitle">Buckwheat Cafe</p>
+              <p class="attraction-desc">이효석문화마을 인근의 메밀 전문 카페. 봉평 메밀 핸드드립 커피와 메밀 젤라또, 메밀라떼.</p>
+              <div class="attraction-meta">
+                <span class="attraction-meta-item">📍 봉평면 이효석길 168-47</span>
+                <span class="attraction-meta-item">🚗 호텔 기준 차량 약 10분</span>
+              </div>
+              <span class="attraction-tag attraction-tag--green">메밀 디저트</span>
+            </div>
+          </div>
+
+          <div class="attraction-card">
+            <div class="attraction-content">
+              <div class="cafe-card-top">
+                <span class="cafe-area">진부</span>
+                <span class="cafe-drive">약 25분</span>
+              </div>
+              <h3 class="attraction-name">엘림커피 본점</h3>
+              <p class="attraction-subtitle">Hand Drip Coffee</p>
+              <p class="attraction-desc">핸드드립 전문 커피집. 메밀을 더한 시그니처 '메미리카노'와 메밀크림라떼.</p>
+              <div class="attraction-meta">
+                <span class="attraction-meta-item">📍 진부면 땅골길 2-57</span>
+                <span class="attraction-meta-item">🚗 호텔 기준 차량 약 25분</span>
+              </div>
+              <span class="attraction-tag attraction-tag--amber">핸드드립</span>
+            </div>
+          </div>
+
+          <div class="attraction-card">
+            <div class="attraction-content">
+              <div class="cafe-card-top">
+                <span class="cafe-area">진부</span>
+                <span class="cafe-drive">약 30분</span>
+              </div>
+              <h3 class="attraction-name">카페 연월일</h3>
+              <p class="attraction-subtitle">Field View Cafe</p>
+              <p class="attraction-desc">초록 파밭이 창밖으로 펼쳐지는 전망 카페. 직접 만든 디저트와 당근케이크.</p>
+              <div class="attraction-meta">
+                <span class="attraction-meta-item">📍 진부면 진고개로 129</span>
+                <span class="attraction-meta-item">🚗 호텔 기준 차량 약 30분</span>
+              </div>
+              <span class="attraction-tag attraction-tag--blue">전망</span>
+            </div>
+          </div>
+
+          <div class="attraction-card">
+            <div class="attraction-content">
+              <div class="cafe-card-top">
+                <span class="cafe-area">진부</span>
+                <span class="cafe-drive">약 30분</span>
+              </div>
+              <h3 class="attraction-name">감자창고</h3>
+              <p class="attraction-subtitle">Potato Dessert Cafe</p>
+              <p class="attraction-desc">강원도 감자로 만든 디저트 카페. 곤드레라떼와 감자가토가 대표 메뉴.</p>
+              <div class="attraction-meta">
+                <span class="attraction-meta-item">📍 진부면 방아다리로 362</span>
+                <span class="attraction-meta-item">🚗 호텔 기준 차량 약 30분</span>
+              </div>
+              <span class="attraction-tag attraction-tag--green">감자 디저트</span>
+            </div>
+          </div>
         </div>
+        <p class="cafe-note">이동 시간은 호텔 출발 기준 대략적인 차량 소요 시간입니다. 영업시간과 휴무일은 매장 사정에 따라 달라질 수 있으니 방문 전 확인해 주세요.</p>
       </div>
     </div>
   </section>
